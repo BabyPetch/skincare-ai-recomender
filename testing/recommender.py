@@ -8,7 +8,7 @@ from pathlib import Path
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-DATA_FILE = Path('C:/Users/Petch/Desktop/Projectskin/skincare-ai-recomender/data/Data_Collection_ASA - data.csv')
+DATA_FILE = Path('skincare-ai-recomender\data\Data_Collection_ASA - data.csv')
 
 class InteractiveSkinCareAnalyzer:
     """ระบบวิเคราะห์ผิวและแนะนำผลิตภัณฑ์แบบโต้ตอบ"""
@@ -245,7 +245,11 @@ class InteractiveSkinCareAnalyzer:
         self._display_results(df_filtered.head(10))
         
         # บันทึกผลลัพธ์
-        output_file = f'recommended_{self.user_profile["skin_type"]}.csv'
+        # สร้างโฟลเดอร์ Datasaver ถ้ายังไม่มี
+        output_dir = Path('skincare-ai-recomender\Datasaver')
+        output_dir.mkdir(parents=True, exist_ok=True)
+        
+        output_file = output_dir / f'recommended_{self.user_profile["skin_type"]}.csv'
         df_filtered.to_csv(output_file, index=False, encoding='utf-8-sig')
         print(f"\n💾 บันทึกผลลัพธ์ทั้งหมดไว้ที่: {output_file}")
     
