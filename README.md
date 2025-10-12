@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://i.imgur.com/8a5g8fB.png" alt="ASA Logo" width="150"/>
+  <!-- <img src="https://i.imgur.com/8a5g8fB.png" alt="ASA Logo" width="150"/> -->
   <h1>✨ AI Skincare Assistant (ASA) ✨</h1>
   <p>
     <strong>ระบบแนะนำผลิตภัณฑ์ดูแลผิวเบื้องต้น (Rule-Based Recommendation System)</strong>
