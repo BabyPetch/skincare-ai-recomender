@@ -1,0 +1,21 @@
+# core libs
+torch
+torchvision
+ultralytics
+
+# data & ml
+scikit-learn
+pandas
+numpy
+scipy
+tqdm
+
+# nlp / transformer
+transformers
+
+# image io & viz
+opencv-python
+Pillow
+matplotlib
+jupyter
+
