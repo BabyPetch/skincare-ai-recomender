@@ -44,12 +44,18 @@
     git clone [https://your-repository-url.git](https://your-repository-url.git)
     cd your-project-folder
     ```
+2. **สร้าง Virtual Environment (venv)**
+      🔹 Windows
+      python -m venv venv
+      venv\Scripts\activate
+      
+      🔹 macOS / Linux
+      python3 -m venv venv
+      source venv/bin/activate
+3. **ติดตั้งไลบรารีทั้งหมดจาก requirements.txt**
 
-2.  **ติดตั้ง Library ที่จำเป็น:**
-    โปรเจกต์นี้ใช้ `pandas` ในการจัดการข้อมูล ติดตั้งผ่าน `pip` ด้วยคำสั่งเดียว:
-    ```bash
-    pip install pandas
-    ```
+    pip install -r requirements.txt
+   
 
 ## 📂 โครงสร้างไฟล์ (Project Structure)
 
