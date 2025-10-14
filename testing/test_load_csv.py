@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 import io
+from pathlib import Path
 
 # แก้ปัญหาการแสดงผลภาษาไทย
 if sys.stdout.encoding != 'utf-8':
@@ -8,11 +9,11 @@ if sys.stdout.encoding != 'utf-8':
 
 import pandas as pd
 
-file_path = r"C:\Users\Petch\Desktop\Projectskin\skincare-ai-recomender\data\Data_Collection_ASA - data.csv"
+DATA_FILE = Path('data/Data_Collection_ASA - data.csv')  
 
-data = pd.read_csv(file_path, encoding='utf-8-sig')
+data = pd.read_csv(DATA_FILE, encoding='utf-8-sig')
 
-print("โหลดข้อมูลสำเร็จ ✅\n")
+print("โหลดข้อมูลสำเร็จ \n")
 print(data.head())
 print("\nคอลัมน์ทั้งหมด:", list(data.columns))
 

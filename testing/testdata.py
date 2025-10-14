@@ -2,13 +2,14 @@
 import sys
 import io
 import pandas as pd
+from pathlib import Path
 
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-file_path = r"C:\Users\Petch\Desktop\Projectskin\skincare-ai-recomender\data\Data_Collection_ASA - data.csv"
+DATA_FILE = Path('data/Data_Collection_ASA - data.csv')  
 
-data = pd.read_csv(file_path, encoding='utf-8-sig')
+data = pd.read_csv(DATA_FILE, encoding='utf-8-sig')
 
 print("=" * 60)
 print("การวิเคราะห์ข้อมูล")
@@ -38,7 +39,7 @@ print(f"  - คอลัมน์ที่เกี่ยวกับ name/produ
 if skintype_cols:
     col = skintype_cols[0]
     unique_vals = data[col].dropna().unique()
-    print(f"\n🎯 ค่าที่ไม่ซ้ำในคอลัมน์ '{col}':")
+    print(f"\n ค่าที่ไม่ซ้ำในคอลัมน์ '{col}':")
     for val in unique_vals[:10]:  # แสดงแค่ 10 ค่าแรก
         count = (data[col] == val).sum()
         print(f"  - '{val}' ({count} รายการ)")
