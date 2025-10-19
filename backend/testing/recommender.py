@@ -8,7 +8,7 @@ from pathlib import Path
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-DATA_FILE = Path('data\Data_Collection_ASA - data.csv')
+DATA_FILE = Path('backend\data\Data_Collection_ASA - data.csv')
 
 class InteractiveSkinCareAnalyzer:
     """ระบบวิเคราะห์ผิวและแนะนำผลิตภัณฑ์แบบโต้ตอบ"""
