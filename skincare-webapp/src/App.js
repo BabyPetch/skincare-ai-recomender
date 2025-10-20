@@ -1,26 +1,18 @@
 import React, { useState } from 'react';
-import { ChevronRight, Check } from 'lucide-react'; // npm install lucide-react
 
 export default function SkinCareAdvisor() {
   const [step, setStep] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [userProfile, setUserProfile] = useState({
     skinType: null,
     concerns: [],
     productType: null,
-    maxPrice: null,
-    brand: null
+    minPrice: null,
+    maxPrice: null
   });
   const [recommendations, setRecommendations] = useState([]);
 
-  // ข้อมูลผลิตภัณฑ์ตัวอย่าง (ในอนาคตจะมาจาก backend)
-  const mockProducts = [
-    { id: 1, name: 'Cleanser Pro', brand: 'CeraVe', type: 'Cleanser', skintype: 'oily', price: 450, score: 85 },
-    { id: 2, name: 'Hydra Serum', brand: 'The Ordinary', type: 'Serum', skintype: 'dry', price: 250, score: 88 },
-    { id: 3, name: 'Sensitive Shield', brand: 'La Roche', type: 'Moisturizer', skintype: 'sensitive', price: 650, score: 90 },
-    { id: 4, name: 'Oil Control', brand: 'Neutrogena', type: 'Moisturizer', skintype: 'oily', price: 350, score: 82 },
-    { id: 5, name: 'Daily SPF50', brand: 'Sunscreen Pro', type: 'Sunscreen', skintype: 'normal', price: 550, score: 87 }
-  ];
-
+  // --- ตัวเลือกสำหรับแต่ละขั้นตอน ---
   const skinTypeOptions = [
     "มันมาก (บริเวณ T-zone และทั้งหน้า)",
     "มันปานกลาง (เฉพาะบริเวณ T-zone)",
@@ -43,13 +35,16 @@ export default function SkinCareAdvisor() {
     "ทุกประเภท"
   ];
 
+  // *** UPDATED: ปรับปรุงตัวเลือกงบประมาณ ***
   const budgetOptions = [
-    { label: "ไม่เกิน 300 บาท", value: 300 },
-    { label: "300-700 บาท", value: 700 },
-    { label: "700-1500 บาท", value: 1500 },
-    { label: "มากกว่า 1500 บาท", value: 5000 }
+    { label: "ไม่เกิน 300 บาท", value: { min: 0, max: 300 } },
+    { label: "300 - 700 บาท", value: { min: 300, max: 700 } },
+    { label: "700 - 1500 บาท", value: { min: 700, max: 1500 } },
+    { label: "มากกว่า 1500 บาท", value: { min: 1500, max: null } },
+    { label: "ทุกช่วงราคา / ไม่จำกัด", value: { min: 0, max: null } } // เพิ่มตัวเลือกใหม่
   ];
 
+  // --- ฟังก์ชันจัดการ Logic ---
   const determineSkinType = (answer) => {
     if (answer.includes("มันมาก")) return "oily";
     if (answer.includes("มันปานกลาง")) return "combination";
@@ -58,258 +53,248 @@ export default function SkinCareAdvisor() {
   };
 
   const extractConcerns = (answer) => {
-    const concerns = [];
-    if (answer.includes("สิว")) concerns.push("สิว", "ควบคุมความมัน");
-    if (answer.includes("แห้ง")) concerns.push("ผิวแห้ง");
-    if (answer.includes("แพ้ง่าย")) concerns.push("ผิวแพ้ง่าย");
-    if (concerns.length === 0) concerns.push("ดูแลทั่วไป");
-    return concerns;
-  };
-
-  const handleStep1 = (answer) => {
-    const skinType = determineSkinType(answer);
-    setUserProfile(prev => ({
-      ...prev,
-      skinType,
-      concerns: extractConcerns(answer)
-    }));
-    setStep(2);
-  };
-
-  const handleStep2 = (answer) => {
-    setUserProfile(prev => ({
-      ...prev,
-      productType: answer
-    }));
-    setStep(3);
-  };
-
-  const handleStep3 = (budget) => {
-    setUserProfile(prev => ({
-      ...prev,
-      maxPrice: budget
-    }));
-    setStep(4);
-  };
-
-  const handleRecommend = () => {
-    let filtered = mockProducts;
-
-    if (userProfile.skinType) {
-      filtered = filtered.filter(p => p.skintype === userProfile.skinType);
+    const concerns = new Set(); // ใช้ Set เพื่อป้องกันค่าซ้ำ
+    if (answer.includes("สิว")) {
+        concerns.add("สิว");
+        concerns.add("ควบคุมความมัน");
     }
-
-    if (userProfile.productType && !userProfile.productType.includes("ทุกประเภท")) {
-      const productKeyword = userProfile.productType.split(' ')[0];
-      filtered = filtered.filter(p => p.type.toLowerCase().includes(productKeyword.toLowerCase()));
-    }
-
-    if (userProfile.maxPrice) {
-      filtered = filtered.filter(p => p.price <= userProfile.maxPrice);
-    }
-
-    filtered.sort((a, b) => b.score - a.score);
-    setRecommendations(filtered);
-    setStep(5);
+    if (answer.includes("แห้ง")) concerns.add("ผิวแห้ง");
+    if (answer.includes("แพ้ง่าย")) concerns.add("ผิวแพ้ง่าย");
+    if (concerns.size === 0) concerns.add("ดูแลทั่วไป");
+    return Array.from(concerns);
   };
-
-  const translateSkinType = (type) => {
-    const map = {
+  
+  const translateSkinType = (type) => ({
       oily: 'ผิวมัน',
       dry: 'ผิวแห้ง',
       combination: 'ผิวผสม',
-      normal: 'ผิวปกติ',
-      sensitive: 'ผิวแพ้ง่าย'
+      normal: 'ผิวปกติ'
+  }[type] || type);
+
+
+  const handleSelection = (updateFunc, value, nextStep) => {
+      updateFunc(value);
+      setStep(nextStep);
+  };
+  
+  const handleBudgetAndRecommend = async (budgetObject) => {
+    setLoading(true);
+
+    // สร้างโปรไฟล์ผู้ใช้ล่าสุดเพื่อส่งไป API ทันที
+    const currentProfile = {
+      ...userProfile,
+      minPrice: budgetObject.min,
+      maxPrice: budgetObject.max,
     };
-    return map[type] || type;
+    
+    // อัปเดต State ของ UI ไปด้วย
+    setUserProfile(currentProfile);
+
+    try {
+      const response = await fetch('http://localhost:5000/api/recommend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(currentProfile)
+      });
+      const data = await response.json();
+      if (data.success) {
+        setRecommendations(data.recommendations);
+      } else {
+        alert(data.message || 'เกิดข้อผิดพลาดในการรับคำแนะนำ');
+        setRecommendations([]);
+      }
+    } catch (error) {
+      console.error('Error fetching recommendations:', error);
+      alert('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้');
+    }
+    setLoading(false);
+    setStep(5); // ไปยังหน้าแสดงผลลัพธ์
+  };
+
+  const reset = () => {
+    setStep(0);
+    setUserProfile({
+      skinType: null,
+      concerns: [],
+      productType: null,
+      minPrice: null,
+      maxPrice: null
+    });
+    setRecommendations([]);
+  };
+
+  // --- ส่วนของการแสดงผล (Render) ---
+  const renderStepContent = () => {
+    switch (step) {
+      case 0:
+        return (
+          <div style={styles.welcome}>
+            <h2>ยินดีต้อนรับ! 👋</h2>
+            <p>ระบบจะวิเคราะห์ผิวของคุณและแนะนำผลิตภัณฑ์ที่เหมาะสมที่สุด</p>
+            <button style={styles.btnPrimary} onClick={() => setStep(1)}>
+              เริ่มต้น ➜
+            </button>
+          </div>
+        );
+      case 1:
+        return (
+          <QuestionStep
+            title="ขั้นตอนที่ 1: วิเคราะห์ประเภทผิว"
+            question="หลังล้างหน้า 2-3 ชั่วโมง ผิวหน้าของคุณรู้สึกอย่างไร?"
+            options={skinTypeOptions}
+            onSelect={(option) => handleSelection((val) => {
+                const skinType = determineSkinType(val);
+                setUserProfile(prev => ({...prev, skinType, concerns: extractConcerns(val)}));
+            }, option, 2)}
+          />
+        );
+      case 2:
+        return (
+          <QuestionStep
+            title="ขั้นตอนที่ 2: ปัญหาผิวที่กังวล"
+            question="คุณมีปัญหาผิวที่กังวลเป็นพิเศษหรือไม่?"
+            options={concernsOptions}
+            onSelect={(option) => handleSelection((val) => setUserProfile(prev => ({ ...prev, concerns: extractConcerns(val) })), option, 3)}
+            onBack={() => setStep(1)}
+          />
+        );
+      case 3:
+        return (
+          <QuestionStep
+            title="ขั้นตอนที่ 3: ประเภทผลิตภัณฑ์"
+            question="คุณกำลังมองหาผลิตภัณฑ์ประเภทไหนเป็นพิเศษ?"
+            options={productTypeOptions}
+            onSelect={(option) => handleSelection((val) => setUserProfile(prev => ({ ...prev, productType: val })), option, 4)}
+            onBack={() => setStep(2)}
+          />
+        );
+      case 4:
+        return (
+          <QuestionStep
+            title="ขั้นตอนที่ 4: งบประมาณ"
+            question="เลือกช่วงงบประมาณที่คุณสนใจ"
+            options={budgetOptions.map(opt => opt.label)}
+            onSelect={(label) => {
+                const selectedBudget = budgetOptions.find(opt => opt.label === label);
+                if (selectedBudget) {
+                    handleBudgetAndRecommend(selectedBudget.value);
+                }
+            }}
+            onBack={() => setStep(3)}
+          />
+        );
+      case 5:
+        return (
+          <div>
+            <h2>🏆 ผลิตภัณฑ์ที่แนะนำสำหรับคุณ</h2>
+            {loading ? <p>กำลังประมวลผล...</p> : 
+             recommendations.length > 0 ? (
+              <div style={styles.options}>
+                {recommendations.map((p, idx) => <ProductCard key={p.id || idx} product={p} rank={idx + 1} />)}
+              </div>
+            ) : (
+              <p style={styles.noProducts}>ไม่พบผลิตภัณฑ์ที่ตรงกับเงื่อนไขของคุณ</p>
+            )}
+            <div style={styles.navigation}>
+                <button style={styles.btnBack} onClick={() => setStep(4)}>ย้อนกลับ</button>
+                <button style={styles.btnPrimary} onClick={reset}>เริ่มต้นใหม่</button>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50">
-      <div className="max-w-2xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">✨ Skin Care AI Advisor</h1>
-          <p className="text-gray-600">ระบบแนะนำผลิตภัณฑ์ดูแลผิวอัจฉริยะ</p>
+    <div style={styles.container}>
+        <div style={styles.header}>
+            <h1>✨ AI Skincare Assistant</h1>
+            <p>ค้นหาสกินแคร์ที่ใช่สำหรับคุณโดยเฉพาะ</p>
         </div>
-
-        {/* Progress */}
-        <div className="mb-8">
-          <div className="flex justify-between mb-2">
-            <span className="text-sm font-semibold text-gray-700">ความคืบหน้า</span>
-            <span className="text-sm text-gray-600">{Math.min(step, 5)}/5</span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div
-              className="bg-gradient-to-r from-pink-500 to-purple-500 h-2 rounded-full transition-all"
-              style={{ width: `${(Math.min(step, 5) / 5) * 100}%` }}
-            ></div>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          {step === 0 && (
-            <div className="text-center space-y-6">
-              <h2 className="text-2xl font-bold text-gray-800">ยินดีต้อนรับ! 👋</h2>
-              <p className="text-gray-600 text-lg">
-                ระบบจะวิเคราะห์ผิวของคุณและแนะนำผลิตภัณฑ์ที่เหมาะสมที่สุด
-              </p>
-              <button
-                onClick={() => setStep(1)}
-                className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2 mx-auto"
-              >
-                เริ่มต้น <ChevronRight size={20} />
-              </button>
-            </div>
-          )}
-
-          {step === 1 && (
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">ขั้นตอนที่ 1: วิเคราะห์ประเภทผิว</h2>
-              <p className="text-gray-600 mb-4">หลังล้างหน้า 2-3 ชั่วโมง ผิวหน้าของคุณรู้สึกอย่างไร?</p>
-              <div className="space-y-3">
-                {skinTypeOptions.map((option, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => handleStep1(option)}
-                    className="w-full p-4 text-left border-2 border-gray-200 rounded-lg hover:border-pink-500 hover:bg-pink-50 transition-all"
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">ขั้นตอนที่ 2: คุณมีปัญหาผิวอะไรบ้าง?</h2>
-              <div className="space-y-3">
-                {concernsOptions.map((option, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => {
-                      setUserProfile(prev => ({
-                        ...prev,
-                        concerns: extractConcerns(option)
-                      }));
-                      setStep(3);
-                    }}
-                    className="w-full p-4 text-left border-2 border-gray-200 rounded-lg hover:border-pink-500 hover:bg-pink-50 transition-all"
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {step === 3 && (
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">คุณกำลังหาผลิตภัณฑ์ประเภทไหน?</h2>
-              <div className="space-y-3">
-                {productTypeOptions.map((option, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => handleStep2(option)}
-                    className="w-full p-4 text-left border-2 border-gray-200 rounded-lg hover:border-pink-500 hover:bg-pink-50 transition-all"
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {step === 4 && (
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">งบประมาณของคุณ?</h2>
-              <div className="space-y-3">
-                {budgetOptions.map((option, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => handleStep3(option.value)}
-                    className="w-full p-4 text-left border-2 border-gray-200 rounded-lg hover:border-pink-500 hover:bg-pink-50 transition-all"
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-
-              {/* Summary */}
-              <div className="mt-8 p-4 bg-gray-50 rounded-lg space-y-2">
-                <h3 className="font-semibold text-gray-800">📋 สรุปข้อมูลของคุณ:</h3>
-                <p className="text-sm text-gray-600">🧴 ผิว: {translateSkinType(userProfile.skinType)}</p>
-                <p className="text-sm text-gray-600">⚠️ ปัญหา: {userProfile.concerns.join(', ')}</p>
-                <p className="text-sm text-gray-600">📦 ประเภท: {userProfile.productType}</p>
-              </div>
-
-              <button
-                onClick={handleRecommend}
-                className="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all mt-6"
-              >
-                รับคำแนะนำ ✨
-              </button>
-            </div>
-          )}
-
-          {step === 5 && (
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">🏆 ผลิตภัณฑ์ที่แนะนำ</h2>
-              {recommendations.length === 0 ? (
-                <p className="text-gray-600 text-center py-8">ไม่พบผลิตภัณฑ์ที่ตรงกับเงื่อนไข</p>
-              ) : (
-                <div className="space-y-4">
-                  {recommendations.map((product, idx) => (
-                    <div
-                      key={product.id}
-                      className="p-4 border-2 border-pink-200 rounded-lg bg-gradient-to-r from-pink-50 to-purple-50"
-                    >
-                      <div className="flex items-start gap-3">
-                        <span className="text-2xl">
-                          {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '🔸'}
-                        </span>
-                        <div className="flex-1">
-                          <h3 className="font-bold text-gray-800">{product.name}</h3>
-                          <p className="text-sm text-gray-600">💼 {product.brand}</p>
-                          <p className="text-sm text-gray-600">🧴 {product.type}</p>
-                          <p className="text-sm text-gray-600">💰 {product.price} บาท</p>
-                          <div className="flex items-center gap-2 mt-2">
-                            <span className="text-sm font-semibold text-purple-600">⭐ {product.score}/100</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+        
+        {step > 0 && (
+            <div style={styles.progressContainer}>
+                <div style={styles.progressBar}>
+                    <div style={{ ...styles.progressFill, width: `${(step / 4) * 100}%` }}></div>
                 </div>
-              )}
-
-              <button
-                onClick={() => {
-                  setStep(0);
-                  setUserProfile({
-                    skinType: null,
-                    concerns: [],
-                    productType: null,
-                    maxPrice: null,
-                    brand: null
-                  });
-                  setRecommendations([]);
-                }}
-                className="w-full bg-gray-300 text-gray-800 py-3 rounded-lg font-semibold hover:bg-gray-400 transition-all mt-6"
-              >
-                ทำการประเมินใหม่
-              </button>
             </div>
-          )}
+        )}
+
+        <div style={styles.card}>
+            {renderStepContent()}
         </div>
 
-        {/* Footer */}
-        <div className="text-center mt-8 text-gray-600 text-sm">
-          <p>✨ ระบบแนะนำผลิตภัณฑ์ดูแลผิวอัจฉริยะ</p>
+        <div style={styles.footer}>
+            <p>ASA Project - 2025</p>
         </div>
-      </div>
     </div>
   );
 }
+
+// --- Components ย่อย ---
+
+const QuestionStep = ({ title, question, options, onSelect, onBack }) => (
+  <div>
+    <h2>{title}</h2>
+    <p>{question}</p>
+    <div style={styles.options}>
+      {options.map((option, idx) => (
+        <button key={idx} style={styles.btnOption} onClick={() => onSelect(option)}>
+          {option}
+        </button>
+      ))}
+    </div>
+    {onBack && (
+        <div style={styles.navigation}>
+            <button style={styles.btnBack} onClick={onBack}>ย้อนกลับ</button>
+        </div>
+    )}
+  </div>
+);
+
+const ProductCard = ({ product, rank }) => {
+    const rankIcons = { 1: '🥇', 2: '🥈', 3: '🥉' };
+    return (
+        <div style={styles.productCard}>
+            <span style={styles.rank}>{rankIcons[rank] || ` ${rank}. `}</span>
+            <div style={styles.productInfo}>
+                <div style={styles.productName}>{product.name}</div>
+                <div style={styles.productDetail}>💼 {product.brand}</div>
+                <div style={styles.productDetail}>📦{product.type}</div>
+            </div>
+            <div style={styles.productPriceContainer}>
+                <div style={styles.productPrice}>{product.price.toLocaleString()} ฿</div>
+                <div style={styles.productScore}>คะแนน: {product.score.toFixed(1)}</div>
+            </div>
+        </div>
+    );
+};
+
+
+// --- Styles ---
+const styles = {
+    container: { fontFamily: "'Sarabun', sans-serif", background: 'linear-gradient(135deg, #fdf2f8 0%, #f5f3ff 100%)', minHeight: '100vh', padding: '2rem' },
+    header: { textAlign: 'center', marginBottom: '2rem', color: '#1e293b' },
+    progressContainer: { maxWidth: '600px', margin: '0 auto 2rem auto' },
+    progressBar: { width: '100%', height: '8px', background: '#e5e7eb', borderRadius: '4px', overflow: 'hidden' },
+    progressFill: { height: '100%', background: 'linear-gradient(90deg, #db2777 0%, #9333ea 100%)', transition: 'width 0.4s ease-in-out' },
+    card: { maxWidth: '600px', margin: '0 auto', background: 'white', borderRadius: '1rem', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)', padding: '2rem' },
+    welcome: { textAlign: 'center', padding: '2rem 0' },
+    options: { display: 'flex', flexDirection: 'column', gap: '0.75rem', margin: '1.5rem 0' },
+    btnOption: { padding: '1rem', border: '1px solid #d1d5db', background: 'white', borderRadius: '0.75rem', cursor: 'pointer', textAlign: 'left', fontSize: '1rem', transition: 'all 0.2s ease', color: '#374151', '&:hover': { borderColor: '#9333ea', background: '#f5f3ff'} },
+    btnPrimary: { flex: 1, padding: '0.75rem 1.5rem', background: 'linear-gradient(90deg, #db2777 0%, #9333ea 100%)', color: 'white', border: 'none', borderRadius: '0.75rem', fontSize: '1rem', fontWeight: '600', cursor: 'pointer', transition: 'transform 0.2s ease', '&:hover': { transform: 'scale(1.02)' } },
+    btnBack: { flex: 1, padding: '0.75rem 1.5rem', background: 'transparent', color: '#6b7280', border: '1px solid #d1d5db', borderRadius: '0.75rem', fontSize: '1rem', fontWeight: '600', cursor: 'pointer', '&:hover': { background: '#f3f4f6' } },
+    navigation: { display: 'flex', gap: '1rem', marginTop: '1.5rem' },
+    productCard: { border: '1px solid #e5e7eb', background: '#fafafa', padding: '1rem', borderRadius: '0.75rem', display: 'flex', alignItems: 'center', gap: '1rem' },
+    rank: { fontSize: '1.75rem', color: '#6b7280' },
+    productInfo: { flex: 1 },
+    productName: { fontWeight: '600', color: '#1f293b' },
+    productDetail: { fontSize: '0.875rem', color: '#6b7280', marginTop: '0.25rem' },
+    productPriceContainer: { textAlign: 'right' },
+    productPrice: { fontWeight: 'bold', fontSize: '1.125rem', color: '#db2777' },
+    productScore: { fontSize: '0.75rem', color: '#9333ea', marginTop: '0.25rem' },
+    noProducts: { textAlign: 'center', padding: '3rem 1rem', color: '#6b7280' },
+    footer: { textAlign: 'center', marginTop: '3rem', color: '#9ca3af', fontSize: '0.875rem' },
+};
+
