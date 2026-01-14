@@ -11,143 +11,134 @@ if sys.stdout.encoding != 'utf-8':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # --- CONFIGURATION ---
-# ใช้ Pathlib เพื่อให้หาไฟล์เจอเสมอ ไม่ว่าจะรันจากที่ไหนก็ตาม
 DATA_FILE_PATH = Path(__file__).parent / 'data' / 'Data_Collection_ASA - data.csv'
 
 # --- APPLICATION SETUP ---
 app = Flask(__name__)
-CORS(app)  # อนุญาตให้ Frontend (React) เรียก API นี้ได้
+CORS(app)
 
 # --- DATA LOADING AND PRE-PROCESSING ---
 def load_and_prepare_data(path):
-    """
-    โหลดข้อมูลจากไฟล์ CSV และเตรียมข้อมูลเบื้องต้นเพียงครั้งเดียวตอนเริ่มเซิร์ฟเวอร์
-    """
+    """โหลดข้อมูลจากไฟล์ CSV"""
     try:
         df = pd.read_csv(path, encoding='utf-8-sig')
-        
-        # *** FIX & IMPROVEMENT: แก้ไขการประมวลผลคอลัมน์ราคา ***
-        # 1. แปลงคอลัมน์ราคาให้เป็น string เพื่อให้ใช้ .str ได้อย่างปลอดภัย
-        # 2. ใช้ .str.replace(',', '') เพื่อลบเครื่องหมายจุลภาคออก
-        # 3. แปลงคอลัมน์ที่สะอาดแล้วให้เป็นตัวเลข, ถ้าแปลงไม่ได้จะกลายเป็นค่าว่าง (NaN)
         df['price (bath)'] = pd.to_numeric(df['price (bath)'].astype(str).str.replace(',', ''), errors='coerce')
-
         print(f"✓ โหลดและเตรียมข้อมูลสำเร็จ: {len(df)} ผลิตภัณฑ์")
         return df
     except Exception as e:
         print(f"✗ เกิดข้อผิดพลาดในการโหลดข้อมูล: {e}")
         return None
 
-# โหลดข้อมูลเก็บไว้ใน memory ตอนเซิร์ฟเวอร์เริ่มทำงาน
 products_df = load_and_prepare_data(DATA_FILE_PATH)
 
 # --- HELPER FUNCTIONS FOR FILTERING ---
 def filter_by_skintype(df, skin_type):
     if not skin_type:
         return df
-    # .contains ครอบคลุมการ match ทั้งแบบบางส่วนและทั้งหมดอยู่แล้ว
     condition = df['skintype'].fillna('').str.contains(skin_type, case=False, na=False)
     return df[condition]
 
 def filter_by_product_type(df, product_type):
     if not product_type or "ทุกประเภท" in product_type:
         return df
-    keyword = product_type.split(' ')[0] # เอาแค่คำแรก เช่น "Cleanser"
+    keyword = product_type.split(' ')[0]
     condition = df['type_of_product'].fillna('').str.contains(keyword, case=False, na=False)
     return df[condition]
 
 def filter_by_price(df, min_price, max_price):
-    """
-    *** UPDATED: ฟังก์ชันกรองตามช่วงราคา (min และ max) ***
-    """
     filtered_df = df
     if min_price is not None:
-        # กรองผลิตภัณฑ์ที่ราคาสูงกว่าหรือเท่ากับ min_price
         filtered_df = filtered_df[filtered_df['price (bath)'] >= min_price]
     if max_price is not None:
-        # กรองผลิตภัณฑ์ที่ราคาต่ำกว่าหรือเท่ากับ max_price
         filtered_df = filtered_df[filtered_df['price (bath)'] <= max_price]
     return filtered_df
 
 # --- SCORING LOGIC ---
-def calculate_scores(df, skin_type, concerns):
-    """
-    คำนวณคะแนนผลิตภัณฑ์ตามเกณฑ์ต่างๆ (ระบบคะแนนรวม 100)
-    """
+def calculate_scores(df, skin_type, concerns, age=None, gender=None):
+    """คำนวณคะแนนผลิตภัณฑ์"""
     if df.empty:
         return df
 
     scored_df = df.copy()
     
-    # 1. Skin Type Match Score (40 คะแนน)
-    # ให้คะแนนสูงถ้าประเภทผิวตรงเป๊ะๆ
+    # 1. Skin Type Match (30 คะแนน)
     def skin_score(row_skintype):
         if pd.isna(row_skintype): return 0
-        # แก้ไขให้รองรับการ split ค่า skintype ที่เป็น list
         skintypes = [s.strip().lower() for s in str(row_skintype).split(',')]
-        if skin_type.lower() in skintypes: return 40 # ตรงเป๊ะ
-        if any(skin_type.lower() in s for s in skintypes): return 20 # มีคำว่า...
+        if skin_type.lower() in skintypes: return 30
+        if 'all' in skintypes or 'ทุกสภาพผิว' in skintypes: return 15
         return 0
     scored_df['skin_score'] = scored_df['skintype'].apply(skin_score)
     
-    # 2. Concerns Match Score (40 คะแนน)
-    # ยิ่งแก้ปัญหาได้ตรงจุดเยอะ ยิ่งได้คะแนนเยอะ
+    # 2. Concerns Match (35 คะแนน)
     def concern_score(row_props):
-        score = 0
         if pd.isna(row_props) or not concerns: return 0
-        for concern in concerns:
-            if concern.lower() in row_props.lower():
-                score += 1
-        return (score / len(concerns)) * 40 # คิดเป็นสัดส่วนแล้วคูณ 40
+        props_lower = row_props.lower()
+        matched = sum(1 for c in concerns if c.lower() in props_lower)
+        return (matched / len(concerns)) * 35
     scored_df['concern_score'] = scored_df['คุณสมบัติ(จากactive ingredients)'].apply(concern_score)
     
-    # 3. Price Score (20 คะแนน)
-    # ยิ่งถูก ยิ่งได้คะแนนเยอะ (เทียบกับผลิตภัณฑ์ที่ผ่านการกรองมาแล้ว)
-    min_price_in_set = scored_df['price (bath)'].min()
-    max_price_in_set = scored_df['price (bath)'].max()
-    if max_price_in_set > min_price_in_set:
-        scored_df['price_score'] = (1 - (scored_df['price (bath)'] - min_price_in_set) / (max_price_in_set - min_price_in_set)) * 20
+    # 3. Age Match (15 คะแนน)
+    def age_score(row_props):
+        if not age or pd.isna(row_props): return 7
+        props_lower = row_props.lower()
+        if age < 25 and 'ป้องกัน' in props_lower: return 15
+        if 25 <= age < 35 and ('ลดริ้วรอยเริ่มแรก' in props_lower or 'เพิ่มความยืดหยุ่น' in props_lower): return 15
+        if age >= 35 and 'ลดริ้วรอย' in props_lower: return 15
+        return 7
+    scored_df['age_score'] = scored_df['คุณสมบัติ(จากactive ingredients)'].apply(age_score) if age else 0
+    
+    # 4. Price Score (20 คะแนน)
+    min_price = scored_df['price (bath)'].min()
+    max_price = scored_df['price (bath)'].max()
+    if max_price > min_price:
+        scored_df['price_score'] = (1 - (scored_df['price (bath)'] - min_price) / (max_price - min_price)) * 20
     else:
         scored_df['price_score'] = 20
-        
     scored_df['price_score'].fillna(0, inplace=True)
 
-    # รวมคะแนนทั้งหมด
-    scored_df['total_score'] = scored_df['skin_score'] + scored_df['concern_score'] + scored_df['price_score']
+    # รวมคะแนน
+    scored_df['total_score'] = (
+        scored_df['skin_score'] + 
+        scored_df['concern_score'] + 
+        scored_df['age_score'] + 
+        scored_df['price_score']
+    )
+    
     return scored_df
 
 # --- API ENDPOINTS ---
+
 @app.route('/api/recommend', methods=['POST'])
 def recommend_api():
+    """API แนะนำผลิตภัณฑ์"""
     if products_df is None:
         return jsonify({'success': False, 'message': 'เกิดข้อผิดพลาด: ไม่สามารถโหลดฐานข้อมูลได้'}), 500
     
     try:
-        # รับข้อมูลจาก Frontend
         profile = request.json
         skin_type = profile.get('skinType')
         product_type = profile.get('productType')
-        # *** UPDATED: รับค่า minPrice และ maxPrice ***
         min_price = profile.get('minPrice') 
         max_price = profile.get('maxPrice')
         concerns = profile.get('concerns', [])
+        age = profile.get('age')
+        gender = profile.get('gender')
 
-        # --- ขั้นตอนการทำงาน ---
-        # 1. กรองข้อมูลตามเงื่อนไข
+        # กรองข้อมูล
         filtered_df = products_df.copy()
         filtered_df = filter_by_skintype(filtered_df, skin_type)
         filtered_df = filter_by_product_type(filtered_df, product_type)
-        # *** UPDATED: เรียกใช้ฟังก์ชันกรองราคาแบบใหม่ ***
         filtered_df = filter_by_price(filtered_df, min_price, max_price)
 
         if filtered_df.empty:
-            return jsonify({'success': True, 'recommendations': [], 'message': 'ไม่พบผลิตภัณฑ์ที่ตรงตามเงื่อนไขเบื้องต้น'})
+            return jsonify({'success': True, 'recommendations': [], 'message': 'ไม่พบผลิตภัณฑ์ที่ตรงตามเงื่อนไข'})
 
-        # 2. คำนวณคะแนนและจัดลำดับ
-        scored_df = calculate_scores(filtered_df, skin_type, concerns)
+        # คำนวณคะแนน
+        scored_df = calculate_scores(filtered_df, skin_type, concerns, age, gender)
         results_df = scored_df.sort_values('total_score', ascending=False).head(5)
 
-        # 3. สร้าง JSON สำหรับส่งกลับ
+        # สร้าง JSON
         recommendations = []
         for _, row in results_df.iterrows():
             recommendations.append({
@@ -156,7 +147,7 @@ def recommend_api():
                 'brand': str(row.get('brand', '')),
                 'type': str(row.get('type_of_product', '')),
                 'price': float(row.get('price (bath)', 0)),
-                'score': round(float(row.get('total_score', 0)), 2) # ปัดทศนิยม 2 ตำแหน่ง
+                'score': round(float(row.get('total_score', 0)), 2)
             })
             
         return jsonify({'success': True, 'recommendations': recommendations})
@@ -164,6 +155,92 @@ def recommend_api():
     except Exception as e:
         print(f"✗ เกิดข้อผิดพลาดใน API: {e}")
         return jsonify({'success': False, 'message': 'เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์'}), 500
+
+
+@app.route('/api/products/<int:product_id>', methods=['GET'])
+def get_product_detail(product_id):
+    """ดูรายละเอียดผลิตภัณฑ์"""
+    if products_df is None:
+        return jsonify({'success': False, 'message': 'ไม่สามารถโหลดข้อมูลได้'}), 500
+    
+    product = products_df[products_df['id'] == product_id]
+    
+    if product.empty:
+        return jsonify({'success': False, 'message': 'ไม่พบผลิตภัณฑ์'}), 404
+    
+    product_dict = product.iloc[0].to_dict()
+    product_dict = {k: (None if pd.isna(v) else v) for k, v in product_dict.items()}
+    
+    return jsonify({'success': True, 'product': product_dict})
+
+
+@app.route('/api/stats', methods=['GET'])
+def get_stats():
+    """สถิติข้อมูล"""
+    if products_df is None:
+        return jsonify({'success': False}), 500
+    
+    stats = {
+        'total_products': len(products_df),
+        'brands': products_df['brand'].nunique(),
+        'by_type': products_df['type_of_product'].value_counts().to_dict(),
+        'by_skintype': products_df['skintype'].value_counts().to_dict(),
+        'price_range': {
+            'min': float(products_df['price (bath)'].min()),
+            'max': float(products_df['price (bath)'].max()),
+            'avg': round(float(products_df['price (bath)'].mean()), 2)
+        }
+    }
+    
+    return jsonify({'success': True, 'stats': stats})
+
+
+@app.route('/api/products', methods=['GET'])
+def search_products():
+    """ค้นหาผลิตภัณฑ์"""
+    if products_df is None:
+        return jsonify({'success': False}), 500
+    
+    query = request.args.get('q', '').lower()
+    skin_type = request.args.get('skinType')
+    product_type = request.args.get('productType')
+    min_price = request.args.get('minPrice', type=float)
+    max_price = request.args.get('maxPrice', type=float)
+    
+    filtered_df = products_df.copy()
+    
+    if query:
+        filtered_df = filtered_df[
+            filtered_df['name'].fillna('').str.lower().str.contains(query) |
+            filtered_df['brand'].fillna('').str.lower().str.contains(query)
+        ]
+    
+    if skin_type:
+        filtered_df = filter_by_skintype(filtered_df, skin_type)
+    if product_type:
+        filtered_df = filter_by_product_type(filtered_df, product_type)
+    if min_price or max_price:
+        filtered_df = filter_by_price(filtered_df, min_price, max_price)
+    
+    results = filtered_df.head(50).to_dict('records')
+    
+    return jsonify({
+        'success': True,
+        'products': results,
+        'total': len(filtered_df)
+    })
+
+
+@app.route('/api/health', methods=['GET'])
+def health_check():
+    """ตรวจสอบสถานะ"""
+    return jsonify({
+        'success': True,
+        'status': 'running',
+        'products_loaded': len(products_df) if products_df is not None else 0,
+        'version': '1.0.0'
+    })
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
