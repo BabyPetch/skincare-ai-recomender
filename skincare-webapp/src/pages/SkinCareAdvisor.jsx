@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { SKIN_TYPE_OPTIONS, CONCERNS_OPTIONS, PRODUCT_TYPE_OPTIONS, BUDGET_OPTIONS } from './constants/options';
-import { determineSkinType, extractConcerns } from './utils/helpers';
-import { getRecommendations } from './services/api';
-import { styles } from './styles';
+import { SKIN_TYPE_OPTIONS, CONCERNS_OPTIONS, PRODUCT_TYPE_OPTIONS, BUDGET_OPTIONS } from '../constants/options';
+import { determineSkinType, extractConcerns } from '../utils/helpers';
+import { getRecommendations } from '../services/api';
+import { styles } from '../styles';
 
 // --- Components ย่อย ---
 const QuestionStep = ({ title, question, options, onSelect, onBack }) => (
