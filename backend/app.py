@@ -5,6 +5,8 @@ import pandas as pd
 from pathlib import Path
 import sys
 import io
+import json
+
 
 # ตั้งค่า Encoding ของ Output ให้เป็น UTF-8 (สำคัญสำหรับ Windows)
 if sys.stdout.encoding != 'utf-8':
@@ -242,5 +244,50 @@ def health_check():
     })
 
 
+# ไฟล์สำหรับเก็บข้อมูลสมาชิก
+USERS_FILE_PATH = Path(__file__).parent / 'data' / 'users.json'
+
+def init_users_db():
+    if not USERS_FILE_PATH.exists():
+        if not USERS_FILE_PATH.parent.exists():
+            USERS_FILE_PATH.parent.mkdir(parents=True)
+        with open(USERS_FILE_PATH, 'w', encoding='utf-8') as f:
+            json.dump([], f)
+init_users_db()
+
+@app.route('/api/register', methods=['POST'])
+def register():
+    try:
+        data = request.json
+        users = json.load(open(USERS_FILE_PATH, 'r', encoding='utf-8'))
+        if any(u['email'] == data['email'] for u in users):
+            return jsonify({"success": False, "message": "อีเมลนี้ถูกใช้ไปแล้ว"}), 400
+        
+        users.append({
+            "id": len(users) + 1,
+            "name": data.get('name'),
+            "email": data.get('email'),
+            "password": data.get('password'),
+            "role": "user"
+        })
+        json.dump(users, open(USERS_FILE_PATH, 'w', encoding='utf-8'), indent=4, ensure_ascii=False)
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+@app.route('/api/login', methods=['POST'])
+def login():
+    try:
+        data = request.json
+        users = json.load(open(USERS_FILE_PATH, 'r', encoding='utf-8'))
+        user = next((u for u in users if u['email'] == data['email'] and u['password'] == data['password']), None)
+        if user:
+            return jsonify({"success": True, "user": {"name": user['name'], "role": user['role']}})
+        return jsonify({"success": False, "message": "อีเมลหรือรหัสผ่านไม่ถูกต้อง"}), 401
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+# --- RUN APPLICATION ---
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
+    
