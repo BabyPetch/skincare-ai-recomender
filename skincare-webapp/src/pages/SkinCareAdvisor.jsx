@@ -1,169 +1,165 @@
 import React, { useState } from 'react';
-import { SKIN_TYPE_OPTIONS, CONCERNS_OPTIONS, PRODUCT_TYPE_OPTIONS, BUDGET_OPTIONS } from '../constants/options';
-import { determineSkinType, extractConcerns } from '../utils/helpers';
-import { getRecommendations } from '../services/api';
-import { styles } from '../styles';
+import './SkinCareAdvisor.css'; // <-- Import CSS ที่เราเพิ่งสร้าง
 
-// --- Components ย่อย ---
-const QuestionStep = ({ title, question, options, onSelect, onBack }) => (
-  <div>
-    <h2>{title}</h2>
-    <p>{question}</p>
-    <div style={styles.options}>
-      {options.map((option, idx) => (
-        <button key={idx} style={styles.btnOption} onClick={() => onSelect(option)}>
-          {option}
-        </button>
-      ))}
-    </div>
-    {onBack && (
-      <div style={styles.navigation}>
-        <button style={styles.btnBack} onClick={onBack}>ย้อนกลับ</button>
-      </div>
-    )}
-  </div>
-);
+const SkinCareAdvisor = () => {
+  // --- State ---
+  const [skinType, setSkinType] = useState('All');
+  const [concerns, setConcerns] = useState([]);
+  const [age, setAge] = useState(20);
+  const [recommendations, setRecommendations] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-const ProductCard = ({ product, rank }) => {
-  const rankIcons = { 1: '🥇', 2: '🥈', 3: '🥉' };
+  const concernOptions = ["สิว", "ริ้วรอย", "หน้ามัน", "รอยดำ", "ผิวแพ้ง่าย", "รูขุมขนกว้าง", "หมองคล้ำ"];
+
+  const toggleConcern = (c) => {
+    setConcerns(prev => prev.includes(c) ? prev.filter(item => item !== c) : [...prev, c]);
+  };
+
+  const handleAnalyze = async () => {
+    setLoading(true);
+    setError('');
+    setRecommendations([]);
+
+    try {
+      const res = await fetch('http://127.0.0.1:5000/api/recommend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          skinType, 
+          concerns,
+          age: parseInt(age) 
+        })
+      });
+      
+      const data = await res.json();
+      if (data.success) {
+        setRecommendations(data.recommendations);
+      } else {
+        setError('เกิดข้อผิดพลาดในการวิเคราะห์');
+      }
+    } catch (err) {
+      setError('เชื่อมต่อ Server ไม่ได้ (กรุณาเปิด app.py)');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div style={styles.productCard}>
-      <span style={styles.rank}>{rankIcons[rank] || ` ${rank}. `}</span>
-      <div style={styles.productInfo}>
-        <div style={styles.productName}>{product.name}</div>
-        <div style={styles.productDetail}>💼 {product.brand}</div>
-        <div style={styles.productDetail}>📦 {product.type}</div>
+    <div className="advisor-container">
+      
+      {/* Header */}
+      <header className="advisor-header">
+        <h2>🤖 AI Skincare Advisor</h2>
+        <p>วิเคราะห์ผิวและจัดลำดับ Routine ด้วยระบบอัจฉริยะ</p>
+      </header>
+
+      {/* Input Form */}
+      <div className="form-card">
+        
+        {/* Row 1: Skin Type & Age */}
+        <div className="form-row">
+          <div className="input-group">
+            <label className="input-label">สภาพผิว:</label>
+            <select 
+              className="form-select"
+              value={skinType} 
+              onChange={(e) => setSkinType(e.target.value)}
+            >
+              <option value="All">ทุกสภาพผิว / ไม่แน่ใจ</option>
+              <option value="Oily">ผิวมัน (Oily)</option>
+              <option value="Dry">ผิวแห้ง (Dry)</option>
+              <option value="Combination">ผิวผสม (Combination)</option>
+              <option value="Sensitive">ผิวแพ้ง่าย (Sensitive)</option>
+            </select>
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">ช่วงอายุ:</label>
+            <select 
+              className="form-select"
+              value={age}
+              onChange={(e) => setAge(parseInt(e.target.value))}
+            >
+              <option value="20">ต่ำกว่า 25 ปี (เน้นป้องกัน)</option>
+              <option value="30">25 - 34 ปี (เริ่มมีริ้วรอย)</option>
+              <option value="40">35 ปีขึ้นไป (ฟื้นฟูลึก)</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Row 2: Concerns */}
+        <div style={{ marginBottom: '30px' }}>
+          <label className="input-label">ปัญหาที่กังวล:</label>
+          <div className="concern-wrapper">
+            {concernOptions.map(c => (
+              <button
+                key={c}
+                onClick={() => toggleConcern(c)}
+                // ใช้ Logic เลือก Class ถ้าถูกเลือกให้เติม class 'active'
+                className={`concern-btn ${concerns.includes(c) ? 'active' : ''}`}
+              >
+                {concerns.includes(c) && '✓ '} {c}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <button 
+          className="analyze-btn"
+          onClick={handleAnalyze} 
+          disabled={loading}
+        >
+          {loading ? '⏳ กำลังประมวลผล...' : '🔍 วิเคราะห์และจัดตาราง'}
+        </button>
+
+        {error && <p className="error-msg">⚠️ {error}</p>}
       </div>
-      <div style={styles.productPriceContainer}>
-        <div style={styles.productPrice}>{product.price.toLocaleString()} ฿</div>
-        <div style={styles.productScore}>คะแนน: {product.score}</div>
-      </div>
+
+      {/* Results Section */}
+      {recommendations.length > 0 && (
+        <div className="results-section">
+          <h3 className="results-title">✨ ตารางดูแลผิวสำหรับคุณ</h3>
+          
+          <div className="result-list">
+            {recommendations.map((item, index) => (
+              <div key={index} className="result-card">
+                
+                {/* Step Badge */}
+                <div className="step-badge">
+                  <span className="step-label">STEP</span>
+                  <span className="step-number">{item.routine_step}</span>
+                </div>
+
+                {/* Content */}
+                <div className="card-content">
+                  <div className="card-header">
+                    <h4 className="product-name">{item.name}</h4>
+                    <div className="match-badge">Match: {item.score}%</div>
+                  </div>
+                  
+                  <div className="product-meta">
+                    <span className="brand-highlight">{item.brand}</span> | {item.type}
+                  </div>
+                  
+                  {/* AI Insight */}
+                  <div className="ai-insight-box">
+                    <p className="ai-text">{item.ai_insight}</p>
+                  </div>
+                  
+                  <div className="price-tag">
+                    ฿{item.price.toLocaleString()}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
 
-export default function SkinCareAdvisor() {
-  const [step, setStep] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [userProfile, setUserProfile] = useState({
-    skinType: null, concerns: [], productType: null, minPrice: null, maxPrice: null
-  });
-  const [recommendations, setRecommendations] = useState([]);
-
-  const handleSelection = (updateFunc, value, nextStep) => {
-    updateFunc(value);
-    setStep(nextStep);
-  };
-
-  const handleBudgetAndRecommend = async (budgetObject) => {
-    setLoading(true);
-    const updatedProfile = { ...userProfile, minPrice: budgetObject.min, maxPrice: budgetObject.max };
-    setUserProfile(updatedProfile);
-
-    try {
-      const data = await getRecommendations(updatedProfile);
-      if (data.success) {
-        setRecommendations(data.recommendations);
-      } else {
-        alert(data.message || 'ไม่พบผลิตภัณฑ์ที่ตรงกับเงื่อนไข');
-      }
-    } catch (error) {
-      alert('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้');
-    } finally {
-      setLoading(false);
-      setStep(5);
-    }
-  };
-
-  const reset = () => {
-    setStep(0);
-    setUserProfile({ skinType: null, concerns: [], productType: null, minPrice: null, maxPrice: null });
-    setRecommendations([]);
-  };
-
-  const renderStepContent = () => {
-    switch (step) {
-      case 0:
-        return (
-          <div style={styles.welcome}>
-            <h2>ยินดีต้อนรับ! 👋</h2>
-            <p>ระบบจะวิเคราะห์ผิวของคุณและแนะนำผลิตภัณฑ์ที่เหมาะสมที่สุด</p>
-            <button style={styles.btnPrimary} onClick={() => setStep(1)}>เริ่มต้น ➜</button>
-          </div>
-        );
-      case 1:
-        return (
-          <QuestionStep
-            title="ขั้นตอนที่ 1"
-            question="ผิวหน้าของคุณรู้สึกอย่างไรหลังล้างหน้า?"
-            options={SKIN_TYPE_OPTIONS}
-            onSelect={(option) => handleSelection((val) => {
-                const skinType = determineSkinType(val);
-                setUserProfile(prev => ({...prev, skinType, concerns: extractConcerns(val)}));
-            }, option, 2)}
-          />
-        );
-      case 2:
-        return (
-          <QuestionStep
-            title="ขั้นตอนที่ 2"
-            question="ปัญหาผิวที่กังวล?"
-            options={CONCERNS_OPTIONS}
-            onSelect={(option) => handleSelection((val) => setUserProfile(prev => ({ ...prev, concerns: extractConcerns(val) })), option, 3)}
-            onBack={() => setStep(1)}
-          />
-        );
-      case 3:
-        return (
-          <QuestionStep
-            title="ขั้นตอนที่ 3"
-            question="เลือกประเภทสินค้า?"
-            options={PRODUCT_TYPE_OPTIONS}
-            onSelect={(option) => handleSelection((val) => setUserProfile(prev => ({ ...prev, productType: val })), option, 4)}
-            onBack={() => setStep(2)}
-          />
-        );
-      case 4:
-        return (
-          <QuestionStep
-            title="ขั้นตอนที่ 4"
-            question="ช่วงงบประมาณ?"
-            options={BUDGET_OPTIONS.map(opt => opt.label)}
-            onSelect={(label) => {
-                const selectedBudget = BUDGET_OPTIONS.find(opt => opt.label === label);
-                if (selectedBudget) handleBudgetAndRecommend(selectedBudget.value);
-            }}
-            onBack={() => setStep(3)}
-          />
-        );
-      case 5:
-        return (
-          <div>
-            <h2>🏆 ผลิตภัณฑ์ที่แนะนำ</h2>
-            {loading ? <p>กำลังวิเคราะห์...</p> : 
-             recommendations.length > 0 ? (
-              <div style={styles.options}>
-                {recommendations.map((p, idx) => <ProductCard key={p.id || idx} product={p} rank={idx + 1} />)}
-              </div>
-            ) : <p style={styles.noProducts}>ไม่พบสินค้า</p>}
-            <button style={styles.btnPrimary} onClick={reset}>เริ่มต้นใหม่</button>
-          </div>
-        );
-      default: return null;
-    }
-  };
-
-  return (
-    <div style={styles.container}>
-        <div style={styles.header}><h1>✨ AI Skincare</h1></div>
-        {step > 0 && (
-            <div style={styles.progressContainer}>
-                <div style={styles.progressBar}>
-                    <div style={{ ...styles.progressFill, width: `${(step / 4) * 100}%` }}></div>
-                </div>
-            </div>
-        )}
-        <div style={styles.card}>{renderStepContent()}</div>
-    </div>
-  );
-}
+export default SkinCareAdvisor;
