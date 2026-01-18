@@ -1,275 +1,250 @@
 /* src/pages/SkinCareAdvisor.css */
 
-/* --- Layout หลัก --- */
-    .advisor-container {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 20px;
-    font-family: 'Kanit', sans-serif;
-    }
+.advisor-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+  font-family: 'Kanit', sans-serif;
+  animation: fadeIn 0.5s ease-out;
+}
 
-    /* --- Header --- */
-    .advisor-header {
-    text-align: center;
-    margin-bottom: 30px;
-    }
+.advisor-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
 
-    .advisor-header h2 {
-    color: #1e293b;
-    font-size: 2rem;
-    margin-bottom: 10px;
-    }
+.advisor-header h2 {
+  color: #4f46e5;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
 
-    .advisor-header p {
-    color: #64748b;
-    font-size: 1.1rem;
-    }
+.subtitle {
+  color: #64748b;
+}
 
-    /* --- Form Card --- */
-    .form-card {
-    background: white;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e2e8f0;
-    }
+/* --- Form Section --- */
+.form-card {
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
 
-    .form-row {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 25px;
-    flex-wrap: wrap; /* ให้ตกบรรทัดเมื่อจอเล็ก */
-    }
+.form-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 25px;
+}
 
-    .input-group {
-    flex: 1;
-    min-width: 200px;
-    }
+.input-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
 
-    .input-label {
-    font-weight: 600;
-    display: block;
-    margin-bottom: 8px;
-    color: #334155;
-    }
+.input-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 8px;
+}
 
-    .form-select {
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #cbd5e1;
-    font-size: 16px;
-    outline: none;
-    transition: border-color 0.2s;
-    background-color: #fff;
-    }
+/* 🔥 แก้ปัญหา Dropdown มองไม่เห็นตัวหนังสือตรงนี้ 🔥 */
+.form-select {
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 16px;
+  background-color: white;
+  color: #1e293b; /* บังคับตัวหนังสือสีเข้ม */
+  outline: none;
+  transition: all 0.2s;
+  cursor: pointer;
+  text-overflow: ellipsis; 
+  white-space: nowrap; 
+  overflow: hidden; 
+  max-width: 100%; /* ไม่ให้ทะลุกรอบ */
+}
 
-    .form-select:focus {
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-    }
+.form-select:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
 
-    /* --- Concern Buttons (Checkbox) --- */
-    .concern-wrapper {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    }
+/* บังคับสี Option ข้างในด้วย */
+.form-select option {
+  color: #1e293b;
+  background: white;
+  padding: 10px;
+}
 
-    .concern-btn {
-    padding: 8px 16px;
-    border-radius: 50px;
-    border: 1px solid #cbd5e1;
-    background: white;
-    color: #64748b;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.2s ease;
-    }
+/* --- Concern Buttons --- */
+.concern-section { margin-bottom: 30px; }
 
-    .concern-btn:hover {
-    background-color: #f8fafc;
-    }
+.concern-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
 
-    /* สถานะเมื่อถูกเลือก (Active) */
-    .concern-btn.active {
-    background-color: #eef2ff;
-    color: #4f46e5;
-    border-color: #4f46e5;
-    font-weight: 600;
-    box-shadow: 0 2px 4px rgba(79, 70, 229, 0.1);
-    }
+.concern-btn {
+  padding: 8px 16px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  border-radius: 50px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
 
-    /* --- Analyze Button --- */
-    .analyze-btn {
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
-    transition: transform 0.1s, opacity 0.2s;
-    margin-top: 10px;
-    }
+.concern-btn:hover { background: #f8fafc; }
 
-    .analyze-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
-    }
+.concern-btn.active {
+  background: #4f46e5;
+  color: white;
+  border-color: #4f46e5;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+}
 
-    .analyze-btn:active {
-    transform: translateY(0);
-    }
+/* --- Button --- */
+.analyze-btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+  transition: transform 0.1s;
+}
 
-    .analyze-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    transform: none;
-    }
+.analyze-btn:active { transform: scale(0.98); }
+.analyze-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
 
-    .error-msg {
-    color: #ef4444;
-    margin-top: 15px;
-    text-align: center;
-    font-weight: 500;
-    }
+/* --- Results --- */
+.results-section { margin-top: 40px; }
+.results-title { color: #1e293b; margin-bottom: 20px; font-size: 1.5rem; }
 
-    /* --- Results Section --- */
-    .results-section {
-    margin-top: 50px;
-    }
+.result-list { display: flex; flex-direction: column; gap: 20px; }
 
-    .results-title {
-    color: #4f46e5;
-    margin-bottom: 25px;
-    font-size: 1.5rem;
-    text-align: center;
-    }
+.result-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+  border: 1px solid #f1f5f9;
+  position: relative;
+  overflow: hidden;
+}
 
-    .result-list {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    }
+.step-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #eef2ff;
+  color: #4f46e5;
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+.step-label { font-size: 10px; font-weight: bold; letter-spacing: 1px; }
+.step-number { font-size: 24px; font-weight: bold; line-height: 1; }
 
-    .result-card {
-    display: flex;
-    background: white;
-    padding: 20px;
-    border-radius: 16px;
-    border: 1px solid #f1f5f9;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s;
-    }
+.card-content { flex: 1; }
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
+.product-name { margin: 0; font-size: 1.1rem; color: #1e293b; }
 
-    .result-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    }
+.match-badge {
+  background: #dcfce7; color: #166534;
+  padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold;
+}
 
-    .step-badge {
-    background: #1e293b;
-    color: white;
-    min-width: 70px;
-    height: 70px;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-right: 20px;
-    flex-shrink: 0;
-    }
+.product-meta { color: #64748b; font-size: 14px; margin-bottom: 10px; }
+.brand-highlight { color: #4f46e5; font-weight: 600; }
 
-    .step-label {
-    font-size: 12px;
-    opacity: 0.8;
-    letter-spacing: 1px;
-    }
+.ai-insight-box {
+  background: #f8fafc; padding: 10px; border-radius: 8px; border-left: 3px solid #fbbf24; margin-bottom: 10px;
+}
+.ai-text { margin: 0; font-size: 13px; color: #475569; }
 
-    .step-number {
-    font-size: 24px;
-    font-weight: bold;
-    }
+.price-tag { font-weight: bold; color: #1e293b; font-size: 1.1rem; text-align: right; }
+.error-msg { color: #ef4444; background: #fee2e2; padding: 10px; border-radius: 8px; margin-top: 15px; text-align: center; }
 
-    .card-content {
-    flex: 1;
-    }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 5px;
-    }
+/* Mobile Responsive */
+@media (max-width: 600px) {
+  .form-row { flex-direction: column; gap: 15px; }
+  .result-card { flex-direction: column; }
+  .step-badge { width: 100%; height: 40px; flex-direction: row; gap: 10px; margin-bottom: 10px; }
+  .form-select {
+    white-space: normal;
+    font-size: 14px; /* ลดขนาดตัวอักษรนิดนึง */
+  }
+}
+/* --- Guest Popup Modal --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); /* พื้นหลังสีดำจางๆ */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* อยู่บนสุด */
+  animation: fadeIn 0.3s ease-out;
+}
 
-    .product-name {
-    margin: 0;
-    font-size: 1.2rem;
-    color: #0f172a;
-    }
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+  transform: scale(1);
+  animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
 
-    .product-meta {
-    font-size: 14px;
-    color: #64748b;
-    margin-bottom: 12px;
-    }
+.modal-content h3 {
+  color: #4f46e5;
+  margin-top: 0;
+}
 
-    .brand-highlight {
-    font-weight: 600;
-    color: #475569;
-    }
+.modal-select {
+  width: 100%;
+  margin: 20px 0;
+  border: 2px solid #e0e7ff;
+}
 
-    .match-badge {
-    background: #ecfdf5;
-    color: #059669;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: bold;
-    white-space: nowrap;
-    }
+.confirm-btn {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 50px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
 
-    .ai-insight-box {
-    background: #f5f3ff;
-    padding: 12px 16px;
-    border-radius: 8px;
-    border-left: 4px solid #8b5cf6;
-    margin-top: 10px;
-    }
+.confirm-btn:hover {
+  background: #4338ca;
+}
 
-    .ai-text {
-    margin: 0;
-    font-size: 14px;
-    color: #5b21b6;
-    line-height: 1.5;
-    }
-
-    .price-tag {
-    margin-top: 10px;
-    text-align: right;
-    font-size: 16px;
-    color: #059669;
-    font-weight: bold;
-    }
-
-    /* Mobile Responsive */
-    @media (max-width: 600px) {
-    .result-card {
-        flex-direction: column;
-    }
-    .step-badge {
-        width: 100%;
-        height: 40px;
-        flex-direction: row;
-        gap: 10px;
-        margin-bottom: 15px;
-    }
-    .step-number {
-        font-size: 18px;
-    }
+@keyframes popUp {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }

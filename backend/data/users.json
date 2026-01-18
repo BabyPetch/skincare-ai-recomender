@@ -5,5 +5,12 @@
         "email": "Test@gmail.com",
         "password": "1234",
         "role": "user"
+    },
+    {
+        "name": "Petch",
+        "email": "1@gmail.com",
+        "password": "1234",
+        "birthdate": "2004-01-12",
+        "role": "user"
     }
 ]
