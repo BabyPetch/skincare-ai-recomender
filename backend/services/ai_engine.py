@@ -24,8 +24,7 @@ class SkincareAI:
             if 'reviews' not in self.df.columns:
                 self.df['reviews'] = ''
 
-            # --- 2. รวมข้อมูลสินค้า (แก้ชื่อคอลัมน์ให้ตรงเป๊ะ) ---
-            # ใช้ type_of_product แทน category
+            # --- 2. รวมข้อมูลสินค้า ---
             self.df['combined_features'] = (
                 self.df['skintype'].fillna('') + ' ' + 
                 self.df['คุณสมบัติ(จากactive ingredients)'].fillna('') + ' ' + 
@@ -33,12 +32,11 @@ class SkincareAI:
                 self.df['brand'].fillna('')
             )
             
-            # --- 3. สร้าง AI Vector (สูตร N-gram อ่านภาษาไทยรู้เรื่อง) ---
-            # analyzer='char_wb' ช่วยให้อ่านทีละ 3-5 ตัวอักษร (แก้ปัญหาตัดคำผิด)
+            # --- 3. สร้าง AI Vector ---
             self.vectorizer = TfidfVectorizer(analyzer='char_wb', ngram_range=(3, 5), min_df=1)
             self.tfidf_matrix = self.vectorizer.fit_transform(self.df['combined_features'])
 
-            # --- 4. เตรียม Rating (แปลงเป็นตัวเลข) ---
+            # --- 4. เตรียม Rating ---
             self.df['rating'] = pd.to_numeric(self.df['rating'], errors='coerce').fillna(0)
             self.df['sentiment_score'] = self.df['reviews'].apply(self._analyze_sentiment)
 
@@ -64,19 +62,43 @@ class SkincareAI:
             if key in pt_lower: return step
         return 6
 
+    # --- ✨ ฟังก์ชันวิเคราะห์ค่าพลังกราฟ Radar ---
+    def _analyze_benefits(self, text):
+        text = str(text).lower()
+        scores = { 'acne': 4, 'brightening': 4, 'moisturizing': 4, 'aging': 4, 'gentle': 4 }
+        
+        keywords = {
+            'acne': ['สิว', 'มัน', 'อุดตัน', 'รูขุมขน', 'acne', 'bha', 'salicylic', 'tea tree', 'oil', 'sebum', 'pore', 'zinc', 'clay', 'mud', 'green tea', 'cleanse', 'foam'],
+            'brightening': ['ขาว', 'ใส', 'จุดด่างดำ', 'หมองคล้ำ', 'white', 'bright', 'vit c', 'niacinamide', 'glow', 'radiance', 'dark spot', 'arbutin', 'lemon'],
+            'moisturizing': ['ชุ่มชื้น', 'แห้ง', 'น้ำ', 'ฉ่ำ', 'hydrat', 'moist', 'hyaluron', 'ceramide', 'water', 'aloe', 'sooth', 'essence', 'mask', 'dry'],
+            'aging': ['ริ้วรอย', 'เหี่ยวย่น', 'ตึง', 'ย้อนวัย', 'age', 'wrinkle', 'retinol', 'firm', 'collagen', 'peptide', 'ginseng', 'repair', 'anti-aging'],
+            'gentle': ['แพ้', 'อ่อนโยน', 'ปลอบประโลม', 'sensitive', 'gentle', 'sooth', 'centella', 'free', 'natural', 'calm', 'chamomile', 'organic', 'cica']
+        }
+        
+        for key, words in keywords.items():
+            for word in words:
+                if word in text: 
+                    scores[key] += 2 
+            scores[key] = min(scores[key], 10)
+            
+        return scores
+
+    # --- ✨ ฟังก์ชันดึงจุดเด่น ---
+    def _get_highlights(self, props_text):
+        if not props_text: return []
+        words = str(props_text).replace(',', ' ').split()
+        return words[:3]
+
     def recommend(self, skin_type, concerns, age):
-        # 1. เช็คความปลอดภัย
         if self.df is None or self.df.empty:
             print("⚠️ AI Error: Database is empty.")
             return []
 
         print(f"🔍 AI Analyzing: Skin={skin_type}, Concerns={concerns}")
 
-        # 2. แปลงความต้องการลูกค้าเป็น Vector
         user_query = f"{skin_type} {' '.join(concerns)}"
         user_vector = self.vectorizer.transform([user_query])
         
-        # 3. คำนวณความเหมือน (0-1)
         similarity_scores = cosine_similarity(user_vector, self.tfidf_matrix).flatten()
         
         final_results = []
@@ -84,54 +106,47 @@ class SkincareAI:
         for idx, score in enumerate(similarity_scores):
             row = self.df.iloc[idx]
             
-            # คะแนน Content (เต็ม 100)
             s_content = score * 100 
-            
-            # เช็คว่ามีรีวิวไหม (เพื่อปรับสูตรคำนวณ)
             rating_val = float(row['rating'])
             has_reviews = rating_val > 0 or (str(row.get('reviews','')) != '')
 
-            # --- 🧠 Logic คำนวณคะแนน ---
             if has_reviews:
-                # สูตร Hybrid (ถ้ามีรีวิว)
                 s_rating = rating_val * 20 
                 s_sentiment = (float(row.get('sentiment_score', 0)) + 1) * 50
                 total_score = (s_content * 0.6) + (s_rating * 0.2) + (s_sentiment * 0.2)
                 insight_suffix = " (จากสเปคและรีวิว)"
             else:
-                # สูตร Content ล้วน (ลดทอนนิดหน่อย)
                 total_score = s_content * 0.95
                 insight_suffix = ""
 
-            # --- 🛡️ กรอง Skin Type (แก้ให้ไม่สนตัวพิมพ์เล็ก/ใหญ่) ---
             row_skin = str(row.get('skintype', '')).lower()
             user_skin = skin_type.lower()
             
             is_skin_match = False
-            # ถ้าลูกค้าเลือก All หรือ ผิวลูกค้าตรงกับสินค้า
             if user_skin == 'all' or user_skin in row_skin:
                 is_skin_match = True
-            # หรือถ้าสินค้าบอกว่าใช้ได้กับ All skin types
             elif 'all' in row_skin:
                 is_skin_match = True
 
-            # --- 🎯 กรองคะแนนขั้นต่ำ (ปรับลดเหลือ > 1) ---
             if is_skin_match and total_score > 1: 
+                props = str(row.get('คุณสมบัติ(จากactive ingredients)', ''))
+                name = str(row.get('name', ''))
+                full_text_for_ai = f"{props} {name}"
+
                 final_results.append({
                     'id': int(row.get('id', 0)),
-                    'name': str(row.get('name', '')),
+                    'name': name,
                     'brand': str(row.get('brand', '')),
-                    'type': str(row.get('type_of_product', '')), # ใช้ชื่อคอลัมน์ที่ถูก
+                    'type': str(row.get('type_of_product', '')),
                     'price': float(str(row.get('price (bath)', 0)).replace(',','')),
                     'score': int(total_score),
                     'ai_insight': f"Match {int(total_score)}%{insight_suffix}",
-                    'routine_step': self._get_routine_step(row.get('type_of_product', ''))
+                    'routine_step': self._get_routine_step(row.get('type_of_product', '')),
+                    'benefits': self._analyze_benefits(full_text_for_ai),
+                    'highlights': self._get_highlights(props)
                 })
 
-        # 4. เรียงลำดับคะแนนมาก -> น้อย
         final_results.sort(key=lambda x: x['score'], reverse=True)
-        
-        # 5. ตัดเอาแค่ Top 5 แล้วเรียงตามขั้นตอนการทา (Step)
         top_picks = final_results[:5]
         top_picks.sort(key=lambda x: x['routine_step'])
         

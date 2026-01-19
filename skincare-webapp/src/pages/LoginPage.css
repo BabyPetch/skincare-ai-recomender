@@ -1,0 +1,132 @@
+/* src/pages/LoginPage.css */
+
+/* พื้นหลังแบบไล่เฉดสี */
+.login-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    font-family: 'Kanit', sans-serif;
+}
+
+/* การ์ดสีขาวตรงกลาง */
+.login-card {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-title {
+    text-align: center;
+    color: #1e293b;
+    margin-bottom: 25px;
+    font-size: 24px;
+}
+
+.error-message {
+    color: #ef4444;
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 15px;
+    background: #fee2e2;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+/* ฟอร์มและอินพุต */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 4px;
+    margin-left: 4px;
+}
+
+.form-input {
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    font-size: 16px;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.form-input:focus {
+    border-color: #6366f1;
+}
+
+/* ปุ่มหลัก (สีม่วง) */
+.btn-primary {
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: #4f46e5;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.2s;
+}
+
+.btn-primary:hover {
+    background: #4338ca;
+}
+
+/* ปุ่ม Guest */
+.btn-guest {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.2s;
+}
+
+.btn-guest:hover {
+    background: #f1f5f9;
+    color: #334155;
+}
+
+/* ตัวลิงก์สลับหน้า */
+.toggle-container {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+    color: #64748b;
+}
+
+.toggle-link {
+    color: #4f46e5;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+.toggle-link:hover {
+    text-decoration: underline;
+}
+
+.divider {
+    margin-top: 20px;
+    border-top: 1px solid #eee;
+}

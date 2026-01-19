@@ -1,98 +1,130 @@
-import React, { useState, useRef } from 'react';
-import { calculateAge } from '../utils/helpers'; // <--- Import Helper ที่แยกไว้
-import './UserProfile.css'; // <--- อย่าลืมบรรทัดนี้!
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './UserProfile.css';
 
-const UserProfile = ({ user, onStartAnalyze, onLogout, onUpdateUser }) => {
-  const [isEditing, setIsEditing] = useState(false);
+const UserProfile = ({ user }) => {
+  const navigate = useNavigate();
   
-  const [editName, setEditName] = useState(user.name || '');
-  const [editBirthdate, setEditBirthdate] = useState(user.birthdate || '2000-01-01');
-  const [previewImage, setPreviewImage] = useState(user.avatar || null);
+  // สร้างตัวแปรเก็บข้อมูลผู้ใช้ล่าสุด
+  const [currentUser, setCurrentUser] = useState(user);
 
-  const fileInputRef = useRef(null);
+  // --- ฟังก์ชันดึงข้อมูลใหม่ล่าสุด ---
+  useEffect(() => {
+    if (user?.email) {
+      console.log("🔄 Fetching fresh user data...");
+      fetch(`http://127.0.0.1:5000/api/user/${user.email}`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data.error) {
+            console.log("✅ Got fresh data:", data);
+            setCurrentUser(data); // อัปเดตหน้าจอด้วยข้อมูลใหม่
+          }
+        })
+        .catch(err => console.error("Error fetching user:", err));
+    }
+  }, [user]);
 
-  // คำนวณอายุจาก State ปัจจุบัน (Real-time update)
-  const currentAge = calculateAge(editBirthdate);
+  // ถ้าไม่มี User ให้เด้งไปหน้า Login
+  if (!currentUser) {
+    navigate('/login');
+    return null;
+  }
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) setPreviewImage(URL.createObjectURL(file));
+  const handleLogout = () => {
+    navigate('/login');
+    window.location.reload(); 
   };
 
-  const handleSave = () => {
-    onUpdateUser({
-      name: editName,
-      birthdate: editBirthdate,
-      age: currentAge, // ส่งอายุที่คำนวณแล้วกลับไปเก็บที่ App.js
-      avatar: previewImage
-    });
-    setIsEditing(false);
-  };
+  const history = currentUser.history || [];
 
   return (
     <div className="profile-container">
-      <div className="profile-header">
-        <div className="avatar-wrapper">
-          {previewImage ? (
-            <img src={previewImage} alt="Profile" className="avatar-img" />
-          ) : (
-            <div className="avatar-circle">{user.name ? user.name.charAt(0).toUpperCase() : 'U'}</div>
-          )}
-          {isEditing && (
-            <div className="avatar-overlay" onClick={() => fileInputRef.current.click()}>📷</div>
-          )}
-          <input type="file" ref={fileInputRef} style={{ display: 'none' }} accept="image/*" onChange={handleImageChange} />
-        </div>
-
-        {isEditing ? (
-          <div className="edit-form">
-            <input type="text" className="edit-input" value={editName} onChange={(e) => setEditName(e.target.value)} placeholder="ชื่อของคุณ" />
-            <p className="user-email">{user.email}</p>
-          </div>
-        ) : (
-          <>
-            <h1 className="user-name">สวัสดี, {user.name} 👋</h1>
-            <p className="user-email">{user.email}</p>
-          </>
-        )}
-
-        <button className={`edit-btn ${isEditing ? 'save-mode' : ''}`} onClick={isEditing ? handleSave : () => setIsEditing(true)}>
-          {isEditing ? '💾 บันทึกข้อมูล' : '✏️ แก้ไขโปรไฟล์'}
+      
+      {/* ส่วนปุ่ม Back กลับหน้าหลัก (เผื่ออยากกลับ) */}
+      <div style={{ width: '100%', maxWidth: '500px', marginBottom: '10px', textAlign: 'left' }}>
+        <button 
+          onClick={() => navigate('/')}
+          style={{ border: 'none', background: 'none', color: '#64748b', cursor: 'pointer', fontSize: '14px' }}
+        >
+          ← กลับหน้าหลัก
         </button>
       </div>
 
-      <div className="info-section">
-        <h3>📝 ข้อมูลสำหรับการวิเคราะห์ผิว</h3>
-        <div className="info-card">
-          <label>วันเกิดของคุณ:</label>
-          
-          {isEditing ? (
-            <input 
-              type="date" 
-              className="edit-select"
-              value={editBirthdate}
-              onChange={(e) => setEditBirthdate(e.target.value)}
-            />
-          ) : (
-            <div style={{ textAlign: 'right' }}>
-              <div className="display-value" style={{ fontSize: '1.2rem', color: '#4f46e5', fontWeight: 'bold' }}>
-                อายุ {currentAge} ปี
+      {/* การ์ดข้อมูลส่วนตัว */}
+      <div className="profile-card">
+        <div className="profile-header-bg"></div>
+        <div className="profile-info">
+          <div className="profile-avatar">
+            {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
+          </div>
+          <h2 className="profile-name">{currentUser.name}</h2>
+          <p className="profile-email">{currentUser.email}</p>
+          {currentUser.role === 'guest' && (
+            <span className="guest-badge">บัญชีผู้เยี่ยมชม</span>
+          )}
+        </div>
+
+        <div className="profile-details">
+          <div className="detail-row">
+            <span className="detail-label">🎂 วันเกิด</span>
+            <span className="detail-value">{currentUser.birthdate || '-'}</span>
+          </div>
+          <div className="detail-row">
+            <span className="detail-label">📅 อายุ</span>
+            <span className="detail-value">{currentUser.age || 0} ปี</span>
+          </div>
+        </div>
+
+        <div className="profile-actions">
+          <button className="btn-action btn-logout" onClick={handleLogout}>
+            ออกจากระบบ
+          </button>
+          <button className="btn-action btn-analyze" onClick={() => navigate('/advisor')}>
+            วิเคราะห์ผิวอีกครั้ง
+          </button>
+        </div>
+      </div>
+
+      {/* ส่วนประวัติการวิเคราะห์ */}
+      <div className="history-section">
+        <h3 className="history-title">🕒 ประวัติการวิเคราะห์ผิว ({history.length})</h3>
+        
+        <div className="history-list">
+          {history.length > 0 ? (
+            history.map((item, index) => (
+              <div key={index} className="history-card">
+                <div className="history-header">
+                  <span className="history-date">{item.date}</span>
+                  <span className="skin-badge">{item.skin_type}</span>
+                </div>
+                <div className="history-concerns">
+                  ปัญหา: {item.concerns.join(', ') || 'ไม่มี'}
+                </div>
+                
+                {/* แสดงสินค้าที่แนะนำแบบย่อ */}
+                <div className="history-products">
+                  {item.results && item.results.map((prod, idx) => (
+                    <div key={idx} className="mini-product">
+                      <div className="step-tag">{prod.step}</div>
+                      <div className="prod-name" title={prod.name}>
+                        {prod.name}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <small style={{ color: '#94a3b8' }}>
-                (เกิดวันที่ {new Date(editBirthdate).toLocaleDateString('th-TH')})
-              </small>
+            ))
+          ) : (
+            <div className="empty-history">
+              <p>ยังไม่มีประวัติการวิเคราะห์</p>
+              <button onClick={() => navigate('/advisor')}>
+                เริ่มวิเคราะห์ผิวครั้งแรก
+              </button>
             </div>
           )}
         </div>
-        <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '10px' }}>
-          *ระบบจะใช้อายุนี้ในการเลือกสกินแคร์ที่เหมาะกับวัย
-        </p>
       </div>
 
-      <div className="action-area">
-        <button className="logout-btn" onClick={onLogout}>ออกจากระบบ</button>
-        <button className="start-btn" onClick={onStartAnalyze}>✨ ไปหน้าวิเคราะห์ผิว</button>
-      </div>
     </div>
   );
 };

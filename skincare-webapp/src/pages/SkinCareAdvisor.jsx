@@ -1,166 +1,259 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './SkinCareAdvisor.css';
-import { CONCERN_OPTIONS, SKIN_TYPE_OPTIONS, AGE_RANGES } from '../constants/options';
-import { getRecommendations } from '../services/api';
+import {
+  Chart as ChartJS,
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Radar } from 'react-chartjs-2';
 
+ChartJS.register(
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Tooltip,
+  Legend
+);
+
+// ✅ รับ props 'user' เข้ามาเพื่อใช้อายุ
 const SkinCareAdvisor = ({ user }) => {
-  // --- State ---
-  const [skinType, setSkinType] = useState('All');
+  const [step, setStep] = useState(1);
+  const [skinType, setSkinType] = useState('');
+  // ❌ ลบ state age ออก เพราะจะใช้ user.age แทน
   const [concerns, setConcerns] = useState([]);
-  const [age, setAge] = useState(25); // ค่า Default กลางๆ ไว้ก่อน
-  const [recommendations, setRecommendations] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [results, setResults] = useState([]);
 
-  // ✅ เพิ่ม State สำหรับ Popup ของ Guest
-  const [showGuestPopup, setShowGuestPopup] = useState(false);
+  // เลือกผิวเสร็จ ไป Step 2 (หน้าเลือกปัญหาผิวเลย ไม่ต้องถามอายุแล้ว)
+  const selectSkin = (type) => {
+    setSkinType(type);
+    setTimeout(() => setStep(2), 300);
+  };
 
-  // --- Effect ---
-  useEffect(() => {
-    // ถ้าเป็น Guest ให้เด้ง Popup ถามอายุทันทีที่เข้ามา
-    if (user?.role === 'guest') {
-      setShowGuestPopup(true);
-    } else if (user?.age) {
-      // ถ้าเป็น User ปกติ ดึงอายุจาก Profile มาเลย
-      setAge(user.age);
-    }
-  }, [user]);
-
-  // --- Handlers ---
   const toggleConcern = (concern) => {
-    setConcerns(prev => 
-      prev.includes(concern) ? prev.filter(c => c !== concern) : [...prev, concern]
-    );
+    if (concerns.includes(concern)) {
+      setConcerns(concerns.filter((c) => c !== concern));
+    } else {
+      setConcerns([...concerns, concern]);
+    }
   };
 
-  const handleGuestAgeConfirm = () => {
-    // พอกดเลือกอายุเสร็จ ให้ปิด Popup
-    setShowGuestPopup(false);
-  };
+  // ในไฟล์ src/pages/SkinCareAdvisor.jsx
 
-  const handleAnalyze = async () => {
-    setLoading(true);
-    setError('');
-    setRecommendations([]);
+  const handleSubmit = async () => {
+    setStep(3); // ไปหน้า Loading
+
+    // 1. เตรียมข้อมูลที่จะส่ง (Payload)
+    const userAge = user?.age || 25;
+    const userEmail = user?.email || ""; // ดึง email ของ user มา
+
+    const payload = {
+      skin_type: skinType,
+      concerns: concerns, // ส่งเป็น array ได้เลย ["สิว", "ริ้วรอย"]
+      age: userAge,
+      email: userEmail    // 👈 สำคัญ! ต้องส่ง email ไปด้วยเพื่อบันทึก History
+    };
+
+    console.log("🚀 Sending Data:", payload); // เช็คใน Console browser ว่าข้อมูลถูกต้องไหม
 
     try {
-      const data = await getRecommendations({ skinType, concerns, age: parseInt(age) });
-      if (data.success) {
-        setRecommendations(data.recommendations);
-      } else {
-        setError('เกิดข้อผิดพลาดในการวิเคราะห์ข้อมูล');
+      // 2. ส่ง Request แบบ JSON (ต้องมี Headers และ JSON.stringify)
+      const response = await fetch('http://127.0.0.1:5000/api/recommend', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // 👈 บรรทัดนี้สำคัญมาก! แก้ Error 415
+        },
+        body: JSON.stringify(payload), // 👈 ต้องแปลง Object เป็น String JSON
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
-    } catch (err) {
-      setError('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้');
-    } finally {
-      setLoading(false);
+
+      const data = await response.json();
+      setResults(data);
+      setStep(4); // ไปหน้าแสดงผล
+      
+    } catch (error) {
+      console.error('Error:', error);
+      alert('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์');
+      setStep(2); // กลับไปหน้าเลือกปัญหา
     }
+  };
+  
+  const getChartData = (benefits) => {
+    const safeBenefits = benefits || { acne: 0, brightening: 0, moisturizing: 0, aging: 0, gentle: 0 };
+    return {
+      labels: ['ลดสิว/มัน', 'กระจ่างใส', 'ชุ่มชื้น', 'ลดริ้วรอย', 'อ่อนโยน'],
+      datasets: [
+        {
+          label: 'คะแนน',
+          data: [
+            safeBenefits.acne || 0,
+            safeBenefits.brightening || 0,
+            safeBenefits.moisturizing || 0,
+            safeBenefits.aging || 0,
+            safeBenefits.gentle || 0,
+          ],
+          backgroundColor: 'rgba(99, 102, 241, 0.2)',
+          borderColor: '#6366F1',
+          borderWidth: 2,
+          pointBackgroundColor: '#6366F1',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#6366F1',
+        },
+      ],
+    };
+  };
+
+  const chartOptions = {
+    scales: {
+      r: {
+        min: 0,
+        max: 10,
+        ticks: { display: false, stepSize: 2 },
+        grid: { color: 'rgba(0, 0, 0, 0.05)' },
+        pointLabels: { font: { size: 12, family: "'Kanit', sans-serif" }, color: '#64748b' }
+      }
+    },
+    plugins: { legend: { display: false } },
+    maintainAspectRatio: false
   };
 
   return (
-    <div className="advisor-container">
-      
-      {/* --- ✅ ส่วน Popup (Modal) สำหรับ Guest --- */}
-      {showGuestPopup && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>🎂 ยินดีต้อนรับ Guest!</h3>
-            <p>กรุณาเลือกช่วงอายุของคุณ เพื่อให้ AI วิเคราะห์ได้แม่นยำขึ้น</p>
+    <div className="advisor-wrapper">
+      <div className="advisor-container fadeIn">
+        {/* Progress Bar (ปรับเหลือ 4 ขั้นตอน) */}
+        <div className="progress-container">
+          <div className="progress-bar" style={{width: `${(step / 4) * 100}%`}}></div>
+        </div>
+
+        {/* Step 1: เลือกสภาพผิว */}
+        {step === 1 && (
+          <div className="step-content">
+            <h2 className="step-title">สภาพผิวของคุณเป็นแบบไหน?</h2>
+            <p className="step-subtitle">สวัสดีคุณ {user?.name || 'Guest'} เราจะช่วยเลือกสิ่งที่ดีที่สุดให้คุณ</p>
+            <div className="options-grid">
+              {[
+                { type: 'Oily', icon: '🍋', label: 'หน้ามัน' },
+                { type: 'Dry', icon: '🌵', label: 'หน้าแห้ง' },
+                { type: 'Combination', icon: '⚖️', label: 'ผิวผสม' },
+                { type: 'Sensitive', icon: '🛡️', label: 'แพ้ง่าย' },
+              ].map(({ type, icon, label }) => (
+                <div
+                  key={type}
+                  className={`option-card ${skinType === type ? 'selected' : ''}`}
+                  onClick={() => selectSkin(type)}
+                >
+                  <div className="icon-wrapper">{icon}</div>
+                  <span>{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ❌ ตัดหน้าเลือกอายุออกไปแล้ว */}
+
+        {/* Step 2: เลือกปัญหาผิว (ขยับขึ้นมาแทน) */}
+        {step === 2 && (
+          <div className="step-content">
+            <h2 className="step-title">กังวลเรื่องอะไรเป็นพิเศษ?</h2>
+            <p className="step-subtitle">อายุ {user?.age || 25} ปี ผิวต้องการการดูแลเฉพาะจุด</p>
+            <div className="options-grid">
+              {[
+                { name: 'สิว', icon: '🌋' },
+                { name: 'หมองคล้ำ', icon: '☀️' },
+                { name: 'ริ้วรอย', icon: '👵' },
+                { name: 'แห้งกร้าน', icon: '🍂' },
+              ].map(({ name, icon }) => (
+                <div
+                  key={name}
+                  className={`option-card ${concerns.includes(name) ? 'selected' : ''}`}
+                  onClick={() => toggleConcern(name)}
+                >
+                  <div className="icon-wrapper">{icon}</div>
+                  <span>{name}</span>
+                </div>
+              ))}
+            </div>
+            <div className="btn-group">
+              <button className="btn-back" onClick={() => setStep(1)}>ย้อนกลับ</button>
+              <button className="btn-next" onClick={handleSubmit}>วิเคราะห์ผลลัพธ์ ✨</button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: Loading */}
+        {step === 3 && (
+          <div className="loading-screen">
+            <div className="loading-spinner"></div>
+            <h3>AI กำลังประมวลผล...</h3>
+            <p>กำลังค้นหาสกินแคร์รูทีนที่เหมาะกับวัย {user?.age || 25} ปี ของคุณ</p>
+          </div>
+        )}
+
+        {/* Step 4: Result List */}
+        {step === 4 && (
+          <div className="results-content">
+            <div className="results-header">
+              <div>
+                <h2 className="step-title">✨ สกินแคร์รูทีนเพื่อคุณ</h2>
+                <p className="step-subtitle">สำหรับ: {user?.name} (อายุ {user?.age} ปี)</p>
+              </div>
+              <button className="btn-restart" onClick={() => setStep(1)}>🔄 เริ่มใหม่</button>
+            </div>
             
-            <select 
-              className="form-select modal-select"
-              value={age < 25 ? 20 : (age < 35 ? 30 : 40)} 
-              onChange={(e) => setAge(parseInt(e.target.value))}
-            >
-              {AGE_RANGES.map(opt => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
+            <div className="product-list">
+              {Array.isArray(results) && results.length > 0 ? (
+                results.map((p, idx) => (
+                  <div key={idx} className="product-card-react">
+                    <div className="card-header">
+                      <div className="step-badge">Step {p.routine_step}</div>
+                      <div className="match-badge">{p.ai_insight}</div>
+                    </div>
 
-            <button className="confirm-btn" onClick={handleGuestAgeConfirm}>
-              ยืนยันอายุ
-            </button>
+                    <div className="product-info">
+                      <h3 className="brand-name">{p.brand}</h3>
+                      <h4 className="product-name">{p.name}</h4>
+                    </div>
+
+                    <div className="highlights">
+                      {p.highlights?.map((h, i) => (
+                        <span key={i} className="ing-tag">🧪 {h}</span>
+                      ))}
+                    </div>
+
+                    <div className="chart-container">
+                      <div className="chart-wrapper">
+                        <Radar data={getChartData(p.benefits)} options={chartOptions} />
+                      </div>
+                    </div>
+
+                    <div className="card-footer">
+                      <div className="price">฿{p.price.toLocaleString()}</div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="empty-state">
+                  <span className="empty-icon">😕</span>
+                  <h3>ไม่พบข้อมูลสินค้า</h3>
+                  <p>ลองปรับเปลี่ยนเงื่อนไข หรือตรวจสอบการเชื่อมต่อ</p>
+                  <button className="btn-restart-large" onClick={() => setStep(1)}>เริ่มทำแบบทดสอบใหม่</button>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      )}
-      {/* ----------------------------------------- */}
-
-      <header className="advisor-header">
-        <h2>🤖 AI Skincare Advisor</h2>
-        <p>สวัสดีคุณ <strong>{user?.name || 'Guest'}</strong> (อายุ {age} ปี)</p>
-      </header>
-
-      <div className="form-card">
-        <div className="form-row">
-          <InputGroup label="สภาพผิวของคุณ">
-            <select className="form-select" value={skinType} onChange={(e) => setSkinType(e.target.value)}>
-              {SKIN_TYPE_OPTIONS.map(opt => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
-          </InputGroup>
-
-          <InputGroup label="ช่วงอายุ">
-            <select 
-              className="form-select" 
-              value={age < 25 ? 20 : (age < 35 ? 30 : 40)} 
-              onChange={(e) => setAge(parseInt(e.target.value))}
-              // ถ้าเป็น Guest ให้แก้ได้ตลอด แต่ถ้า User ล็อกไว้ (หรือจะปลดก็ได้)
-              disabled={user?.role !== 'guest'} 
-            >
-              {AGE_RANGES.map(opt => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
-          </InputGroup>
-        </div>
-
-        <div className="concern-section">
-          <label className="input-label">ปัญหาผิวที่กังวล:</label>
-          <div className="concern-wrapper">
-            {CONCERN_OPTIONS.map(c => (
-              <button key={c} onClick={() => toggleConcern(c)} className={`concern-btn ${concerns.includes(c) ? 'active' : ''}`}>
-                {concerns.includes(c) && '✓ '} {c}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <button className="analyze-btn" onClick={handleAnalyze} disabled={loading}>
-          {loading ? '⏳ กำลังประมวลผล...' : '🔍 วิเคราะห์และจัดตาราง Routine'}
-        </button>
-        {error && <div className="error-msg">⚠️ {error}</div>}
+        )}
       </div>
-
-      {recommendations.length > 0 && (
-        <div className="results-section">
-          <h3 className="results-title">✨ ผลลัพธ์: ตารางดูแลผิวสำหรับคุณ</h3>
-          <div className="result-list">
-            {recommendations.map((item, index) => (
-              <ProductCard key={index} item={item} />
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
-
-// Sub-Components
-const InputGroup = ({ label, children }) => (
-  <div className="input-group"><label className="input-label">{label}</label>{children}</div>
-);
-
-const ProductCard = ({ item }) => (
-  <div className="result-card">
-    <div className="step-badge"><span className="step-label">STEP</span><span className="step-number">{item.routine_step}</span></div>
-    <div className="card-content">
-      <div className="card-header"><h4 className="product-name">{item.name}</h4><div className="match-badge">Match: {item.score}%</div></div>
-      <div className="product-meta"><span className="brand-highlight">{item.brand}</span> | {item.type}</div>
-      <div className="ai-insight-box"><p className="ai-text">{item.ai_insight}</p></div>
-      <div className="price-tag">฿{item.price.toLocaleString()}</div>
-    </div>
-  </div>
-);
 
 export default SkinCareAdvisor;

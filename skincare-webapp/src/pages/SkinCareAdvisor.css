@@ -248,3 +248,78 @@
   from { transform: scale(0.8); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
+
+/* Container หลัก */
+.advisor-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+  font-family: 'Kanit', sans-serif;
+  text-align: center;
+}
+
+h2 { color: #2D3436; margin-bottom: 25px; }
+
+/* Grid การ์ดตัวเลือก */
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.option-card {
+  border: 2px solid #F0F0F0;
+  border-radius: 16px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: white;
+}
+
+.option-card:hover { transform: translateY(-3px); border-color: #00CEC9; }
+.option-card.selected { background: #E0FFFF; border-color: #00CEC9; font-weight: bold; }
+
+.icon { font-size: 32px; display: block; margin-bottom: 8px; }
+
+/* ปุ่มกด */
+.btn-group { display: flex; gap: 10px; justify-content: center; }
+.btn-next { background: #2D3436; color: white; border: none; padding: 12px 30px; border-radius: 30px; font-size: 16px; cursor: pointer; flex: 2;}
+.btn-back { background: transparent; color: #888; border: 1px solid #DDD; padding: 12px 20px; border-radius: 30px; cursor: pointer; flex: 1;}
+.btn-restart { background: #eee; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; margin-bottom: 20px;}
+
+/* Loading */
+.loading-screen { padding: 50px; }
+.spinner { font-size: 50px; animation: spin 2s infinite linear; margin-bottom: 20px; }
+
+/* Product Card */
+.product-list { display: grid; gap: 20px; }
+.product-card-react {
+  background: white;
+  border: 1px solid #EEE;
+  border-radius: 16px;
+  padding: 20px;
+  position: relative;
+  text-align: left;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.match-badge { position: absolute; top: 15px; right: 15px; background: #00CEC9; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+.step-badge { display: inline-block; background: #FFEAA7; color: #d35400; padding: 3px 10px; border-radius: 8px; font-size: 11px; margin-bottom: 5px; }
+
+.brand-name { color: #888; font-size: 14px; margin: 0; }
+.product-name { font-size: 18px; color: #2D3436; margin: 5px 0 15px 0; }
+
+.highlights { margin-bottom: 15px; }
+.ing-tag { background: #E8F8F5; color: #1ABC9C; border: 1px solid #1ABC9C; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-right: 5px; }
+
+.chart-wrapper { height: 200px; width: 100%; margin: 10px auto; }
+.price { font-size: 18px; font-weight: bold; color: #2D3436; text-align: right; }
+
+/* Animation */
+.fadeIn { animation: fadeIn 0.5s ease-in; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }

@@ -1,132 +1,169 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 
 // Import Pages
-import AdvisorPage from './pages/SkinCareAdvisor';
+import SkinCareAdvisor from './pages/SkinCareAdvisor';
 import AdminPage from './pages/AdminPage';
 import LoginPage from './pages/LoginPage';
 import UserProfile from './pages/UserProfile';
 
-function App() {
-  const [user, setUser] = useState(null);
-  
-  // page state: 'profile' | 'advisor' | 'admin'
-  const [currentPage, setCurrentPage] = useState('profile'); 
+// --- ส่วนประกอบ: Navbar ---
+const Navbar = ({ user, onLogout }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // --- 1. จัดการ Login (แก้ตรงนี้!) ---
-  const handleLoginSuccess = (userData) => {
-    setUser(userData);
+  const isActive = (path) => location.pathname === path;
 
-    // เช็คเงื่อนไข: ถ้าเป็น Guest หรือชื่อ Test ให้ข้ามไปหน้า Advisor เลย
-    if (userData.role === 'guest' || userData.email === 'test@gmail.com') {
-      setCurrentPage('advisor'); 
-    } else {
-      // ถ้าเป็นคนอื่น ให้ไปหน้า Profile ก่อน
-      setCurrentPage('profile'); 
-    }
-  };
+  // สไตล์ปุ่มทั่วไป
+  const btnStyle = (path) => ({
+    padding: '8px 16px',
+    borderRadius: '6px',
+    border: 'none',
+    cursor: 'pointer',
+    background: isActive(path) ? '#4f46e5' : 'transparent',
+    color: isActive(path) ? 'white' : '#94a3b8',
+    transition: '0.2s'
+  });
 
-  // --- 2. ฟังก์ชันอัปเดตข้อมูล User ---
-  const handleUpdateUser = (updatedData) => {
-    setUser((prevUser) => ({
-      ...prevUser,
-      ...updatedData
-    }));
-  };
-
-  // --- 3. จัดการ Logout ---
-  const handleLogout = () => {
-    setUser(null);
-    setCurrentPage('profile'); 
-  };
-
-  // --- ถ้ายังไม่ Login ให้โชว์หน้า Login ---
-  if (!user) {
-    return <LoginPage onLoginSuccess={handleLoginSuccess} />;
-  }
-
-  // --- 4. ถ้าอยู่ในโหมด Profile (และไม่ใช่ Test/Guest ที่ข้ามมา) ---
-  if (currentPage === 'profile') {
-    return (
-      <UserProfile 
-        user={user} 
-        onStartAnalyze={() => setCurrentPage('advisor')}
-        onLogout={handleLogout}
-        onUpdateUser={handleUpdateUser}
-      />
-    );
-  }
-
-  // --- 5. หน้าใช้งานจริง (Advisor / Admin) ---
   return (
-    <div style={{ fontFamily: "'Kanit', sans-serif" }}>
+    <nav style={{ 
+      padding: '15px 30px', 
+      background: '#1e293b', 
+      color: 'white', 
+      display: 'flex', 
+      justifyContent: 'space-between', 
+      alignItems: 'center',
+      boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
+      position: 'sticky',
+      top: 0,
+      zIndex: 1000
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+        <h3 style={{ margin: 0, color: '#818cf8', cursor:'pointer' }} onClick={() => navigate('/skincare-advisor')}>
+            SkinCare AI ✨
+        </h3>
+        <span style={{ fontSize: '14px', opacity: 0.8, borderLeft: '1px solid #475569', paddingLeft: '15px' }}>
+            สวัสดี, {user?.name || 'Guest'} 
+            {user?.role === 'admin' && <span style={{color: '#facc15', marginLeft: '5px'}}> (Admin)</span>}
+        </span>
+      </div>
       
-      {/* Navbar */}
-      <nav style={{ 
-        padding: '15px 30px', 
-        background: '#1e293b', 
-        color: 'white', 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <h3 style={{ margin: 0, color: '#818cf8' }}>SkinCare AI</h3>
-          <span style={{ fontSize: '14px', opacity: 0.8 }}>
-             | ผู้ใช้งาน: {user.name} {user.role === 'guest' && '(Guest)'}
-          </span>
-        </div>
+      <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
         
-        <div style={{ display: 'flex', gap: '10px' }}>
+        {/* 1. ปุ่มไปหน้า AI Advisor */}
+        <button 
+          onClick={() => navigate('/skincare-advisor')}
+          style={btnStyle('/skincare-advisor')}
+        >
+          🔍 วิเคราะห์ผิว
+        </button>
+        
+        {/* 2. ปุ่ม Admin (โชว์เฉพาะแอดมิน) */}
+        {user?.role === 'admin' && (
           <button 
-            onClick={() => setCurrentPage('advisor')}
-            style={{
-              padding: '8px 16px', borderRadius: '6px', border: 'none', cursor: 'pointer',
-              background: currentPage === 'advisor' ? '#4f46e5' : 'transparent',
-              color: currentPage === 'advisor' ? 'white' : '#94a3b8'
-            }}
+            onClick={() => navigate('/admin')}
+            style={btnStyle('/admin')}
           >
-            🔍 วิเคราะห์ผิว
+            👑 ระบบหลังบ้าน
           </button>
-          
-          {user.role === 'admin' && (
-            <button 
-              onClick={() => setCurrentPage('admin')}
-              style={{
-                padding: '8px 16px', borderRadius: '6px', border: 'none', cursor: 'pointer',
-                background: currentPage === 'admin' ? '#4f46e5' : 'transparent',
-                color: currentPage === 'admin' ? 'white' : '#94a3b8'
-              }}
-            >
-              ⚙️ จัดการสินค้า
-            </button>
-          )}
+        )}
 
-          {/* ปุ่มกลับหน้า Profile (ซ่อนถ้าเป็น Guest ก็ได้ ถ้าต้องการ) */}
-          <button 
-             onClick={() => setCurrentPage('profile')}
-             style={{ padding: '8px 16px', background: 'transparent', color: '#cbd5e1', border: 'none', cursor: 'pointer' }}
+        {/* 3. ปุ่ม Profile (โชว์ทุกคนที่ไม่ใช่ Guest) */}
+        {user?.role !== 'guest' && (
+             <button 
+             onClick={() => navigate('/profile')}
+             style={btnStyle('/profile')}
           >
             👤 โปรไฟล์
           </button>
+        )}
+        
+        {/* 4. ปุ่ม Logout */}
+        <button 
+          onClick={onLogout} 
+          style={{ 
+            padding: '8px 16px', background: '#ef4444', color: 'white', 
+            border: 'none', borderRadius: '6px', cursor: 'pointer', marginLeft: '10px' 
+          }}
+        >
+          ออกจากระบบ
+        </button>
+      </div>
+    </nav>
+  );
+};
+
+// --- Main App Component ---
+function App() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // 1. ตรวจสอบ localStorage ตอนเริ่มแอป (เพื่อให้ Refresh แล้วไม่หลุด)
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+    setLoading(false);
+  }, []);
+
+  // 2. ฟังก์ชัน Logout
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setUser(null);
+    window.location.href = '/login'; 
+  };
+
+  // 3. ฟังก์ชัน Login
+  const handleLogin = (userData) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
+
+  if (loading) return <div style={{padding:'20px'}}>⏳ Loading...</div>;
+
+  return (
+    <Router>
+      <div style={{ fontFamily: "'Kanit', sans-serif", minHeight: '100vh', background: '#F8FAFC' }}>
+        
+        {/* แสดง Navbar เฉพาะตอน Login แล้ว */}
+        {user && <Navbar user={user} onLogout={handleLogout} />}
+
+        <Routes>
+          {/* ✅ Route 1: หน้า Login */}
+          <Route 
+            path="/login" 
+            element={!user ? <LoginPage onLoginSuccess={handleLogin} /> : <Navigate to="/skincare-advisor" />} 
+          />
+
+          {/* ✅ Route 2: หน้า AI Advisor (สำคัญ: ส่ง user props ไปด้วย) */}
+          <Route 
+            path="/skincare-advisor" 
+            element={user ? <SkinCareAdvisor user={user} /> : <Navigate to="/login" />} 
+          />
+
+          {/* ✅ Route 3: หน้า Profile */}
+          <Route 
+            path="/profile" 
+            element={user ? <UserProfile user={user} /> : <Navigate to="/login" />} 
+          />
+
+          {/* ✅ Route 4: หน้า Admin (เช็ค Role ก่อนเข้า) */}
+          <Route 
+            path="/admin" 
+            element={
+              user && user.role === 'admin' 
+                ? <AdminPage user={user} /> 
+                : <Navigate to="/skincare-advisor" />
+            } 
+          />
           
-          <button 
-            onClick={handleLogout} 
-            style={{ 
-              padding: '8px 16px', background: '#ef4444', color: 'white', 
-              border: 'none', borderRadius: '6px', cursor: 'pointer', marginLeft: '10px' 
-            }}
-          >
-            ออก
-          </button>
-        </div>
-      </nav>
+          {/* ✅ Route 5: ถ้าพิมพ์มั่ว ให้ดีดกลับหน้าหลัก */}
+          <Route path="*" element={<Navigate to={user ? "/skincare-advisor" : "/login"} />} />
+        </Routes>
 
-      <main style={{ padding: '20px' }}>
-        {currentPage === 'advisor' ? <AdvisorPage user={user} /> : <AdminPage />}
-      </main>
-
-    </div>
+      </div>
+    </Router>
   );
 }
 
