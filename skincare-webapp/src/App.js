@@ -120,6 +120,8 @@ function App() {
           
           {/* ✅ 6. ถ้าพิมพ์มั่ว หรือหาไม่เจอ ให้ไปหน้า advisor */}
           <Route path="*" element={<Navigate to={user ? "/advisor" : "/login"} />} />
+
+          
           
         </Routes>
 

@@ -1,27 +1,32 @@
 import React from 'react';
+import '../SkinAdvisorCss/StepSkinType.css'; // ✅ เพิ่มบรรทัดนี้
 
 const StepSkinType = ({ onSelect, currentSelection, userName }) => {
-  const options = [
-    { type: 'Oily', icon: '🍋', label: 'หน้ามัน' },
-    { type: 'Dry', icon: '🌵', label: 'หน้าแห้ง' },
-    { type: 'Combination', icon: '⚖️', label: 'ผิวผสม' },
-    { type: 'Sensitive', icon: '🛡️', label: 'แพ้ง่าย' },
+  const skinTypes = [
+    { id: 'oily', label: 'หน้ามัน', icon: '🍋' },
+    { id: 'dry', label: 'หน้าแห้ง', icon: '🌵' },
+    { id: 'combination', label: 'ผิวผสม', icon: '⚖️' },
+    { id: 'sensitive', label: 'แพ้ง่าย', icon: '🛡️' },
+    { id: 'normal', label: 'ผิวธรรมดา', icon: '✨' }
   ];
 
   return (
-    <div className="step-content">
+    <div className="step-content fadeIn">
       <h2 className="step-title">สภาพผิวของคุณเป็นแบบไหน?</h2>
       <p className="step-subtitle">สวัสดีคุณ {userName || 'Guest'} เราจะช่วยเลือกสิ่งที่ดีที่สุดให้คุณ</p>
-      <div className="options-grid">
-        {options.map(({ type, icon, label }) => (
-          <div
-            key={type}
-            className={`option-card ${currentSelection === type ? 'selected' : ''}`}
-            onClick={() => onSelect(type)}
+
+      {/* ✅ เรียกใช้ Grid Layout */}
+      <div className="skin-type-grid">
+        {skinTypes.map((type) => (
+          <button
+            key={type.id}
+            // ✅ ใส่ Class ให้ตรงกับ CSS: skin-type-card และเช็คว่าถูกเลือกไหม
+            className={`skin-type-card ${currentSelection === type.id ? 'selected' : ''}`}
+            onClick={() => onSelect(type.id)}
           >
-            <div className="icon-wrapper">{icon}</div>
-            <span>{label}</span>
-          </div>
+            <div className="icon-wrapper">{type.icon}</div>
+            <div className="label-text">{type.label}</div>
+          </button>
         ))}
       </div>
     </div>

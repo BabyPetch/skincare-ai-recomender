@@ -1,8 +1,11 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import pandas as pd
+import os
+
+# ✅ เรียกจากโฟลเดอร์ services ให้ถูกต้อง
 from services.ai_engine import SkincareAI
 from services.user_manager import UserManager  # 👈 นำเข้า UserManager ที่คุณให้มา
-import os
 
 app = Flask(__name__)
 CORS(app)
