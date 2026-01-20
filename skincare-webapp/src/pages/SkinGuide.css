@@ -1,5 +1,5 @@
 /* =========================================
-   ไฟล์: src/pages/SkinGuide.css (ฉบับสมบูรณ์)
+   ไฟล์: SkinGuide.css (ฉบับสมบูรณ์)
    ========================================= */
 
 /* --- 1. จัดหน้าหลัก --- */
@@ -12,24 +12,44 @@
   justify-content: center;
   padding: 50px 20px;
   font-family: 'Kanit', sans-serif;
+  position: relative;
+}
+
+.guide-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23667eea' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  z-index: 0;
 }
 
 .guide-header {
   text-align: center;
   margin-bottom: 40px;
   max-width: 600px;
+  position: relative;
+  z-index: 1;
 }
 
 .guide-header h1 {
   color: #1e293b;
   margin: 0 0 15px 0;
   font-size: 2.2rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .guide-header p {
   color: #64748b;
   font-size: 1.1rem;
   line-height: 1.6;
+  font-weight: 500;
 }
 
 /* --- 2. คอนเทนเนอร์การ์ด --- */
@@ -40,7 +60,9 @@
   width: 100%;
   max-width: 1250px;
   flex-wrap: wrap;
-  align-items: stretch; /* สำคัญ: ดึงให้การ์ดทุกใบสูงเท่ากัน */
+  align-items: stretch; /* ⭐ ให้การ์ดยืดเท่ากันตามการ์ดที่สูงสุด */
+  position: relative;
+  z-index: 1;
 }
 
 /* --- 3. ตัวการ์ดหลัก --- */
@@ -53,55 +75,81 @@
   box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
-  border: 1px solid #f1f5f9;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* เอฟเฟกต์นุ่มนวล */
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  /* ⭐ KEY FIX: ให้การ์ดทุกใบสูงเท่ากัน */
+  height: 100%;
 }
 
-/* เอฟเฟกต์ตอนเอาเมาส์ชี้ (ลอยสูงตามที่ขอ) */
+.guide-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.05), transparent);
+  transition: left 0.5s ease;
+}
+
+.guide-card:hover::before {
+  left: 100%;
+}
+
+/* เอฟเฟกต์ตอนเอาเมาส์ชี้ */
 .guide-card:hover {
-  transform: translateY(-15px); 
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-  border-color: #e2e8f0;
+  transform: translateY(-8px); 
+  box-shadow: 0 20px 40px -10px rgba(102, 126, 234, 0.2);
+  border-color: #667eea;
 }
 
-/* --- 4. จัดระเบียบส่วนบน (Key Fix: ทำให้กล่องสีเริ่มเท่ากัน) --- */
+/* --- 4. จัดระเบียบส่วนบน (KEY FIX: ล็อคความสูงให้เท่ากัน) --- */
 .card-top {
-  /* ล็อคความสูงขั้นต่ำของส่วนข้อความ ให้รองรับการ์ดที่ยาวที่สุด 
-     ถ้าข้อความยาวกว่านี้ ให้เพิ่มตัวเลขนี้ขึ้นอีก (เช่น 240px) */
-  min-height: 220px; 
+  /* ⭐ ล็อคความสูงส่วนหัว + เนื้อหา ให้เท่ากันทั้ง 3 การ์ด */
+  min-height: 240px; 
   display: flex;
   flex-direction: column;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f1f5f9;
+  margin-bottom: 20px;
 }
 
 .card-title {
-  color: #334155;
+  color: #1e293b;
   margin-top: 0;
   margin-bottom: 15px;
   font-size: 1.4rem;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.4;
   
-  /* ล็อคความสูงหัวข้อ (เผื่อไว้ 2 บรรทัด) เพื่อให้เริ่มเนื้อหาเท่ากัน */
-  min-height: 65px; 
+  /* ⭐ ล็อคความสูงหัวข้อให้รองรับ 2 บรรทัด */
+  min-height: 75px; 
   display: flex;
   flex-direction: column;
-  justify-content: center; /* จัดกึ่งกลางแนวตั้ง */
+  justify-content: flex-start;
 }
 
 .card-title span {
   display: block;
   font-size: 0.95rem;
-  color: #94a3b8;
-  font-weight: normal;
-  margin-top: 4px;
+  color: #667eea;
+  font-weight: 600;
+  margin-top: 6px;
 }
 
 .card-steps {
   color: #475569;
   font-size: 1rem;
-  line-height: 1.6;
-  margin-bottom: 10px;
-  /* เนื้อหาจะไหลลงมาเองตามธรรมชาติ */
+  line-height: 1.7;
+  margin-bottom: 0;
+  flex-grow: 1;
+}
+
+.card-steps b {
+  color: #667eea;
+  font-weight: 700;
 }
 
 /* --- 5. 🎨 โซนกล่องสีพาสเทล --- */
@@ -109,8 +157,8 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 0; /* ไม่ดันไปล่างสุดแล้ว ให้ต่อจาก card-top เลย */
-  flex-grow: 1; /* ให้กินพื้นที่ที่เหลือ */
+  /* ⭐ ตอนนี้กล่องสีจะเริ่มที่ตำแหน่งเดียวกันทุกการ์ด */
+  flex-grow: 1; /* ⭐ ให้กินพื้นที่ที่เหลือทั้งหมด เพื่อดันการ์ดให้สูงเท่ากัน */
 }
 
 /* ดีไซน์กล่องแต่ละประเภท */
@@ -118,15 +166,16 @@
   display: flex;
   align-items: center;
   gap: 15px;
-  padding: 15px 20px;
-  border-radius: 16px;
-  border: 2px solid transparent;
-  transition: all 0.2s;
+  padding: 16px 20px;
+  border-radius: 14px;
+  border: 2px solid;
+  transition: all 0.3s ease;
   background-color: #fff;
 }
 
 .type-box:hover {
-  transform: scale(1.02);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 }
 
 .box-icon {
@@ -137,11 +186,12 @@
 .type-box div {
   display: flex;
   flex-direction: column;
+  gap: 4px;
 }
 
 .type-box strong {
   font-size: 1.05rem;
-  margin-bottom: 4px;
+  font-weight: 700;
 }
 
 .type-box span {
@@ -152,47 +202,98 @@
 
 /* --- สีเฉพาะของแต่ละกล่อง --- */
 /* 🟡 ผิวมัน */
-.box-oily { background-color: #fffbeb; border-color: #fde68a; color: #b45309; }
+.box-oily { 
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-color: #fbbf24;
+  color: #92400e;
+}
+
 /* 🔵 ผิวแห้ง */
-.box-dry { background-color: #eff6ff; border-color: #bfdbfe; color: #1e40af; }
+.box-dry { 
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-color: #60a5fa;
+  color: #1e3a8a;
+}
+
 /* 🟣 ผิวผสม */
-.box-combi { background-color: #faf5ff; border-color: #e9d5ff; color: #6b21a8; }
+.box-combi { 
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  border-color: #818cf8;
+  color: #3730a3;
+}
+
 /* 🟢 ผิวธรรมดา */
-.box-normal { background-color: #f0fdf4; border-color: #86efac; color: #166534; }
+.box-normal { 
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  border-color: #34d399;
+  color: #065f46;
+}
+
 /* 🔴 แพ้ง่าย */
-.box-sensitive { background-color: #fef2f2; border-color: #fecaca; color: #991b1b; }
+.box-sensitive { 
+  background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+  border-color: #f472b6;
+  color: #831843;
+}
 
 /* 🟠 Warning (Card 3) */
 .box-warning {
-  background-color: #fff7ed;
-  border-color: #fed7aa;
-  color: #9a3412;
-  margin-top: 0; /* ให้เริ่มพร้อมเพื่อน ไม่ต้องดันลงล่าง */
+  background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+  border-color: #f97316;
+  color: #7c2d12;
 }
-.box-warning strong { color: #ea580c; }
+
+.box-warning strong { 
+  color: #ea580c; 
+  font-weight: 700;
+}
 
 /* --- 6. ปุ่ม Start --- */
 .guide-footer {
   margin-top: 50px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
 }
+
 .btn-start {
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
   padding: 16px 45px;
   font-size: 1.2rem;
-  font-weight: 600;
-  border-radius: 50px;
+  font-weight: 700;
+  border-radius: 16px;
   cursor: pointer;
-  box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35);
   transition: all 0.3s ease;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 10px;
+  font-family: 'Kanit', sans-serif;
 }
+
 .btn-start:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 35px -5px rgba(79, 70, 229, 0.5);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.45);
+}
+
+.btn-start:active {
+  transform: translateY(-2px);
+}
+
+/* Pulse animation */
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35);
+  }
+  50% {
+    box-shadow: 0 6px 30px rgba(102, 126, 234, 0.55);
+  }
+}
+
+.btn-start {
+  animation: pulse 2s ease-in-out infinite;
 }
 
 /* --- 7. Responsive --- */
@@ -201,17 +302,93 @@
     flex-direction: column;
     align-items: center;
   }
+  
   .guide-card {
     width: 100%;
     max-width: 500px;
-    /* เมื่อเป็นมือถือ ไม่ต้องล็อคความสูงแล้ว ให้ยืดหดตามเนื้อหา */
-    min-height: auto; 
   }
+  
+  /* บนมือถือไม่ต้องล็อคความสูง ให้ยืดหดตามเนื้อหา */
   .card-top {
     min-height: auto;
-    margin-bottom: 20px;
   }
+  
   .card-title {
     min-height: auto;
   }
 }
+
+@media (max-width: 768px) {
+  .guide-page {
+    padding: 30px 15px;
+  }
+  
+  .guide-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .guide-header p {
+    font-size: 1rem;
+  }
+  
+  .guide-card {
+    padding: 25px 20px;
+  }
+  
+  .card-title {
+    font-size: 1.2rem;
+  }
+  
+  .card-steps {
+    font-size: 0.95rem;
+  }
+  
+  .type-box {
+    padding: 14px 16px;
+  }
+  
+  .btn-start {
+    padding: 14px 35px;
+    font-size: 1.1rem;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .guide-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .card-title {
+    font-size: 1.1rem;
+  }
+  
+  .type-box strong {
+    font-size: 0.95rem;
+  }
+  
+  .type-box span {
+    font-size: 0.85rem;
+  }
+}
+
+/* Animation สำหรับการ์ด */
+.guide-card {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stagger animation */
+.guide-card:nth-child(1) { animation-delay: 0.1s; }
+.guide-card:nth-child(2) { animation-delay: 0.2s; }
+.guide-card:nth-child(3) { animation-delay: 0.3s; }

@@ -1,56 +1,103 @@
 /* ตั้งค่า Font และพื้นหลังรวม */
 .profile-container {
-  min-height: 90vh; /* ให้เต็มจอ */
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px 20px;
-  background-color: #f8fafc; /* พื้นหลังสีเทาอ่อน */
+  padding: 40px 20px 60px;
+  background: #f8fafc;
   font-family: 'Kanit', sans-serif;
+  position: relative;
 }
 
 /* --- ส่วนการ์ด Profile --- */
 .profile-card {
   width: 100%;
-  max-width: 500px;
+  max-width: 520px;
   background: white;
-  border-radius: 20px;
-  overflow: hidden; /* เพื่อให้ header-bg ไม่ล้นขอบ */
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
   text-align: center;
   position: relative;
+  z-index: 1;
   border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.profile-card:hover {
+  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.15);
 }
 
 /* แถบสีม่วงด้านบน */
 .profile-header-bg {
-  height: 120px;
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  height: 140px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-header-bg::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  animation: pulse 8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.1); opacity: 0.8; }
 }
 
 /* รูป Avatar */
 .profile-info {
-  margin-top: -60px; /* ดึงขึ้นไปทับแถบสีม่วง */
-  padding-bottom: 20px;
+  margin-top: -70px;
+  padding-bottom: 25px;
   border-bottom: 1px solid #f1f5f9;
+  position: relative;
+  z-index: 2;
 }
 
 .profile-avatar {
-  width: 100px;
-  height: 100px;
-  background: white;
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 50px;
-  margin: 0 auto 15px; /* จัดกึ่งกลาง */
-  border: 4px solid white;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  font-size: 56px;
+  font-weight: bold;
+  color: white;
+  margin: 0 auto 15px;
+  border: 6px solid white;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-avatar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  100% { left: 100%; }
 }
 
 .profile-name {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: bold;
   color: #1e293b;
   margin: 0;
@@ -58,32 +105,44 @@
 
 .profile-email {
   color: #64748b;
-  margin: 5px 0 0;
-  font-size: 14px;
+  margin: 8px 0 0;
+  font-size: 15px;
 }
 
 .guest-badge {
-  background: #f1f5f9;
-  padding: 4px 12px;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  padding: 6px 16px;
   border-radius: 20px;
-  font-size: 12px;
-  color: #64748b;
-  margin-top: 8px;
+  font-size: 13px;
+  color: white;
+  margin-top: 10px;
   display: inline-block;
-  font-weight: 500;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
 }
 
 /* --- รายละเอียด (วันเกิด, อายุ) --- */
 .profile-details {
-  padding: 20px 30px;
+  padding: 25px 35px;
+  background: white;
 }
 
 .detail-row {
   display: flex;
   justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid #f8fafc;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #f1f5f9;
   font-size: 15px;
+  transition: all 0.2s;
+}
+
+.detail-row:hover {
+  background: rgba(102, 126, 234, 0.04);
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 8px;
+  border-bottom-color: transparent;
 }
 
 .detail-row:last-child {
@@ -92,158 +151,377 @@
 
 .detail-label {
   color: #64748b;
-  font-weight: 500;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  font-size: 16px;
 }
 
 .detail-value {
-  color: #334155;
-  font-weight: 600;
+  color: #1e293b;
+  font-weight: 700;
+  font-size: 16px;
 }
 
 /* --- ปุ่มกดต่างๆ --- */
 .profile-actions {
-  padding: 20px 30px;
+  padding: 25px 35px 30px;
   display: flex;
   gap: 15px;
   justify-content: center;
+  background: white;
 }
 
 .btn-action {
   flex: 1;
-  padding: 12px;
+  padding: 14px 20px;
   border: none;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 600;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
   font-family: 'Kanit', sans-serif;
 }
 
 .btn-logout {
   background: white;
-  border: 1px solid #ef4444;
+  border: 2px solid #ef4444;
   color: #ef4444;
 }
 
 .btn-logout:hover {
-  background: #fef2f2;
+  background: #ef4444;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.25);
 }
 
 .btn-analyze {
-  background: #4f46e5;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
 }
 
 .btn-analyze:hover {
-  background: #4338ca;
   transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
 }
 
 /* --- ส่วน History (ประวัติ) --- */
 .history-section {
   width: 100%;
-  max-width: 500px;
-  margin-top: 30px;
-  text-align: left; /* จัดชิดซ้าย */
+  max-width: 520px;
+  margin-top: 35px;
+  text-align: left;
+  position: relative;
+  z-index: 1;
 }
 
 .history-title {
-  font-size: 18px;
-  color: #334155;
-  margin-bottom: 15px;
-  border-left: 5px solid #4f46e5;
-  padding-left: 10px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #1e293b;
+  margin-bottom: 20px;
+  padding-left: 15px;
+  border-left: 5px solid #667eea;
 }
 
 .history-list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 18px;
 }
 
 .history-card {
   background: white;
-  border-radius: 12px;
-  padding: 15px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e2e8f0;
-  transition: transform 0.2s;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 2px solid #f1f5f9;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
 }
 
 .history-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+  border-color: #667eea;
 }
 
 .history-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .history-date {
   font-size: 14px;
   color: #64748b;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .skin-badge {
-  background: #e0e7ff;
-  color: #4338ca;
-  padding: 4px 10px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 6px 14px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: bold;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
 }
 
 .history-concerns {
   font-size: 14px;
   color: #475569;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+  font-weight: 500;
 }
 
-/* Scroll แนวนอนสำหรับสินค้า */
-.history-products {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto; /* ให้เลื่อนซ้ายขวาได้ */
-  padding-bottom: 5px;
+.click-hint {
+  text-align: right;
+  margin-top: 12px;
+  color: #667eea;
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.mini-product {
-  min-width: 100px;
-  max-width: 100px;
-  background: #f8fafc;
-  border: 1px solid #f1f5f9;
-  border-radius: 8px;
-  padding: 8px;
-  font-size: 12px;
-}
-
-.step-tag {
-  color: #4f46e5;
-  font-weight: bold;
-  margin-bottom: 4px;
-}
-
-.prod-name {
-  color: #334155;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.history-card:hover .click-hint {
+  opacity: 1;
 }
 
 .empty-history {
   text-align: center;
-  padding: 30px;
+  padding: 50px 30px;
   color: #94a3b8;
   background: white;
-  border-radius: 12px;
-  border: 2px dashed #e2e8f0;
+  border-radius: 16px;
+  border: 2px dashed #cbd5e1;
+}
+
+/* --- Modal Popup --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 20px;
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: white;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  padding: 30px;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #f1f5f9;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 28px;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  background: #ef4444;
+  color: white;
+  transform: rotate(90deg);
+}
+
+.modal-title {
+  font-size: 26px;
+  font-weight: bold;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+  padding-right: 50px;
+}
+
+.modal-date {
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+.modal-summary {
+  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+  padding: 20px;
+  border-radius: 16px;
+  margin-bottom: 30px;
+  border: 2px solid #e0e7ff;
+}
+
+.skin-badge-large {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.modal-summary p {
+  margin: 12px 0 0 0;
+  color: #475569;
+  font-size: 15px;
+}
+
+.modal-summary strong {
+  color: #1e293b;
+}
+
+.modal-results h3 {
+  font-size: 20px;
+  color: #1e293b;
+  margin: 0 0 20px 0;
+  padding-left: 12px;
+  border-left: 4px solid #667eea;
+}
+
+.modal-product-item {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.modal-product-item:hover {
+  background: white;
+  border-color: #667eea;
+  transform: translateX(6px);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.12);
+}
+
+.modal-step-tag {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.modal-prod-details {
+  padding-left: 8px;
+}
+
+.modal-prod-brand {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.modal-prod-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.modal-prod-price {
+  font-size: 15px;
+  color: #667eea;
+  font-weight: 700;
+}
+
+/* Scrollbar ใน Modal */
+.modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #667eea, #764ba2);
+  border-radius: 10px;
+}
+
+/* Responsive สำหรับมือถือ */
+@media (max-width: 640px) {
+  .profile-container {
+    padding: 20px 15px 40px;
+  }
+  
+  .profile-card {
+    max-width: 100%;
+  }
+  
+  .profile-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .btn-action {
+    width: 100%;
+  }
+  
+  .modal-content {
+    max-width: 100%;
+    border-radius: 20px;
+    padding: 25px 20px;
+    max-height: 90vh;
+  }
+  
+  .modal-title {
+    font-size: 22px;
+  }
 }

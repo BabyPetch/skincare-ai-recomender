@@ -10,149 +10,15 @@
         "name": "1234",
         "email": "1@gmail.com",
         "password": "1234",
-        "birthdate": "2026-01-01",
+        "birthdate": "1993-01-05",
         "role": "user",
         "history": [
             {
-                "date": "2026-01-20 23:25",
-                "skin_type": "sensitive",
-                "concerns": [
-                    "moisturizing"
-                ],
-                "results": [
-                    {
-                        "id": 84,
-                        "name": "COSRX Oil-free Ultra Moisturizing Lotion ",
-                        "brand": "COSRX",
-                        "type": "moisturizer",
-                        "price": 700.0,
-                        "score": 48,
-                        "match_percent": 48,
-                        "analysis": {
-                            "skin_match": 27.0,
-                            "quality": 15.6,
-                            "trend": 6.1
-                        },
-                        "routine_step": 4,
-                        "acne_score": 4,
-                        "brightening_score": 4,
-                        "moisturizing_score": 8,
-                        "anti_aging_score": 4,
-                        "gentle_score": 8,
-                        "highlights": [
-                            "ลดการระคายเคือง",
-                            "ปลอบประโลมผิว",
-                            "เพิ่มความชุ่มชื้น"
-                        ]
-                    }
-                ]
-            },
-            {
-                "date": "2026-01-20 23:24",
-                "skin_type": "dry",
-                "concerns": [
-                    "acne"
-                ],
-                "results": [
-                    {
-                        "id": 47,
-                        "name": "Plantnery Rice Ceramide Cleansing Balm",
-                        "brand": "PLANTNERY",
-                        "type": "cleansing",
-                        "price": 459.0,
-                        "score": 38,
-                        "match_percent": 38,
-                        "analysis": {
-                            "skin_match": 18.5,
-                            "quality": 16.0,
-                            "trend": 4.0
-                        },
-                        "routine_step": 1,
-                        "acne_score": 4,
-                        "brightening_score": 4,
-                        "moisturizing_score": 6,
-                        "anti_aging_score": 4,
-                        "gentle_score": 4,
-                        "highlights": []
-                    },
-                    {
-                        "id": 53,
-                        "name": "COSRX Advanced Snail 96 Mucin Power Essence",
-                        "brand": "COSRX",
-                        "type": "essence",
-                        "price": 620.0,
-                        "score": 29,
-                        "match_percent": 29,
-                        "analysis": {
-                            "skin_match": 9.9,
-                            "quality": 16.3,
-                            "trend": 3.8
-                        },
-                        "routine_step": 3,
-                        "acne_score": 4,
-                        "brightening_score": 4,
-                        "moisturizing_score": 6,
-                        "anti_aging_score": 4,
-                        "gentle_score": 4,
-                        "highlights": [
-                            "ลดการระคายเคือง",
-                            "ปลอบประโลมผิว",
-                            "เพิ่มความชุ่มชื้น"
-                        ]
-                    },
-                    {
-                        "id": 75,
-                        "name": "Dr.Pong CalmMEA 1.5 Soothing Cream",
-                        "brand": "DR.PONG",
-                        "type": "moisturizer",
-                        "price": 1600.0,
-                        "score": 40,
-                        "match_percent": 40,
-                        "analysis": {
-                            "skin_match": 18.8,
-                            "quality": 16.6,
-                            "trend": 5.5
-                        },
-                        "routine_step": 4,
-                        "acne_score": 4,
-                        "brightening_score": 4,
-                        "moisturizing_score": 4,
-                        "anti_aging_score": 4,
-                        "gentle_score": 8,
-                        "highlights": []
-                    },
-                    {
-                        "id": 26,
-                        "name": "SKIN1004 Madagascar Centella Hyalu-Cica Water-Fit Sun Serum SPF50+ PA++++",
-                        "brand": "SKIN1004",
-                        "type": "sunscreen",
-                        "price": 890.0,
-                        "score": 27,
-                        "match_percent": 27,
-                        "analysis": {
-                            "skin_match": 6.9,
-                            "quality": 15.6,
-                            "trend": 4.6
-                        },
-                        "routine_step": 5,
-                        "acne_score": 8,
-                        "brightening_score": 4,
-                        "moisturizing_score": 6,
-                        "anti_aging_score": 4,
-                        "gentle_score": 8,
-                        "highlights": [
-                            "ลดรอยดำ",
-                            "รอยสิว",
-                            "ควบคุมความมัน"
-                        ]
-                    }
-                ]
-            },
-            {
-                "date": "2026-01-20 23:23",
+                "date": "2026-01-21 03:41",
                 "skin_type": "oily",
                 "concerns": [
-                    "dark_spot"
+                    "brightening",
+                    "aging"
                 ],
                 "results": [
                     {
@@ -161,20 +27,29 @@
                         "brand": "GRAVICH",
                         "type": "cleansing",
                         "price": 390.0,
-                        "score": 43,
-                        "match_percent": 43,
+                        "score": 38,
+                        "match_percent": 38,
                         "analysis": {
-                            "skin_match": 21.0,
-                            "quality": 17.7,
-                            "trend": 4.9
+                            "skin_match": 16.8,
+                            "quality": 88.3,
+                            "trend": 50
                         },
-                        "routine_step": 1,
-                        "acne_score": 6,
-                        "brightening_score": 4,
-                        "moisturizing_score": 4,
-                        "anti_aging_score": 4,
-                        "gentle_score": 4,
-                        "highlights": []
+                        "routine_step": 1
+                    },
+                    {
+                        "id": 48,
+                        "name": "Plantnery Tea Tree First Cleansing Water",
+                        "brand": "PLANTNERY",
+                        "type": "cleansing",
+                        "price": 350.0,
+                        "score": 27,
+                        "match_percent": 27,
+                        "analysis": {
+                            "skin_match": 6.9,
+                            "quality": 76.7,
+                            "trend": 50
+                        },
+                        "routine_step": 1
                     },
                     {
                         "id": 59,
@@ -182,20 +57,83 @@
                         "brand": "YOU",
                         "type": "essence",
                         "price": 379.0,
-                        "score": 48,
-                        "match_percent": 48,
+                        "score": 25,
+                        "match_percent": 25,
                         "analysis": {
-                            "skin_match": 26.4,
-                            "quality": 17.0,
-                            "trend": 5.6
+                            "skin_match": 0.0,
+                            "quality": 85.0,
+                            "trend": 50
                         },
-                        "routine_step": 3,
-                        "acne_score": 8,
-                        "brightening_score": 4,
-                        "moisturizing_score": 4,
-                        "anti_aging_score": 4,
-                        "gentle_score": 4,
-                        "highlights": []
+                        "routine_step": 3
+                    },
+                    {
+                        "id": 8,
+                        "name": "CeraVe Oil Control Moisturising Gel Cream",
+                        "brand": "CERAVE",
+                        "type": "moisturizer",
+                        "price": 690.0,
+                        "score": 25,
+                        "match_percent": 25,
+                        "analysis": {
+                            "skin_match": 0.0,
+                            "quality": 86.0,
+                            "trend": 50
+                        },
+                        "routine_step": 4
+                    },
+                    {
+                        "id": 85,
+                        "name": "Zeroid Pimprove Moisturizer ",
+                        "brand": "ZEROID",
+                        "type": "moisturizer",
+                        "price": 1199.0,
+                        "score": 25,
+                        "match_percent": 25,
+                        "analysis": {
+                            "skin_match": 0.0,
+                            "quality": 85.7,
+                            "trend": 50
+                        },
+                        "routine_step": 4
+                    }
+                ]
+            },
+            {
+                "date": "2026-01-21 03:41",
+                "skin_type": "oily",
+                "concerns": [
+                    "acne"
+                ],
+                "results": [
+                    {
+                        "id": 2,
+                        "name": "CeraVe Blemish Control Cleanser",
+                        "brand": "CERAVE",
+                        "type": "cleanser",
+                        "price": 290.0,
+                        "score": 26,
+                        "match_percent": 26,
+                        "analysis": {
+                            "skin_match": 5.8,
+                            "quality": 76.4,
+                            "trend": 50
+                        },
+                        "routine_step": 1
+                    },
+                    {
+                        "id": 46,
+                        "name": "Gravich Micellar Clear Acne Cleansing Water",
+                        "brand": "GRAVICH",
+                        "type": "cleansing",
+                        "price": 390.0,
+                        "score": 26,
+                        "match_percent": 26,
+                        "analysis": {
+                            "skin_match": 0.0,
+                            "quality": 88.3,
+                            "trend": 50
+                        },
+                        "routine_step": 1
                     },
                     {
                         "id": 14,
@@ -203,49 +141,44 @@
                         "brand": "BIODERMA",
                         "type": "moisturizer",
                         "price": 940.0,
-                        "score": 34,
-                        "match_percent": 34,
+                        "score": 27,
+                        "match_percent": 27,
                         "analysis": {
-                            "skin_match": 14.4,
-                            "quality": 15.6,
-                            "trend": 4.3
+                            "skin_match": 5.8,
+                            "quality": 78.0,
+                            "trend": 50
                         },
-                        "routine_step": 4,
-                        "acne_score": 10,
-                        "brightening_score": 4,
-                        "moisturizing_score": 4,
-                        "anti_aging_score": 4,
-                        "gentle_score": 4,
-                        "highlights": [
-                            "ผลัดเซลล์ผิว",
-                            "ลดสิวอุดตัน",
-                            "ลดการอักเสบของสิว"
-                        ]
+                        "routine_step": 4
                     },
                     {
-                        "id": 25,
-                        "name": "Nu Formula Sun Real SPF50+ PA++++ Dry Touch Milk",
-                        "brand": "NU FORMULA",
-                        "type": "sunscreen",
-                        "price": 750.0,
-                        "score": 33,
-                        "match_percent": 33,
+                        "id": 83,
+                        "name": "Provamed Acniclear Bio-Peptide Anti Acne Moisturizer",
+                        "brand": "PROVAMED",
+                        "type": "moisturizer",
+                        "price": 530.0,
+                        "score": 26,
+                        "match_percent": 26,
                         "analysis": {
-                            "skin_match": 13.0,
-                            "quality": 15.2,
-                            "trend": 5.8
+                            "skin_match": 3.8,
+                            "quality": 80.0,
+                            "trend": 50
                         },
-                        "routine_step": 5,
-                        "acne_score": 8,
-                        "brightening_score": 4,
-                        "moisturizing_score": 4,
-                        "anti_aging_score": 4,
-                        "gentle_score": 4,
-                        "highlights": [
-                            "ลดรอยดำ",
-                            "รอยสิว",
-                            "ควบคุมความมัน"
-                        ]
+                        "routine_step": 4
+                    },
+                    {
+                        "id": 81,
+                        "name": "La Roche-Posay Effaclar DUO+M",
+                        "brand": "LAROCHEPOSAY",
+                        "type": "moisturizer",
+                        "price": 1090.0,
+                        "score": 25,
+                        "match_percent": 25,
+                        "analysis": {
+                            "skin_match": 4.5,
+                            "quality": 76.0,
+                            "trend": 50
+                        },
+                        "routine_step": 4
                     }
                 ]
             }
