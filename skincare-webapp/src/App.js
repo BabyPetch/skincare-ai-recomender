@@ -6,40 +6,24 @@ import SkinCareAdvisor from './pages/SkinCareAdvisor';
 import AdminPage from './pages/AdminPage';
 import LoginPage from './pages/LoginPage';
 import UserProfile from './pages/UserProfile';
+import SkinGuide from './pages/SkinGuide';
 
-// --- ส่วนประกอบ: Navbar ---
+// --- Navbar ---
 const Navbar = ({ user, onLogout }) => {
   const navigate = useNavigate();
   const location = useLocation();
-
   const isActive = (path) => location.pathname === path;
 
-  // สไตล์ปุ่มทั่วไป
   const btnStyle = (path) => ({
-    padding: '8px 16px',
-    borderRadius: '6px',
-    border: 'none',
-    cursor: 'pointer',
+    padding: '8px 16px', borderRadius: '6px', border: 'none', cursor: 'pointer',
     background: isActive(path) ? '#4f46e5' : 'transparent',
-    color: isActive(path) ? 'white' : '#94a3b8',
-    transition: '0.2s'
+    color: isActive(path) ? 'white' : '#94a3b8', transition: '0.2s'
   });
 
   return (
-    <nav style={{ 
-      padding: '15px 30px', 
-      background: '#1e293b', 
-      color: 'white', 
-      display: 'flex', 
-      justifyContent: 'space-between', 
-      alignItems: 'center',
-      boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
-      position: 'sticky',
-      top: 0,
-      zIndex: 1000
-    }}>
+    <nav style={{ padding: '15px 30px', background: '#1e293b', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 1000 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-        <h3 style={{ margin: 0, color: '#818cf8', cursor:'pointer' }} onClick={() => navigate('/skincare-advisor')}>
+        <h3 style={{ margin: 0, color: '#818cf8', cursor:'pointer' }} onClick={() => navigate('/advisor')}>
             SkinCare AI ✨
         </h3>
         <span style={{ fontSize: '14px', opacity: 0.8, borderLeft: '1px solid #475569', paddingLeft: '15px' }}>
@@ -49,43 +33,24 @@ const Navbar = ({ user, onLogout }) => {
       </div>
       
       <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-        
-        {/* 1. ปุ่มไปหน้า AI Advisor */}
-        <button 
-          onClick={() => navigate('/skincare-advisor')}
-          style={btnStyle('/skincare-advisor')}
-        >
+        {/* ✅ แก้ Link ให้ตรงกัน */}
+        <button onClick={() => navigate('/advisor')} style={btnStyle('/advisor')}>
           🔍 วิเคราะห์ผิว
         </button>
         
-        {/* 2. ปุ่ม Admin (โชว์เฉพาะแอดมิน) */}
         {user?.role === 'admin' && (
-          <button 
-            onClick={() => navigate('/admin')}
-            style={btnStyle('/admin')}
-          >
+          <button onClick={() => navigate('/admin')} style={btnStyle('/admin')}>
             👑 ระบบหลังบ้าน
           </button>
         )}
 
-        {/* 3. ปุ่ม Profile (โชว์ทุกคนที่ไม่ใช่ Guest) */}
         {user?.role !== 'guest' && (
-             <button 
-             onClick={() => navigate('/profile')}
-             style={btnStyle('/profile')}
-          >
+             <button onClick={() => navigate('/profile')} style={btnStyle('/profile')}>
             👤 โปรไฟล์
           </button>
         )}
         
-        {/* 4. ปุ่ม Logout */}
-        <button 
-          onClick={onLogout} 
-          style={{ 
-            padding: '8px 16px', background: '#ef4444', color: 'white', 
-            border: 'none', borderRadius: '6px', cursor: 'pointer', marginLeft: '10px' 
-          }}
-        >
+        <button onClick={onLogout} style={{ padding: '8px 16px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', marginLeft: '10px' }}>
           ออกจากระบบ
         </button>
       </div>
@@ -98,23 +63,18 @@ function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 1. ตรวจสอบ localStorage ตอนเริ่มแอป (เพื่อให้ Refresh แล้วไม่หลุด)
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
+    if (savedUser) setUser(JSON.parse(savedUser));
     setLoading(false);
   }, []);
 
-  // 2. ฟังก์ชัน Logout
   const handleLogout = () => {
     localStorage.removeItem('user');
     setUser(null);
     window.location.href = '/login'; 
   };
 
-  // 3. ฟังก์ชัน Login
   const handleLogin = (userData) => {
     setUser(userData);
     localStorage.setItem('user', JSON.stringify(userData));
@@ -126,40 +86,41 @@ function App() {
     <Router>
       <div style={{ fontFamily: "'Kanit', sans-serif", minHeight: '100vh', background: '#F8FAFC' }}>
         
-        {/* แสดง Navbar เฉพาะตอน Login แล้ว */}
         {user && <Navbar user={user} onLogout={handleLogout} />}
 
         <Routes>
-          {/* ✅ Route 1: หน้า Login */}
+          {/* ✅ 1. แก้ตรงนี้: ถ้า Login แล้ว ให้ไป /guide ก่อนเสมอ */}
           <Route 
             path="/login" 
-            element={!user ? <LoginPage onLoginSuccess={handleLogin} /> : <Navigate to="/skincare-advisor" />} 
+            element={!user ? <LoginPage onLoginSuccess={handleLogin} /> : <Navigate to="/guide" />} 
           />
 
-          {/* ✅ Route 2: หน้า AI Advisor (สำคัญ: ส่ง user props ไปด้วย) */}
+          {/* ✅ 2. หน้า Guide (ต้องอยู่ก่อน wildcard *) */}
+          <Route path="/guide" element={<SkinGuide />} />
+
+          {/* ✅ 3. หน้า Advisor (ผมเปลี่ยน path เป็น /advisor ให้สั้นลง) */}
           <Route 
-            path="/skincare-advisor" 
+            path="/advisor" 
             element={user ? <SkinCareAdvisor user={user} /> : <Navigate to="/login" />} 
           />
+          {/* รองรับชื่อเก่าเผื่อหลง */}
+          <Route path="/skincare-advisor" element={<Navigate to="/advisor" />} />
 
-          {/* ✅ Route 3: หน้า Profile */}
+          {/* ✅ 4. หน้า Profile */}
           <Route 
             path="/profile" 
             element={user ? <UserProfile user={user} /> : <Navigate to="/login" />} 
           />
 
-          {/* ✅ Route 4: หน้า Admin (เช็ค Role ก่อนเข้า) */}
+          {/* ✅ 5. หน้า Admin */}
           <Route 
             path="/admin" 
-            element={
-              user && user.role === 'admin' 
-                ? <AdminPage user={user} /> 
-                : <Navigate to="/skincare-advisor" />
-            } 
+            element={user && user.role === 'admin' ? <AdminPage user={user} /> : <Navigate to="/advisor" />} 
           />
           
-          {/* ✅ Route 5: ถ้าพิมพ์มั่ว ให้ดีดกลับหน้าหลัก */}
-          <Route path="*" element={<Navigate to={user ? "/skincare-advisor" : "/login"} />} />
+          {/* ✅ 6. ถ้าพิมพ์มั่ว หรือหาไม่เจอ ให้ไปหน้า advisor */}
+          <Route path="*" element={<Navigate to={user ? "/advisor" : "/login"} />} />
+          
         </Routes>
 
       </div>

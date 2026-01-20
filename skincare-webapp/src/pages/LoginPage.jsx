@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { loginUser, registerUser } from '../services/api'; // เรียกใช้ API กลาง
-import './LoginPage.css'; // นำเข้า CSS ที่แยกไว้
+import { useNavigate } from 'react-router-dom'; // 1. ต้องมีตัวนี้
+import { loginUser, registerUser } from '../services/api'; 
+import './LoginPage.css'; 
 
 const LoginPage = ({ onLoginSuccess }) => {
+  const navigate = useNavigate(); // 2. ประกาศตัวแปร
   const [isLogin, setIsLogin] = useState(true);
   
   // State
@@ -20,22 +22,22 @@ const LoginPage = ({ onLoginSuccess }) => {
       if (isLogin) {
         // --- 🟢 ล็อกอิน ---
         const data = await loginUser({ email, password });
-        // ส่งข้อมูล user กลับไปที่ App.js
+        
         onLoginSuccess(data.user); 
+        
+        // 3. สั่งให้ไปหน้า Guide (ต้องตรงกับ App.js)
+        navigate('/guide'); 
+
       } else {
         // --- 🔵 สมัครสมาชิก ---
         await registerUser({ name, email, password, birthdate });
         alert('สมัครสมาชิกสำเร็จ! กรุณาล็อกอิน');
-        
-        // สลับไปหน้าล็อกอิน และเคลียร์ค่า
         setIsLogin(true);
         setPassword('');
         setBirthdate('');
       }
     } catch (err) {
       console.error(err);
-      // ถ้า API ส่งข้อความ error มา ให้แสดงข้อความนั้น
-      // ถ้าเชื่อมต่อไม่ได้ ให้แสดงข้อความทั่วไป
       setError('อีเมล/รหัสผ่านไม่ถูกต้อง หรือเชื่อมต่อ Server ไม่ได้');
     }
   };
@@ -43,6 +45,9 @@ const LoginPage = ({ onLoginSuccess }) => {
   // Guest Login
   const handleGuestLogin = () => {
     onLoginSuccess({ name: 'Guest', role: 'guest', age: 25 });
+
+    // 4. Guest ก็สั่งให้ไปหน้า Guide เหมือนกัน
+    navigate('/guide');
   };
 
   return (
@@ -55,8 +60,6 @@ const LoginPage = ({ onLoginSuccess }) => {
         {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit} className="login-form">
-          
-          {/* ชื่อ (เฉพาะสมัครสมาชิก) */}
           {!isLogin && (
             <input 
               className="form-input"
@@ -86,7 +89,6 @@ const LoginPage = ({ onLoginSuccess }) => {
             onChange={e => setPassword(e.target.value)}
           />
 
-          {/* วันเกิด (เฉพาะสมัครสมาชิก) */}
           {!isLogin && (
             <div className="form-group">
               <label>วันเดือนปีเกิด:</label>
@@ -117,9 +119,9 @@ const LoginPage = ({ onLoginSuccess }) => {
 
         {isLogin && (
           <div className="divider">
-             <button onClick={handleGuestLogin} className="btn-guest">
-               เข้าใช้งานแบบ Guest (ไม่ต้องสมัคร)
-             </button>
+              <button onClick={handleGuestLogin} className="btn-guest">
+                เข้าใช้งานแบบ Guest (ไม่ต้องสมัคร)
+              </button>
           </div>
         )}
       </div>
