@@ -46,7 +46,7 @@ class UserManager:
                     DO $$ 
                     BEGIN 
                         IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                                       WHERE table_name='users' AND column_name='role') THEN
+                                        WHERE table_name='users' AND column_name='role') THEN
                             ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'user';
                         END IF;
                     END $$;
@@ -63,8 +63,24 @@ class UserManager:
                         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                     );
                 """)
+
+                # 🌟 3. ตาราง Products (เพิ่มมาใหม่สำหรับระบบ Admin)
+                cur.execute("""
+                    CREATE TABLE IF NOT EXISTS products (
+                        id SERIAL PRIMARY KEY,
+                        name VARCHAR(255) NOT NULL,
+                        brand VARCHAR(100),
+                        category VARCHAR(100),
+                        skin_type VARCHAR(100),
+                        ingredients TEXT,
+                        description TEXT,
+                        price DECIMAL(10,2),
+                        image_url VARCHAR(255),
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    );
+                """)
                 
-                # 👑 3. สร้างบัญชี Admin อัตโนมัติถ้ายังไม่มี
+                # 👑 4. สร้างบัญชี Admin อัตโนมัติถ้ายังไม่มี
                 cur.execute("SELECT COUNT(*) FROM users WHERE role = 'admin'")
                 admin_count = cur.fetchone()[0]
                 
@@ -84,7 +100,7 @@ class UserManager:
                 cur.close()
                 conn.close()
 
-    # 👇 ฟังก์ชัน Login ที่หายไป กลับมาแล้ว!
+    # 👇 ฟังก์ชัน Login 
     def login(self, email, password):
         conn = self.get_db_connection()
         if not conn: return False, "Database Error"
@@ -104,7 +120,7 @@ class UserManager:
             cur.close()
             conn.close()
 
-    # 👇 ฟังก์ชัน Register เผื่อว่าหายไปด้วย
+    # 👇 ฟังก์ชัน Register 
     def register(self, name, email, password, birthdate):
         conn = self.get_db_connection()
         if not conn: return False, "Database Error"

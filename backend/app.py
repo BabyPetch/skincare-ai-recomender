@@ -8,10 +8,28 @@ from datetime import datetime
 from services.ai_engine import SkincareAI
 from services.user_manager import UserManager
 
+# 🟢 นำเข้าฟังก์ชันจากไฟล์ import_data ที่เราเพิ่งสร้าง
+from import_data import import_csv_to_db
+
 app = Flask(__name__)
 CORS(app)
 
-# 1. โหลด AI
+# 1. โหลด UserManager (เพื่อให้มันสร้างโครงสร้างตาราง DB ก่อน)
+try:
+    print("⏳ Loading User Manager (Checking DB Schema)...")
+    user_manager = UserManager()
+    print("✅ User Manager Loaded & DB Checked!")
+except Exception as e:
+    print(f"❌ Failed to load User Manager: {e}")
+    user_manager = None
+
+# 🌟 1.5 ออโต้โหลดไฟล์ CSV เข้า Database (ถ้ายังไม่มีข้อมูล)
+try:
+    import_csv_to_db()
+except Exception as e:
+    print(f"❌ Auto-import Failed: {e}")
+
+# 2. โหลด AI (ตอนนี้ใน DB มีข้อมูลให้ AI อ่านแล้ว!)
 try:
     print("⏳ Starting AI Engine...")
     ai = SkincareAI()
@@ -19,14 +37,6 @@ try:
 except Exception as e:
     print(f"❌ Failed to start AI: {e}")
     ai = None
-
-# 2. โหลด UserManager
-try:
-    user_manager = UserManager()
-    print("✅ User Manager Loaded!")
-except Exception as e:
-    print(f"❌ Failed to load User Manager: {e}")
-    user_manager = None
 
 # ---  ส่วน Login / Register ---
 @app.route('/api/login', methods=['POST'])
