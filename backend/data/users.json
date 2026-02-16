@@ -14,6 +14,327 @@
         "role": "user",
         "history": [
             {
+                "date": "2026-01-21 11:31",
+                "skin_type": "oily",
+                "concerns": [
+                    "dark_spot"
+                ],
+                "results": [
+                    {
+                        "id": 46,
+                        "name": "Gravich Micellar Clear Acne Cleansing Water",
+                        "brand": "GRAVICH",
+                        "type": "cleansing",
+                        "price": 390.0,
+                        "score": 26,
+                        "match_percent": 26,
+                        "analysis": {
+                            "skin_match": 0.0,
+                            "quality": 88.3,
+                            "trend": 50
+                        },
+                        "routine_step": 1
+                    },
+                    {
+                        "id": 59,
+                        "name": "Y.O.U AcnePlus AHA BHA PHA Daily Essence",
+                        "brand": "YOU",
+                        "type": "essence",
+                        "price": 379.0,
+                        "score": 25,
+                        "match_percent": 25,
+                        "analysis": {
+                            "skin_match": 0.0,
+                            "quality": 85.0,
+                            "trend": 50
+                        },
+                        "routine_step": 3
+                    },
+                    {
+                        "id": 8,
+                        "name": "CeraVe Oil Control Moisturising Gel Cream",
+                        "brand": "CERAVE",
+                        "type": "moisturizer",
+                        "price": 690.0,
+                        "score": 25,
+                        "match_percent": 25,
+                        "analysis": {
+                            "skin_match": 0.0,
+                            "quality": 86.0,
+                            "trend": 50
+                        },
+                        "routine_step": 4
+                    },
+                    {
+                        "id": 85,
+                        "name": "Zeroid Pimprove Moisturizer ",
+                        "brand": "ZEROID",
+                        "type": "moisturizer",
+                        "price": 1199.0,
+                        "score": 25,
+                        "match_percent": 25,
+                        "analysis": {
+                            "skin_match": 0.0,
+                            "quality": 85.7,
+                            "trend": 50
+                        },
+                        "routine_step": 4
+                    },
+                    {
+                        "id": 83,
+                        "name": "Provamed Acniclear Bio-Peptide Anti Acne Moisturizer",
+                        "brand": "PROVAMED",
+                        "type": "moisturizer",
+                        "price": 530.0,
+                        "score": 24,
+                        "match_percent": 24,
+                        "analysis": {
+                            "skin_match": 0.0,
+                            "quality": 80.0,
+                            "trend": 50
+                        },
+                        "routine_step": 4
+                    }
+                ]
+            },
+            {
+                "date": "2026-01-21 11:30",
+                "skin_type": "dry",
+                "concerns": [
+                    "acne"
+                ],
+                "results": [
+                    {
+                        "id": 49,
+                        "name": "COSRX Low pH Niacinamide Micellar Cleansing Water",
+                        "brand": "COSRX",
+                        "type": "cleansing",
+                        "price": 480.0,
+                        "score": 25,
+                        "match_percent": 25,
+                        "analysis": {
+                            "skin_match": 0.0,
+                            "quality": 84.4,
+                            "trend": 50
+                        },
+                        "routine_step": 1
+                    },
+                    {
+                        "id": 71,
+                        "name": "Torriden Dive In Hyaluronic Acid Serum",
+                        "brand": "TORRIDEN",
+                        "type": "serum",
+                        "price": 650.0,
+                        "score": 27,
+                        "match_percent": 27,
+                        "analysis": {
+                            "skin_match": 3.5,
+                            "quality": 82.2,
+                            "trend": 50
+                        },
+                        "routine_step": 3
+                    },
+                    {
+                        "id": 83,
+                        "name": "Provamed Acniclear Bio-Peptide Anti Acne Moisturizer",
+                        "brand": "PROVAMED",
+                        "type": "moisturizer",
+                        "price": 530.0,
+                        "score": 26,
+                        "match_percent": 26,
+                        "analysis": {
+                            "skin_match": 3.8,
+                            "quality": 80.0,
+                            "trend": 50
+                        },
+                        "routine_step": 4
+                    },
+                    {
+                        "id": 10,
+                        "name": "CeraVe Moisturising Cream",
+                        "brand": "CERAVE",
+                        "type": "moisturizer",
+                        "price": 225.0,
+                        "score": 25,
+                        "match_percent": 25,
+                        "analysis": {
+                            "skin_match": 0.0,
+                            "quality": 86.7,
+                            "trend": 50
+                        },
+                        "routine_step": 4
+                    },
+                    {
+                        "id": 26,
+                        "name": "SKIN1004 Madagascar Centella Hyalu-Cica Water-Fit Sun Serum SPF50+ PA++++",
+                        "brand": "SKIN1004",
+                        "type": "sunscreen",
+                        "price": 890.0,
+                        "score": 25,
+                        "match_percent": 25,
+                        "analysis": {
+                            "skin_match": 3.5,
+                            "quality": 77.8,
+                            "trend": 50
+                        },
+                        "routine_step": 5
+                    }
+                ]
+            },
+            {
+                "date": "2026-01-21 11:28",
+                "skin_type": "dry",
+                "concerns": [
+                    "pore"
+                ],
+                "results": [
+                    {
+                        "id": 1,
+                        "name": "CeraVe Hydrating Cleanser",
+                        "brand": "CERAVE",
+                        "type": "cleanser",
+                        "price": 220.0,
+                        "score": 25,
+                        "match_percent": 25,
+                        "analysis": {
+                            "skin_match": 0.0,
+                            "quality": 84.4,
+                            "trend": 50
+                        },
+                        "routine_step": 1
+                    },
+                    {
+                        "id": 49,
+                        "name": "COSRX Low pH Niacinamide Micellar Cleansing Water",
+                        "brand": "COSRX",
+                        "type": "cleansing",
+                        "price": 480.0,
+                        "score": 25,
+                        "match_percent": 25,
+                        "analysis": {
+                            "skin_match": 0.0,
+                            "quality": 84.4,
+                            "trend": 50
+                        },
+                        "routine_step": 1
+                    },
+                    {
+                        "id": 47,
+                        "name": "Plantnery Rice Ceramide Cleansing Balm",
+                        "brand": "PLANTNERY",
+                        "type": "cleansing",
+                        "price": 459.0,
+                        "score": 24,
+                        "match_percent": 24,
+                        "analysis": {
+                            "skin_match": 0.0,
+                            "quality": 80.0,
+                            "trend": 50
+                        },
+                        "routine_step": 1
+                    },
+                    {
+                        "id": 10,
+                        "name": "CeraVe Moisturising Cream",
+                        "brand": "CERAVE",
+                        "type": "moisturizer",
+                        "price": 225.0,
+                        "score": 25,
+                        "match_percent": 25,
+                        "analysis": {
+                            "skin_match": 0.0,
+                            "quality": 86.7,
+                            "trend": 50
+                        },
+                        "routine_step": 4
+                    },
+                    {
+                        "id": 76,
+                        "name": "The Originote CICA B5 Soothing Cream Moisturizer",
+                        "brand": "THE ORIGINOTE",
+                        "type": "moisturizer",
+                        "price": 199.0,
+                        "score": 22,
+                        "match_percent": 22,
+                        "analysis": {
+                            "skin_match": 0.0,
+                            "quality": 75.6,
+                            "trend": 50
+                        },
+                        "routine_step": 4
+                    }
+                ]
+            },
+            {
+                "date": "2026-01-21 04:11",
+                "skin_type": "oily",
+                "concerns": [
+                    "pore"
+                ],
+                "results": [
+                    {
+                        "id": 46,
+                        "name": "Gravich Micellar Clear Acne Cleansing Water",
+                        "brand": "GRAVICH",
+                        "type": "cleansing",
+                        "price": 390.0,
+                        "score": 26,
+                        "match_percent": 26,
+                        "analysis": {
+                            "skin_match": 0.0,
+                            "quality": 88.3,
+                            "trend": 50
+                        },
+                        "routine_step": 1
+                    },
+                    {
+                        "id": 48,
+                        "name": "Plantnery Tea Tree First Cleansing Water",
+                        "brand": "PLANTNERY",
+                        "type": "cleansing",
+                        "price": 350.0,
+                        "score": 23,
+                        "match_percent": 23,
+                        "analysis": {
+                            "skin_match": 0.0,
+                            "quality": 76.7,
+                            "trend": 50
+                        },
+                        "routine_step": 1
+                    },
+                    {
+                        "id": 2,
+                        "name": "CeraVe Blemish Control Cleanser",
+                        "brand": "CERAVE",
+                        "type": "cleanser",
+                        "price": 290.0,
+                        "score": 22,
+                        "match_percent": 22,
+                        "analysis": {
+                            "skin_match": 0.0,
+                            "quality": 76.4,
+                            "trend": 50
+                        },
+                        "routine_step": 1
+                    },
+                    {
+                        "id": 59,
+                        "name": "Y.O.U AcnePlus AHA BHA PHA Daily Essence",
+                        "brand": "YOU",
+                        "type": "essence",
+                        "price": 379.0,
+                        "score": 25,
+                        "match_percent": 25,
+                        "analysis": {
+                            "skin_match": 0.0,
+                            "quality": 85.0,
+                            "trend": 50
+                        },
+                        "routine_step": 3
+                    }
+                ]
+            },
+            {
                 "date": "2026-01-21 03:41",
                 "skin_type": "oily",
                 "concerns": [
@@ -92,90 +413,6 @@
                         "analysis": {
                             "skin_match": 0.0,
                             "quality": 85.7,
-                            "trend": 50
-                        },
-                        "routine_step": 4
-                    }
-                ]
-            },
-            {
-                "date": "2026-01-21 03:41",
-                "skin_type": "oily",
-                "concerns": [
-                    "acne"
-                ],
-                "results": [
-                    {
-                        "id": 2,
-                        "name": "CeraVe Blemish Control Cleanser",
-                        "brand": "CERAVE",
-                        "type": "cleanser",
-                        "price": 290.0,
-                        "score": 26,
-                        "match_percent": 26,
-                        "analysis": {
-                            "skin_match": 5.8,
-                            "quality": 76.4,
-                            "trend": 50
-                        },
-                        "routine_step": 1
-                    },
-                    {
-                        "id": 46,
-                        "name": "Gravich Micellar Clear Acne Cleansing Water",
-                        "brand": "GRAVICH",
-                        "type": "cleansing",
-                        "price": 390.0,
-                        "score": 26,
-                        "match_percent": 26,
-                        "analysis": {
-                            "skin_match": 0.0,
-                            "quality": 88.3,
-                            "trend": 50
-                        },
-                        "routine_step": 1
-                    },
-                    {
-                        "id": 14,
-                        "name": "Bioderma Sebium Pore Refiner",
-                        "brand": "BIODERMA",
-                        "type": "moisturizer",
-                        "price": 940.0,
-                        "score": 27,
-                        "match_percent": 27,
-                        "analysis": {
-                            "skin_match": 5.8,
-                            "quality": 78.0,
-                            "trend": 50
-                        },
-                        "routine_step": 4
-                    },
-                    {
-                        "id": 83,
-                        "name": "Provamed Acniclear Bio-Peptide Anti Acne Moisturizer",
-                        "brand": "PROVAMED",
-                        "type": "moisturizer",
-                        "price": 530.0,
-                        "score": 26,
-                        "match_percent": 26,
-                        "analysis": {
-                            "skin_match": 3.8,
-                            "quality": 80.0,
-                            "trend": 50
-                        },
-                        "routine_step": 4
-                    },
-                    {
-                        "id": 81,
-                        "name": "La Roche-Posay Effaclar DUO+M",
-                        "brand": "LAROCHEPOSAY",
-                        "type": "moisturizer",
-                        "price": 1090.0,
-                        "score": 25,
-                        "match_percent": 25,
-                        "analysis": {
-                            "skin_match": 4.5,
-                            "quality": 76.0,
                             "trend": 50
                         },
                         "routine_step": 4

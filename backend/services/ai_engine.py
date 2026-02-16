@@ -2,18 +2,34 @@ import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+import psycopg2
+from psycopg2.extras import RealDictCursor
 import os
-import re
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_FILE_PATH = os.path.join(BASE_DIR, '../data/Data_Collection_ASA - data.csv')
+import json
 
 class SkincareAI:
     def __init__(self):
         self.df = None
         self.vectorizer = None
         self.tfidf_matrix = None
+        
+        # ⚙️ ตั้งค่า Database
+        self.db_config = {
+            "dbname": "skincareCollectionDB",
+            "user": "postgres",
+            "password": "1234",  # <--- เช็ครหัสผ่านให้ถูกต้อง
+            "host": "127.0.0.1",
+            "port": "5432"
+        }
+        
         self.load_data()
+
+    def get_db_connection(self):
+        try:
+            return psycopg2.connect(**self.db_config)
+        except Exception as e:
+            print(f"❌ Error connecting to DB: {e}")
+            return None
 
     def _analyze_sentiment(self, text):
         if not isinstance(text, str): return 0
@@ -29,78 +45,76 @@ class SkincareAI:
 
     def load_data(self):
         try:
-            print("🔄 AI Engine: Loading data...")
-            if not os.path.exists(DATA_FILE_PATH):
-                print(f"❌ Error: Main data file not found at {DATA_FILE_PATH}")
+            print("🔄 AI Engine: Loading data from Database...")
+            conn = self.get_db_connection()
+            
+            if not conn:
+                print("❌ Database connection failed. AI Engine disabled.")
                 self.df = pd.DataFrame()
                 return
 
-            self.df = pd.read_csv(DATA_FILE_PATH, encoding='utf-8-sig')
+            # 1. ดึงข้อมูลสินค้าจาก PostgreSQL
+            query = "SELECT * FROM products"
+            cur = conn.cursor(cursor_factory=RealDictCursor)
+            cur.execute(query)
+            rows = cur.fetchall()
+            conn.close()
 
-            # 1. จัดการชื่อคอลัมน์ (Normalize Columns)
-            self.df.columns = self.df.columns.str.strip().str.lower()
+            if not rows:
+                print("⚠️ No data found in database.")
+                self.df = pd.DataFrame()
+                return
+
+            self.df = pd.DataFrame(rows)
+            print(f"📦 Loaded {len(self.df)} products from DB.")
+
+            # 2. แปลงข้อมูล JSONB (details) กลับมาเป็นคอลัมน์เพื่อให้ AI ใช้งานง่าย
+            # เราต้องแตก details ออกมาเป็น skintype, active_ingredients, benefits
+            def extract_detail(row, key, default=''):
+                if isinstance(row.get('details'), dict):
+                    return row['details'].get(key, default)
+                return default
+
+            self.df['skintype'] = self.df.apply(lambda x: extract_detail(x, 'skintype'), axis=1)
+            self.df['active ingredients'] = self.df.apply(lambda x: extract_detail(x, 'active_ingredients'), axis=1)
+            self.df['benefits'] = self.df.apply(lambda x: extract_detail(x, 'benefits'), axis=1)
+            self.df['ingredients'] = self.df.apply(lambda x: extract_detail(x, 'ingredients'), axis=1)
             
-            # Map ชื่อคอลัมน์ราคาให้เป็น 'price'
-            rename_map = {
-                'price (bath)': 'price',
-                'price(bath)': 'price',
-                'price (baht)': 'price',
-                'ราคา': 'price'
-            }
-            self.df.rename(columns=rename_map, inplace=True)
-            
-            print(f"📊 Columns Found: {self.df.columns.tolist()}")
+            # Map ชื่อคอลัมน์ให้ตรงกับ Logic เดิม
+            self.df['type_of_product'] = self.df['category'] 
 
-            # 2. 🔥🔥🔥 แก้ไขสำคัญ: ทำความสะอาดราคาตั้งแต่ตอนโหลด (Regex) 🔥🔥🔥
-            if 'price' in self.df.columns:
-                # แปลงเป็น String -> ใช้ Regex เอาเฉพาะตัวเลขและจุดทศนิยม ([^0-9.]) -> แปลงเป็น Float
-                self.df['price'] = self.df['price'].astype(str).str.replace(r'[^\d.]', '', regex=True)
-                self.df['price'] = pd.to_numeric(self.df['price'], errors='coerce').fillna(0)
-            else:
-                self.df['price'] = 0
+            # 3. จัดการราคา (ใน DB เป็นตัวเลขอยู่แล้ว แต่กันเหนียวแปลงเป็น float)
+            self.df['price'] = pd.to_numeric(self.df['price'], errors='coerce').fillna(0)
 
-            # 3. Clean ID
-            if 'id' not in self.df.columns:
-                self.df['id'] = self.df.index
-            self.df['id'] = pd.to_numeric(self.df['id'], errors='coerce').fillna(0).astype(int)
-            print(f"📦 Main Data: Loaded {len(self.df)} products.")
-
-            # 4. Ratings
+            # 4. Rating (ยังคงใช้วิธีโหลด CSV เสริม ถ้ายังไม่มีระบบ Rating ใน DB)
+            # แต่ถ้าไม่มีไฟล์ ก็ให้คะแนนเริ่มต้นเป็น 0
             current_dir = os.path.dirname(os.path.abspath(__file__))
-            rating_path = os.path.join(current_dir, '../data/user_ratings.csv')
+            rating_path = os.path.join(current_dir, '../../data/user_ratings.csv') # ปรับ path ตามจริง
             
             if os.path.exists(rating_path):
                 try:
                     ratings_df = pd.read_csv(rating_path)
-                    ratings_df.columns = ratings_df.columns.str.strip().str.lower()
-                    ratings_df['product_id'] = pd.to_numeric(ratings_df['product_id'], errors='coerce')
-                    ratings_df = ratings_df.dropna(subset=['product_id'])
-                    ratings_df['product_id'] = ratings_df['product_id'].astype(int)
-                    
                     avg_ratings = ratings_df.groupby('product_id')['rating'].mean()
-                    self.df['real_rating'] = self.df['id'].map(avg_ratings).fillna(0)
-                    self.df['rating'] = self.df['real_rating']
+                    self.df['rating'] = self.df['id'].map(avg_ratings).fillna(0)
                 except:
                     self.df['rating'] = 0
             else:
                 self.df['rating'] = 0
 
-            # 5. Vectorizer
+            # 5. สร้าง Features สำหรับ Vectorizer
             self.df['combined_features'] = ''
-            feature_cols = ['skintype', 'คุณสมบัติ(จากactive ingredients)', 'type_of_product', 'brand', 'active ingredients']
+            # รวม text จากคอลัมน์สำคัญ
+            feature_cols = ['skintype', 'benefits', 'category', 'brand', 'active ingredients', 'ingredients']
+            
             for col in feature_cols:
                 if col in self.df.columns:
-                    self.df['combined_features'] += self.df[col].fillna('') + ' '
+                    self.df['combined_features'] += self.df[col].astype(str).fillna('') + ' '
             
-            if 'reviews' not in self.df.columns: self.df['reviews'] = ''
-                
+            # 6. สร้าง TF-IDF Matrix
             self.vectorizer = TfidfVectorizer(analyzer='char_wb', ngram_range=(3, 5), min_df=1)
             self.tfidf_matrix = self.vectorizer.fit_transform(self.df['combined_features'])
 
-            self.df['rating'] = pd.to_numeric(self.df['rating'], errors='coerce').fillna(0)
-            self.df['sentiment_score'] = self.df['reviews'].apply(self._analyze_sentiment)
-
-            print("✅ AI Engine Ready.")
+            print("✅ AI Engine Ready & Trained.")
             
         except Exception as e:
             print(f"❌ Critical Error loading data: {e}")
@@ -119,71 +133,90 @@ class SkincareAI:
         if self.df is None or self.df.empty:
             return []
 
-        print(f"🔍 DEBUG: Filtering - Skin: {skin_type}, Price: {min_price}-{max_price}")
-
-        # 1. กรองสภาพผิว
-        if skin_type.lower() != 'all':
-            if 'skintype' in self.df.columns:
-                filtered_df = self.df[
-                    (self.df['skintype'].str.contains(skin_type, case=False, na=False)) |
-                    (self.df['skintype'].str.contains('all', case=False, na=False))
-                ].copy()
-            else:
-                 filtered_df = self.df.copy()
+        # --- 1. กรองสภาพผิว ---
+        if skin_type and skin_type.lower() != 'all':
+            filtered_df = self.df[
+                (self.df['skintype'].str.contains(skin_type, case=False, na=False)) |
+                (self.df['skintype'].str.contains('all', case=False, na=False)) |
+                (self.df['skintype'] == '') 
+            ].copy()
         else:
             filtered_df = self.df.copy()
 
-        # 2. กรองราคา (ข้อมูลงวดนี้สะอาดแล้วเพราะทำ Regex ตอน Load)
+        # --- 2. กรองราคา ---
         filtered_df = filtered_df[
             (filtered_df['price'] >= float(min_price)) & 
             (filtered_df['price'] <= float(max_price))
         ]
         
-        # ปริ้นท์เช็คว่าเหลือกี่ชิ้น
-        print(f"   👉 Items left after price filter: {len(filtered_df)}")
-
         if filtered_df.empty:
-            print("⚠️ No products match the price criteria.")
             return []
 
-        # 3. คำนวณความแมตช์
-        user_text = ' '.join(concerns)
-        user_vec = self.vectorizer.transform([user_text])
+        # --- 3. (ใหม่ ✨) แปลง Keyword เป็นภาษาไทย/คำใกล้เคียง ---
+        # เพื่อให้ AI ฉลาดขึ้น รู้ว่า acne = สิว
+        keyword_map = {
+            "acne": ["acne", "สิว", "breakout", "อุดตัน", "bha", "salicylic"],
+            "dark spots": ["dark spot", "รอยดำ", "จุดด่างดำ", "hyper", "niacinamide", "vit c", "whitening", "bright"],
+            "oily": ["oily", "มัน", "sebum", "pills"],
+            "dry": ["dry", "แห้ง", "hydration", "moist", "hyaluron"],
+            "sensitive": ["sensitive", "แพ้", "soothing", "calming", "cica"],
+            "aging": ["aging", "wrinkle", "ริ้วรอย", "retinol", "bakuchiol"]
+        }
+
+        # สร้างข้อความค้นหาใหม่ที่รวมคำไทยไปด้วย
+        expanded_concerns = []
+        for c in concerns:
+            c_lower = c.lower()
+            # ถ้ามีใน map ให้เอาคำไทยมาด้วย, ถ้าไม่มีให้ใช้คำเดิม
+            expanded_concerns.extend(keyword_map.get(c_lower, [c_lower]))
         
+        user_text = ' '.join(expanded_concerns)
+        print(f"🔍 Searching for keywords: {user_text}") # Debug ดูว่า AI หาคำว่าอะไรบ้าง
+
+        # --- 4. คำนวณความแมตช์ (Cosine Similarity) ---
+        user_vec = self.vectorizer.transform([user_text])
         product_indices = filtered_df.index
         relevant_tfidf = self.tfidf_matrix[product_indices]
         
         cosine_sim = cosine_similarity(user_vec, relevant_tfidf).flatten()
         filtered_df['match_score'] = cosine_sim * 100
         
-        # 4. Hybrid Score
-        filtered_df['final_score'] = (
-            (filtered_df['match_score'] * 0.7) + 
-            ((filtered_df['rating'] / 5 * 100) * 0.3)
-        )
+        # --- 5. ให้คะแนนพิเศษ (Hybrid Score) ---
+        def boost_score(row):
+            score = row['match_score']
+            # เช็ค Text ทั้งก้อนของสินค้า
+            props = row['combined_features'].lower()
+            
+            for keyword in expanded_concerns:
+                if keyword in props:
+                    score += 15 # เจอคำไทยหรืออังกฤษที่ตรงกัน บวกคะแนนเพิ่ม!
+            return score
+
+        filtered_df['final_score'] = filtered_df.apply(boost_score, axis=1)
+        filtered_df['final_score'] = (filtered_df['final_score'] * 0.8) + (filtered_df['rating'] * 4)
         
-        # 5. จัดเรียง
+        # --- 6. จัดเรียงและเลือก Top N ---
         results = filtered_df.sort_values(by='final_score', ascending=False).head(top_n)
         
         response = []
         for _, row in results.iterrows():
-            quality_score = (row['rating'] / 5) * 100 if row['rating'] > 0 else 0
-            p_type = row['type_of_product'] if 'type_of_product' in row else 'unknown'
+            quality_score = (row['rating'] / 5) * 100 if row['rating'] > 0 else 80
             
             response.append({
                 "id": int(row['id']),
                 "name": row['name'],
                 "brand": row['brand'],
-                "type": p_type,
+                "type": row['category'],
                 "price": float(row['price']),
                 "score": int(row['final_score']),
-                "match_percent": int(row['final_score']),
+                "match_percent": int(min(row['final_score'], 100)),
                 "analysis": {
                     "skin_match": round(row['match_score'], 1),
                     "quality": round(quality_score, 1),
-                    "trend": 50
+                    "trend": 85
                 },
-                "routine_step": self._determine_step(p_type)
+                "routine_step": self._determine_step(row['category'])
             })
             
         return sorted(response, key=lambda x: x['routine_step'])
+    
