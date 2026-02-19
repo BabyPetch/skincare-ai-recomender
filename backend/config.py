@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 # หา Path ปัจจุบันของโปรเจกต์
 BASE_DIR = Path(__file__).parent
@@ -43,3 +44,8 @@ ROUTINE_MAP = {
     "spf": 5, 
     "uv": 5
 }
+
+class Config:
+    DEBUG = True
+    PORT = 5000
+    AUTO_IMPORT = os.getenv("AUTO_IMPORT", "false")

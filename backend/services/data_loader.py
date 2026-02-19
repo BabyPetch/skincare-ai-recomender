@@ -1,11 +1,16 @@
 import pandas as pd
-from database.repository import get_all_products
-
+from database.db import get_connection
+from psycopg2.extras import RealDictCursor
 
 class DataLoader:
 
     def load_products(self):
-        rows = get_all_products()
+        conn = get_connection()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+
+        cur.execute("SELECT * FROM products")
+        rows = cur.fetchall()
+        conn.close()
 
         if not rows:
             return pd.DataFrame()
@@ -14,7 +19,7 @@ class DataLoader:
 
         df['price'] = pd.to_numeric(df['price'], errors='coerce').fillna(0)
 
-        for col in ['skin_type', 'ingredients', 'category', 'brand']:
+        for col in ['skintype', 'benefits', 'ingredients']:
             if col not in df.columns:
                 df[col] = ""
 
