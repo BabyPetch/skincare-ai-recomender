@@ -1,10 +1,22 @@
-import requests
-from bs4 import BeautifulSoup
-import json
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+import pandas as pd
 import time
 import random
 
-headers = {"User-Agent": "Mozilla/5.0"}
+# ===== Setup headless browser =====
+chrome_options = Options()
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--disable-gpu")
+
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
+driver = webdriver.Chrome(
+    service=Service(ChromeDriverManager().install()),
+    options=chrome_options
+)
 
 products_data = []
 
@@ -15,23 +27,29 @@ for idx, link in enumerate(links):
     link = link.strip()
     print(f"Scraping {idx+1}/{len(links)}")
 
-    res = requests.get(link, headers=headers)
-    soup = BeautifulSoup(res.text, "html.parser")
+    driver.get(link)
+    time.sleep(3)  # wait JS render
 
-    # product name
-    name_tag = soup.find("h1")
-    name = name_tag.text.strip() if name_tag else None
+    # ===== Product Name =====
+    try:
+        name = driver.find_element(By.TAG_NAME, "h1").text
+    except:
+        name = None
 
-    # brand
-    brand_tag = soup.find("div", class_="brand-title")
-    brand = brand_tag.text.strip() if brand_tag else None
+    # ===== Brand (breadcrumb area) =====
+    try:
+        brand = driver.find_element(By.CSS_SELECTOR, ".breadcrumb a").text
+    except:
+        brand = None
 
-    # ingredients
-    ingredients_section = soup.find("div", class_="ingredients-list")
-
-    if ingredients_section:
-        ingredients = ingredients_section.text.strip()
-    else:
+    # ===== Ingredients =====
+    # ===== Ingredients (correct for INCIDecoder) =====
+# ===== Ingredients (correct for INCIDecoder) =====
+    try:
+        ingredient_elements = driver.find_elements(By.CSS_SELECTOR, "a.ingred-link")
+        ingredients_list = [el.text.strip() for el in ingredient_elements if el.text.strip()]
+        ingredients = ", ".join(ingredients_list)
+    except:
         ingredients = None
 
     products_data.append({
@@ -43,8 +61,10 @@ for idx, link in enumerate(links):
 
     time.sleep(random.uniform(1, 2))
 
-# save
-with open("products_raw.json", "w", encoding="utf-8") as f:
-    json.dump(products_data, f, ensure_ascii=False, indent=4)
+driver.quit()
 
-print("Done scraping!")
+# ===== Save Excel =====
+df = pd.DataFrame(products_data)
+df.to_excel("products_raw.xlsx", index=False)
+
+print("✅ Done scraping and saved to Excel!")
