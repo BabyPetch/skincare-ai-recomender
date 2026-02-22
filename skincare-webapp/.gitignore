@@ -24,3 +24,11 @@ yarn-error.log*
 
 __pycache__/
 *.pyc
+
+
+# Excel temp files
+~$*.xlsx
+
+# CSV output files
+*.csv
+*.xlsx
