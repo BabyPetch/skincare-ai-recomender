@@ -1,0 +1,468 @@
+{
+  "captured_at": "2026-02-25 17:09:41",
+  "api_requests": [
+    {
+      "url": "https://cloud3.zineone.com/c3/api/v1/originId?originId=fe5ef13b-ed1a-4d2f-9c71-a58712c170c2&profileId=db8ec867-7d9c-45c6-9642-31a93eed5f13",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "text/plain",
+        "apikey": "cloud3@e027d340-5a5b-4f97-8f19-f40a5b2e17d3Z1-2903910173578488841"
+      }
+    },
+    {
+      "url": "https://sephora.cnstrc.com/recommendations/v1/pods/trending_categories?c=ciojs-client-2.74.0&key=u7PNVQx-prod-en-us&i=fe367eb5-e36c-4bf8-a96a-9285db9aa51c&s=1&section=Categories&variations_map=%7B%22values%22%3A%7B%22network_status%22%3A%7B%22aggregation%22%3A%22max%22%2C%22field%22%3A%22data.sku_availability.network_SEPHORAUS%22%7D%2C%22store_status%22%3A%7B%22aggregation%22%3A%22max%22%2C%22field%22%3A%22data.sku_availability.store_123%22%7D%2C%22sku_count%22%3A%7B%22aggregation%22%3A%22count%22%7D%2C%22sale_count%22%3A%7B%22aggregation%22%3A%22value_count%22%2C%22field%22%3A%22data.facets.on_sale%22%2C%22value%22%3Atrue%7D%2C%22min_list_price%22%3A%7B%22aggregation%22%3A%22min%22%2C%22field%22%3A%22data.currentSku.listPriceFloat%22%7D%2C%22max_list_price%22%3A%7B%22aggregation%22%3A%22max%22%2C%22field%22%3A%22data.currentSku.listPriceFloat%22%7D%2C%22min_sale_price%22%3A%7B%22aggregation%22%3A%22min%22%2C%22field%22%3A%22data.currentSku.salePriceFloat%22%7D%2C%22max_sale_price%22%3A%7B%22aggregation%22%3A%22max%22%2C%22field%22%3A%22data.currentSku.salePriceFloat%22%7D%2C%22min_price%22%3A%7B%22aggregation%22%3A%22min%22%2C%22field%22%3A%22data.currentSku.finalPriceFloat%22%7D%2C%22max_price%22%3A%7B%22aggregation%22%3A%22max%22%2C%22field%22%3A%22data.facets.finalPriceFloat%22%7D%2C%22moreColors%22%3A%7B%22aggregation%22%3A%22all%22%2C%22field%22%3A%22data.currentSku.colorName%22%7D%7D%2C%22dtype%22%3A%22object%22%7D",
+      "method": "GET",
+      "headers": {}
+    },
+    {
+      "url": "https://cloud3.zineone.com/c3/api/v1/connect",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "text/plain",
+        "apikey": "cloud3@e027d340-5a5b-4f97-8f19-f40a5b2e17d3Z1-2903910173578488841"
+      }
+    },
+    {
+      "url": "https://cloud3.zineone.com/c3/api/v1/event",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "text/plain",
+        "apikey": "cloud3@e027d340-5a5b-4f97-8f19-f40a5b2e17d3Z1-2903910173578488841"
+      }
+    },
+    {
+      "url": "https://sdk.iad-01.braze.com/api/v3/data/",
+      "method": "POST",
+      "headers": {
+        "Content-type": "application/json",
+        "X-Braze-Api-Key": "476615b3-3386-4e1c-a9fd-7e174eb9b8de",
+        "X-Requested-With": "XMLHttpRequest"
+      }
+    },
+    {
+      "url": "https://www.sephora.com/gway/v1/graph",
+      "method": "POST",
+      "headers": {
+        "Apollographql-Client-Name": "UFE",
+        "Apollographql-Client-Version": "1",
+        "Authorization": "Bearer null",
+        "Content-Type": "application/json",
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "X-Api-Key": "nQc7BFt78yJBvfYDKtle9APd5RrX984i",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://www.sephora.com/gway/v1/currency-converter-service/exchange-rate-usd-cad?apikey=nQc7BFt78yJBvfYDKtle9APd5RrX984i",
+      "method": "GET",
+      "headers": {
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "traceparent": "00-ada083b1a3bc6c0901527162ad5b3c2e-d494ffea66845add-01",
+        "tracestate": "23bdf90f-6b887750@dtr=1;d494ffea66845add;1;010ad61344e68aed;1772014132587NPBGUH8KL6434FNSD75RU1JKJPV1U9O3;QWVAQPPPQARGKMEFWQLICKWCFUNKKUHF-0",
+        "x-dtpc": "-12749$214132581_72h5vQWVAQPPPQARGKMEFWQLICKWCFUNKKUHF-0e0"
+      }
+    },
+    {
+      "url": "https://sephora.tt.omtrdc.net/rest/v1/delivery?client=sephora&sessionId=b3b4c74d6e8d411188eaa75115ef6729&version=2.10.2",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "text/plain",
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://www.sephora.com/api/v3/util/location?radius=50",
+      "method": "GET",
+      "headers": {
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "traceparent": "00-965aa0ba87c32c5d44c25153ecf5aa25-6e3b45495bb94061-01",
+        "tracestate": "23bdf90f-6b887750@dtr=1;6e3b45495bb94061;1;010ad61344e68aed;1772014132587NPBGUH8KL6434FNSD75RU1JKJPV1U9O3;QWVAQPPPQARGKMEFWQLICKWCFUNKKUHF-0",
+        "x-dtpc": "-12749$214132581_72h6vQWVAQPPPQARGKMEFWQLICKWCFUNKKUHF-0e0"
+      }
+    },
+    {
+      "url": "https://www.sephora.com/gway/v1/dotcom/auth/v2/session",
+      "method": "POST",
+      "headers": {
+        "Content-type": "application/json",
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "deviceId": "0480aecabe4fb0dc75076e495de4bc24",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "traceparent": "00-d3c4e35dacb476760810e19c69bb46df-40b88d4f86726493-01",
+        "tracestate": "23bdf90f-6b887750@dtr=1;40b88d4f86726493;1;010ad61344e68aed;1772014132587NPBGUH8KL6434FNSD75RU1JKJPV1U9O3;QWVAQPPPQARGKMEFWQLICKWCFUNKKUHF-0",
+        "x-dtpc": "-12749$214132581_72h3vQWVAQPPPQARGKMEFWQLICKWCFUNKKUHF-0e0",
+        "x-kpsdk-cd": "{\"workTime\":1772014140095,\"id\":\"0754a0c8db62eb8c524221ead92cf381\",\"answers\":[11,4],\"duration\":303.8,\"d\":-1279,\"st\":1772014140049,\"rst\":1772014138770}",
+        "x-kpsdk-ct": "03jfQmN3zqeVAtYmZtuldktmnJo8qk2jR1LF0lDXjzvUckqkbnlzcOvUctoVK6F5b6zc9S7LCVYcVqNFBxoZPOTXo52W5cgkKtNUvZkYSERhs73xoExCqNy7uMdzGEqhFNzOHQCGU7Dr3e0fGZzICwajGuQJ9Fk4UOMbT0e3hU0Q5n",
+        "x-kpsdk-h": "01Ec7J6IvDE/1PWkmPphEl38PCzyE=",
+        "x-kpsdk-v": "j-1.2.205"
+      }
+    },
+    {
+      "url": "https://www.sephora.com/gway/v1/genai-pa/v1/config?language=en&loc=en-US&country=US&campaign_name=product-advisor&client_id=&anonymous_id=c1636b8b-d5c3-4df6-99bd-9d5d427eae2f",
+      "method": "GET",
+      "headers": {
+        "Content-Type": "application/json",
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "authorization": "Bearer QYWjzSVcypKGzuYiVMqhtHXVgLDg",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "traceparent": "00-1735509d7bef681a2b12b75c86f5fa82-8dd705153b3db7c9-01",
+        "tracestate": "23bdf90f-6b887750@dtr=1;8dd705153b3db7c9;1;010ad61344e68aed;1772014132587NPBGUH8KL6434FNSD75RU1JKJPV1U9O3;QWVAQPPPQARGKMEFWQLICKWCFUNKKUHF-0",
+        "x-dtpc": "-12749$214132581_72h70vQWVAQPPPQARGKMEFWQLICKWCFUNKKUHF-0e0"
+      }
+    },
+    {
+      "url": "https://www.sephora.com/api/shopping-cart/basket",
+      "method": "GET",
+      "headers": {
+        "Referer": "https://www.sephora.com/",
+        "Seph-Access-Token": "eyJhbGciOiJSUzI1NiJ9.eyJBdXRoRGF0YSI6eyJkZXZpY2VJZCI6IjFhMjM2NWQ5NmVhYjU2MzI5MDUwNjI2OTA2MDczYWQxMjllYWExYmVlZWE4YzQ5NDZmNjVmYTM2YWU0OTg5NWIiLCJ1dWlkIjoiMjk1NWM4NTktMDY2ZC00OGI0LTg0MjEtN2MwMTMzMGJmNWZiIiwicHJvZmlsZVNlY3VyaXR5U3RhdHVzIjowLCJyb2xlIjoiY2xpZW50In0sImlzcyI6IkF1dGhTZXJ2aWNlIiwiaWF0IjoxNzcyMDE0MTQwLCJleHAiOjE3NzIwMTc3NDB9.JVqHIt5F1ajzgfdSoVq-6E7Zifr9DynVGW2SV-M8Ss2l89FptmUBiypjsYzBQaIMWdz4b-gdlm1N4qj84cnhzNM1I71aUK9xEopUQTYWhrjkcjWTRV-qhadPUH1HrM_qrDdI34m4wkY6uBzkaHdl7V_04QnZw7Tj2qm6OfbS1yvANwwdOQwseMvIpPkbnXuVsjQwGodZE3oo3E8MRTxwP6gF3eM6TbHG5CY1uxtTweAPQMFNw2uls19QyzNbhx2pxS1RMhQj6ZZK79WFfSihPXFZZVcY0r3c3geyzfuT5k5dX4av_HAwid0MCKN0keIhDg3Z-05kPVSbUEoHO2T9Mb2umg64fokd0vdGJcwU4sGV7nxBOFr9EuiNdHg4t4q5iZgoVxs7vNfK_eaeef_TVjR2THXUjsOf1UeSwPl3JTNA7lVyJz94uuYhVjDcU-khprhVqbVSJt1bSQKAKya1KVaUYn-vsYHvg3fQUrhUa12qzJ5PGk21RRcSTKcisLktdqW35EvZdLjOfPAYW7en0rc5hizCsj2LfkA9BWnzGv7YETgalmppQjLCC7dP8UJejNyxARcGFIArcH6GivUjYlufEtdR5qIZn4WDWo5ftv2ZnfzHgpKEN6a9AXVyFnw0sx-zIfom4W0SkskOmnk_3jRyU47h36hb0un2A-Ft9Qg",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "traceparent": "00-eba1b8f5e719390db3a8e4b339648e10-03defa62fd21465d-01",
+        "tracestate": "23bdf90f-6b887750@dtr=1;03defa62fd21465d;1;010ad61344e68aed;1772014132587NPBGUH8KL6434FNSD75RU1JKJPV1U9O3;QWVAQPPPQARGKMEFWQLICKWCFUNKKUHF-0",
+        "x-api-key": "nQc7BFt78yJBvfYDKtle9APd5RrX984i",
+        "x-dtpc": "-12749$214132581_72h72vQWVAQPPPQARGKMEFWQLICKWCFUNKKUHF-0e0"
+      }
+    },
+    {
+      "url": "https://api.bluecore.app/api/track/customer_patch",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://api2.branch.io/v1/open",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://api2.branch.io/v1/pageview",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://trk.clinch.co/trk?cid=wlg04UI&dsid=wgf61IJ&type=pageView&product=ecommerce&referrer=https%3A%2F%2Fwww.sephora.com%2F&version=26.5.1&a=1772014151144",
+      "method": "GET",
+      "headers": {
+        "Referer": "https://www.sephora.com/",
+        "Upgrade-Insecure-Requests": "1",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://smetrics.sephora.com/b/ss/sephoracom/1/JS-2.25.0-LGPQ/s54019773265930?AQB=1&ndh=1&pf=1&t=25%2F1%2F2026%2017%3A9%3A14%203%20-420&sdid=215FEE6BA5B8D754-5F233DBD96461DB5&mid=60869406298578946330913881528638089829&aamlh=3&ce=UTF-8&pageName=home%20page%3Ahome%20page%3An%2Fa%3A%2A&g=https%3A%2F%2Fwww.sephora.com%2F&c.&getPercentPageViewed=5.1&.c&ch=full%20site&pageType=home%20page&events=event19%3D0%2Cevent20%3D0%2Cevent295%3D1&aamb=6G1ynYcLPuiQxYZrsz_pkqfLG9yMXBpb2zX5dvJdYQJzPXImdj0y&v6=D%3DpageName&c8=non-bi&c13=content%3Aus&v17=D%3Dc27&v18=D%3Dc9&c19=VisitorAPI%20Present&v19=desktop%20web&c20=rcps_beauty_chat%3Dtrue%2Crcps_frictionless_checkout%3Dtrue&v21=web&c25=2026%7C02%7C25&c27=unrecognized&c34=advertising%20cookies%3Aon&v39=wednesday&v40=D%3Dg&c46=D%3Dv62&c47=hard%3Aregular%20page%20load&v50=D%3Dc6&c52=7414.600000023842&c53=play%20status%3An%2Fa%2Ccredit%20card%20status%3Aother%2Csame-day%20unlimited%3Aunsubscribed&v55=D%3Dc8&v58=D%3DUser-Agent&v59=D%3Dc9&c61=sdu%3Atrial%20eligible&v62=us-en&v63=D%3Dg&v67=D%3Dc4&c70=US&v70=home%20page%3Ahome%20page%3An%2Fa%3A%2A&v93=home%20page&v94=home%20page&v95=n%2Fa&v97=D%3DpageName&v103=C&v116=lg&v117=responsive%20web%20design&v118=0.9627810733821565_1772014154824&v119=A.L.%20-%20Page%20Load%20Tracking%20With%20Plugin&v136=n%2Fa%3An%2Fa%3An%2Fa&v137=0&s=1920x1080&c=32&j=1.6&v=N&k=Y&bw=1904&bh=985&mcorgid=F6281253512D2BB50A490D45%40AdobeOrg&AQE=1",
+      "method": "GET",
+      "headers": {
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://aa.agkn.com/adscores/g.pixel?sid=9212296888&cv1=f69f97cc-578f-48fa-bbb9-5d23f4c46fb1&cv2=lgiojrsr&page=www.sephora.com/",
+      "method": "GET",
+      "headers": {
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://bat.bing.com/action/0?ti=4001230&Ver=2&mid=81dfe3ed-4afb-4f49-9cac-0f6b5d783c6e&bo=1&sid=0b075620123211f18cdd475990613023&vid=0b080330123211f19a405d204957a413&vids=1&msclkid=N&uach=pv%3D10.0.0&pi=918639831&lg=en-US&sw=1920&sh=1080&sc=32&tl=Makeup,%20Skincare,%20Fragrance,%20Hair%20%26%20Beauty%20Products%20%7C%20Sephora&p=https%3A%2F%2Fwww.sephora.com%2F&r=&lt=13625&evt=pageLoad&sv=2&cdb=AQAQ&rn=478985",
+      "method": "GET",
+      "headers": {
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://api-developer.sephora.com/v1/sot/trackingId?apikey=nQc7BFt78yJBvfYDKtle9APd5RrX984i",
+      "method": "GET",
+      "headers": {
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://mboxedge38.tt.omtrdc.net/rest/v1/delivery?client=sephora&sessionId=b3b4c74d6e8d411188eaa75115ef6729&version=2.10.2",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "text/plain",
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://api-developer.sephora.com/v1/browseSearchProduct",
+      "method": "OPTIONS",
+      "headers": {
+        "Accept": "*/*",
+        "Access-Control-Request-Headers": "content-type,seph-access-token,x-api-key",
+        "Access-Control-Request-Method": "POST",
+        "Origin": "https://www.sephora.com",
+        "Sec-Fetch-Mode": "cors",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "url": "https://www.sephora.com/gway/v1/genai-pa/v1/entrypoint-prompts",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "Referer": "https://www.sephora.com/shop/moisturizing-cream-oils-mists",
+        "Seph-Access-Token": "eyJhbGciOiJSUzI1NiJ9.eyJBdXRoRGF0YSI6eyJkZXZpY2VJZCI6IjFhMjM2NWQ5NmVhYjU2MzI5MDUwNjI2OTA2MDczYWQxMjllYWExYmVlZWE4YzQ5NDZmNjVmYTM2YWU0OTg5NWIiLCJ1dWlkIjoiMjk1NWM4NTktMDY2ZC00OGI0LTg0MjEtN2MwMTMzMGJmNWZiIiwicHJvZmlsZVNlY3VyaXR5U3RhdHVzIjowLCJyb2xlIjoiY2xpZW50In0sImlzcyI6IkF1dGhTZXJ2aWNlIiwiaWF0IjoxNzcyMDE0MTQwLCJleHAiOjE3NzIwMTc3NDB9.JVqHIt5F1ajzgfdSoVq-6E7Zifr9DynVGW2SV-M8Ss2l89FptmUBiypjsYzBQaIMWdz4b-gdlm1N4qj84cnhzNM1I71aUK9xEopUQTYWhrjkcjWTRV-qhadPUH1HrM_qrDdI34m4wkY6uBzkaHdl7V_04QnZw7Tj2qm6OfbS1yvANwwdOQwseMvIpPkbnXuVsjQwGodZE3oo3E8MRTxwP6gF3eM6TbHG5CY1uxtTweAPQMFNw2uls19QyzNbhx2pxS1RMhQj6ZZK79WFfSihPXFZZVcY0r3c3geyzfuT5k5dX4av_HAwid0MCKN0keIhDg3Z-05kPVSbUEoHO2T9Mb2umg64fokd0vdGJcwU4sGV7nxBOFr9EuiNdHg4t4q5iZgoVxs7vNfK_eaeef_TVjR2THXUjsOf1UeSwPl3JTNA7lVyJz94uuYhVjDcU-khprhVqbVSJt1bSQKAKya1KVaUYn-vsYHvg3fQUrhUa12qzJ5PGk21RRcSTKcisLktdqW35EvZdLjOfPAYW7en0rc5hizCsj2LfkA9BWnzGv7YETgalmppQjLCC7dP8UJejNyxARcGFIArcH6GivUjYlufEtdR5qIZn4WDWo5ftv2ZnfzHgpKEN6a9AXVyFnw0sx-zIfom4W0SkskOmnk_3jRyU47h36hb0un2A-Ft9Qg",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "authorization": "Bearer QYWjzSVcypKGzuYiVMqhtHXVgLDg",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "traceparent": "00-a4cabb0d709596a59ec99b7e67bde2d4-266f33be6a010b21-01",
+        "tracestate": "23bdf90f-6b887750@dtr=1;266f33be6a010b21;1;010ad61344e68aed;1772014132587NPBGUH8KL6434FNSD75RU1JKJPV1U9O3;QWVAQPPPQARGKMEFWQLICKWCFUNKKUHF-0",
+        "x-api-key": "nQc7BFt78yJBvfYDKtle9APd5RrX984i",
+        "x-dtpc": "2$214158258_896h65vQWVAQPPPQARGKMEFWQLICKWCFUNKKUHF-0e0"
+      }
+    },
+    {
+      "url": "https://api.bluecore.app/api/track/search",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://aa.agkn.com/adscores/g.pixel?sid=9212296888&cv1=f69f97cc-578f-48fa-bbb9-5d23f4c46fb1&cv2=lgiojrsr&page=www.sephora.com/shop/moisturizing-cream-oils-mists",
+      "method": "GET",
+      "headers": {
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://smetrics.sephora.com/b/ss/sephoracom/1/JS-2.25.0-LGPQ/s52171098499064?AQB=1&ndh=1&pf=1&t=25%2F1%2F2026%2017%3A9%3A23%203%20-420&sdid=66C920A3DD40AA3C-5BE22EF3E27A70EF&mid=60869406298578946330913881528638089829&aamlh=3&ce=UTF-8&pageName=toplevel%3Amoisturizers%3Askincare%3A%2A&g=https%3A%2F%2Fwww.sephora.com%2Fshop%2Fmoisturizing-cream-oils-mists&c.&getPercentPageViewed=5.1&.c&ch=full%20site&pageType=toplevel&events=event233%2Cevent23%3D659%2Cevent19%3D0%2Cevent20%3D0%2Cevent295%3D1&aamb=6G1ynYcLPuiQxYZrsz_pkqfLG9yMXBpb2zX5dvJdYQJzPXImdj0y&c5=659&c6=home%20page%3Ahome%20page%3An%2Fa%3A%2A&v6=D%3DpageName&c7=home%20page&c8=non-bi&c13=content%3Aus&v17=D%3Dc27&v18=D%3Dc9&c19=VisitorAPI%20Present&v19=desktop%20web&c20=rcps_beauty_chat%3Dtrue%2Crcps_frictionless_checkout%3Dtrue&v21=web&c25=2026%7C02%7C25&c27=unrecognized&c34=advertising%20cookies%3Aon&v39=wednesday&v40=D%3Dg&c46=D%3Dv62&c47=hard%3Aregular%20page%20load&v50=D%3Dc6&c52=3569.899999976158&c53=play%20status%3An%2Fa%2Ccredit%20card%20status%3Aother%2Csame-day%20unlimited%3Aunsubscribed&v55=D%3Dc8&v58=D%3DUser-Agent&v59=D%3Dc9&c61=sdu%3Atrial%20eligible&c62=23&v62=us-en&v63=D%3Dg&v67=D%3Dc4&c70=US&v70=toplevel%3Amoisturizers%3Askincare%3A%2A&v93=toplevel&v94=moisturizers&v95=skincare&v97=D%3DpageName&v103=C&v116=lg&v117=responsive%20web%20design&v118=0.9627810733821565_1772014154824&v119=A.L.%20-%20Page%20Load%20Tracking%20With%20Plugin&v136=n%2Fa%3An%2Fa%3An%2Fa&v137=0&s=1920x1080&c=32&j=1.6&v=N&k=Y&bw=1904&bh=985&mcorgid=F6281253512D2BB50A490D45%40AdobeOrg&AQE=1",
+      "method": "GET",
+      "headers": {
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://trk.clinch.co/trk?cid=wlg04UI&dsid=wgf61IJ&type=pageView&product=ecommerce&referrer=https%3A%2F%2Fwww.sephora.com%2Fshop%2Fmoisturizing-cream-oils-mists&version=26.5.1&a=1772014163758",
+      "method": "GET",
+      "headers": {
+        "Referer": "https://www.sephora.com/",
+        "Upgrade-Insecure-Requests": "1",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://smetrics.sephora.com/b/ss/sephoracom/1/JS-2.25.0-LGPQ/s51701601193252?AQB=1&ndh=1&pf=1&t=25%2F1%2F2026%2017%3A9%3A23%203%20-420&mid=60869406298578946330913881528638089829&aamlh=3&ce=UTF-8&pageName=toplevel%3Amoisturizers%3Askincare%3A%2A&g=https%3A%2F%2Fwww.sephora.com%2Fshop%2Fmoisturizing-cream-oils-mists&c.&getPercentPageViewed=5.1&.c&ch=full%20site&pageType=toplevel&events=event233%2Cevent23%3D659%2Cevent19%3D0%2Cevent20%3D0%2Cevent295%3D1&aamb=6G1ynYcLPuiQxYZrsz_pkqfLG9yMXBpb2zX5dvJdYQJzPXImdj0y&v1=D%3Dc4&c5=659&c6=toplevel%3Amoisturizers%3Askincare%3A%2A&v6=D%3DpageName&c7=toplevel&c8=non-bi&c13=content%3Aus&v17=D%3Dc27&v18=D%3Dc9&c19=VisitorAPI%20Present&v19=desktop%20web&c20=rcps_beauty_chat%3Dtrue%2Crcps_frictionless_checkout%3Dtrue&v21=web&c25=2026%7C02%7C25&c27=unrecognized&c34=advertising%20cookies%3Aon&v39=wednesday&c46=D%3Dv62&c47=hard%3Aregular%20page%20load&v50=D%3Dc6&c52=n%2Fa&c53=play%20status%3An%2Fa%2Ccredit%20card%20status%3Aother%2Csame-day%20unlimited%3Aunsubscribed&v55=D%3Dc8&v58=D%3DUser-Agent&c61=sdu%3Atrial%20eligible&c62=14&v62=us-en&v63=D%3Dg&c70=US&v70=toplevel%3Amoisturizers%3Askincare%3A%2A&v93=toplevel&v94=moisturizers&v95=Skincare&v97=D%3DpageName&v103=C&v117=responsive%20web%20design&v118=0.9627810733821565_1772014154824&v119=PoC%20-%20Adobe%20Analytics%20Async%20Page%20Load%20Tracking&v136=n%2Fa%3An%2Fa%3An%2Fa&v137=0&s=1920x1080&c=32&j=1.6&v=N&k=Y&bw=1904&bh=985&mcorgid=F6281253512D2BB50A490D45%40AdobeOrg&AQE=1",
+      "method": "GET",
+      "headers": {
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://cloud3.zineone.com/c3/api/v1/connectwebsocket/c9af3e8e-62c8-4201-e7c9-362d5247dc2d",
+      "method": "OPTIONS",
+      "headers": {
+        "Accept": "*/*",
+        "Access-Control-Request-Headers": "apikey",
+        "Access-Control-Request-Method": "GET",
+        "Origin": "https://www.sephora.com",
+        "Sec-Fetch-Mode": "cors",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "url": "https://trk.clinch.co/trk?cid=wlg04UI&dsid=wgf61IJ&type=category&ids=2895787,2898419,2785434,2767168,2663763,2210581,2896017,2896215,2900124,2734002,2935625,2844942,2919348,2473361,2921393,2896207,2896066,2735843,2921385,2348431,2215945,2527844,2739837,2073195,2931814,2785400,2767127,2828424,2714863,1863604,2844975,2740520,2925501,2925287,2743144,2881951,2895886,2925295,2895977,2844967,2830883,2535128,2844926,2693430,2031458,2576411,2675510,2025633,2871184,2031425,2703726,2421725,2895902,2967370,2527836,2932069,2935690,2935583,2895928,2742203&category=moisturizers&params=%7B%22eventId%22%3A%22viewcategory-z0t4j7c9o217720141605139406%22%2C%22content_type%22%3A%22product%22%2C%22content_ids%22%3A%5B%222895787%22%2C%222898419%22%2C%222785434%22%2C%222767168%22%2C%222663763%22%2C%222210581%22%2C%222896017%22%2C%222896215%22%2C%222900124%22%2C%222734002%22%2C%222935625%22%2C%222844942%22%2C%222919348%22%2C%222473361%22%2C%222921393%22%2C%222896207%22%2C%222896066%22%2C%222735843%22%2C%222921385%22%2C%222348431%22%2C%222215945%22%2C%222527844%22%2C%222739837%22%2C%222073195%22%2C%222931814%22%2C%222785400%22%2C%222767127%22%2C%222828424%22%2C%222714863%22%2C%221863604%22%2C%222844975%22%2C%222740520%22%2C%222925501%22%2C%222925287%22%2C%222743144%22%2C%222881951%22%2C%222895886%22%2C%222925295%22%2C%222895977%22%2C%222844967%22%2C%222830883%22%2C%222535128%22%2C%222844926%22%2C%222693430%22%2C%222031458%22%2C%222576411%22%2C%222675510%22%2C%222025633%22%2C%222871184%22%2C%222031425%22%2C%222703726%22%2C%222421725%22%2C%222895902%22%2C%222967370%22%2C%222527836%22%2C%222932069%22%2C%222935690%22%2C%222935583%22%2C%222895928%22%2C%222742203%22%5D%2C%22content_category%22%3A%22moisturizers%22%7D&product=ecommerce&referrer=https%3A%2F%2Fwww.sephora.com%2Fshop%2Fmoisturizing-cream-oils-mists&version=26.5.1&a=1772014164699",
+      "method": "GET",
+      "headers": {
+        "Referer": "https://www.sephora.com/",
+        "Upgrade-Insecure-Requests": "1",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://www.facebook.com/tr/?id=354147298086799&ev=PageView&dl=https%3A%2F%2Fwww.sephora.com%2Fshop%2Fmoisturizing-cream-oils-mists&rl=&if=false&ts=1772014164848&cd[origin]=Adobe%20Launch%20-%20Facebook_PageView&sw=1920&sh=1080&v=2.9.271&r=stable&ec=0&o=4126&fbp=fb.1.1772014164834.258523237596416236&ler=empty&cdl=API_unavailable&pmd[title]=Face%20Moisturizers%20%7C%20Sephora&pmd[locale]=en&pmd[description]=Upgrade%20your%20skincare%20routine%20with%20moisturizing%20products%20that%20complement%20your%20skin%20type.%20Check%20out%20hydrating%20creams%2C%20oils%2C%20and%20serums%20formulated%20specifically%20for%20your%20face%20and%20neck%20at%20Sephora.&plt=4926.699999988079&it=1772014160713&coo=false&dpo=LDU&dpoco=0&dpost=0&eid=pagevisit-z0t4j7c9o217720141605139406&tm=1&expv2[0]=pl0&expv2[1]=el3&expv2[2]=bc1&expv2[3]=ra2&expv2[4]=rp2&expv2[5]=ct2&expv2[6]=hf0&rqm=GET",
+      "method": "GET",
+      "headers": {
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://www.facebook.com/privacy_sandbox/pixel/register/trigger/?id=354147298086799&ev=PageView&dl=https%3A%2F%2Fwww.sephora.com%2Fshop%2Fmoisturizing-cream-oils-mists&rl=&if=false&ts=1772014164848&cd[origin]=Adobe%20Launch%20-%20Facebook_PageView&sw=1920&sh=1080&v=2.9.271&r=stable&ec=0&o=4126&fbp=fb.1.1772014164834.258523237596416236&ler=empty&cdl=API_unavailable&pmd[title]=Face%20Moisturizers%20%7C%20Sephora&pmd[locale]=en&pmd[description]=Upgrade%20your%20skincare%20routine%20with%20moisturizing%20products%20that%20complement%20your%20skin%20type.%20Check%20out%20hydrating%20creams%2C%20oils%2C%20and%20serums%20formulated%20specifically%20for%20your%20face%20and%20neck%20at%20Sephora.&plt=4926.699999988079&it=1772014160713&coo=false&dpo=LDU&dpoco=0&dpost=0&eid=pagevisit-z0t4j7c9o217720141605139406&tm=1&expv2[0]=pl0&expv2[1]=el3&expv2[2]=bc1&expv2[3]=ra2&expv2[4]=rp2&expv2[5]=ct2&expv2[6]=hf0&rqm=FGET",
+      "method": "GET",
+      "headers": {
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://www.facebook.com/tr/?id=354147298086799&ev=ViewCategory&dl=https%3A%2F%2Fwww.sephora.com%2Fshop%2Fmoisturizing-cream-oils-mists&rl=&if=false&ts=1772014165065&cd[content_type]=product&cd[customer_type]=not%20logged%20in&cd[category_name]=Skincare&cd[content_ids]=%5B%222895787%22%2C%222898419%22%2C%222785434%22%2C%222767168%22%2C%222663763%22%2C%222210581%22%2C%222896017%22%2C%222896215%22%2C%222900124%22%2C%222734002%22%2C%222935625%22%2C%222844942%22%2C%222919348%22%2C%222473361%22%2C%222921393%22%2C%222896207%22%2C%222896066%22%2C%222735843%22%2C%222921385%22%2C%222348431%22%5D&cd[origin]=Adobe%20Launch%20-%20Facebook_ViewCategory&sw=1920&sh=1080&v=2.9.271&r=stable&ec=1&o=4126&fbp=fb.1.1772014164834.258523237596416236&ler=empty&cdl=API_unavailable&pmd[locale]=en&pmd[description]=Upgrade%20your%20skincare%20routine%20with%20moisturizing%20products%20that%20complement%20your%20skin%20type.%20Check%20out%20hydrating%20creams%2C%20oils%2C%20and%20serums%20formulated%20specifically%20for%20your%20face%20and%20neck%20at%20Sephora.&plt=4926.699999988079&it=1772014160713&coo=false&dpo=LDU&dpoco=0&dpost=0&eid=viewcategory-z0t4j7c9o217720141605139406&expv2[0]=pl0&expv2[1]=el2&expv2[2]=bc1&expv2[3]=ra2&expv2[4]=rp2&expv2[5]=ct2&expv2[6]=hf0&rqm=GET",
+      "method": "GET",
+      "headers": {
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://www.facebook.com/privacy_sandbox/pixel/register/trigger/?id=354147298086799&ev=ViewCategory&dl=https%3A%2F%2Fwww.sephora.com%2Fshop%2Fmoisturizing-cream-oils-mists&rl=&if=false&ts=1772014165065&cd[content_type]=product&cd[customer_type]=not%20logged%20in&cd[category_name]=Skincare&cd[content_ids]=%5B%222895787%22%2C%222898419%22%2C%222785434%22%2C%222767168%22%2C%222663763%22%2C%222210581%22%2C%222896017%22%2C%222896215%22%2C%222900124%22%2C%222734002%22%2C%222935625%22%2C%222844942%22%2C%222919348%22%2C%222473361%22%2C%222921393%22%2C%222896207%22%2C%222896066%22%2C%222735843%22%2C%222921385%22%2C%222348431%22%5D&cd[origin]=Adobe%20Launch%20-%20Facebook_ViewCategory&sw=1920&sh=1080&v=2.9.271&r=stable&ec=1&o=4126&fbp=fb.1.1772014164834.258523237596416236&ler=empty&cdl=API_unavailable&pmd[locale]=en&pmd[description]=Upgrade%20your%20skincare%20routine%20with%20moisturizing%20products%20that%20complement%20your%20skin%20type.%20Check%20out%20hydrating%20creams%2C%20oils%2C%20and%20serums%20formulated%20specifically%20for%20your%20face%20and%20neck%20at%20Sephora.&plt=4926.699999988079&it=1772014160713&coo=false&dpo=LDU&dpoco=0&dpost=0&eid=viewcategory-z0t4j7c9o217720141605139406&expv2[0]=pl0&expv2[1]=el2&expv2[2]=bc1&expv2[3]=ra2&expv2[4]=rp2&expv2[5]=ct2&expv2[6]=hf0&rqm=FGET",
+      "method": "GET",
+      "headers": {
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://api-developer.sephora.com/v1/sot/evtTopic?apikey=nQc7BFt78yJBvfYDKtle9APd5RrX984i",
+      "method": "OPTIONS",
+      "headers": {
+        "Accept": "*/*",
+        "Access-Control-Request-Headers": "content-type",
+        "Access-Control-Request-Method": "POST",
+        "Origin": "https://www.sephora.com",
+        "Sec-Fetch-Mode": "cors",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "url": "https://api-developer.sephora.com/v1/sot/evt?apikey=nQc7BFt78yJBvfYDKtle9APd5RrX984i",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://smetrics.sephora.com/b/ss/sephoracom/1/JS-2.25.0-LGPQ/s53187925946825?AQB=1&ndh=1&pf=1&t=25%2F1%2F2026%2017%3A9%3A25%203%20-420&mid=60869406298578946330913881528638089829&aamlh=3&ce=UTF-8&pageName=toplevel%3Amoisturizers%3Askincare%3A%2A&g=https%3A%2F%2Fwww.sephora.com%2Fshop%2Fmoisturizing-cream-oils-mists&c33=9b7ec79c-6f27-4421-8eee-ed6bdebd60e5&pe=lnk_o&pev2=SessionAI_Initialization&s=1920x1080&c=32&j=1.6&v=N&k=Y&bw=1904&bh=985&mcorgid=F6281253512D2BB50A490D45%40AdobeOrg&lrt=135&AQE=1",
+      "method": "GET",
+      "headers": {
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://smetrics.sephora.com/b/ss/sephoracom/1/JS-2.25.0-LGPQ/s51582152442313?AQB=1&ndh=1&pf=1&t=25%2F1%2F2026%2017%3A9%3A26%203%20-420&mid=60869406298578946330913881528638089829&aamlh=3&ce=UTF-8&pageName=toplevel%3Amoisturizers%3Askincare%3A%2A&g=https%3A%2F%2Fwww.sephora.com%2Fshop%2Fmoisturizing-cream-oils-mists&cc=USD&events=event71&c6=toplevel%3Amoisturizers%3Askincare%3A%2A&c19=VisitorAPI%20Present&v19=desktop%20web&v21=web&c34=advertising%20cookies%3Aon&c46=D%3Dv62&c55=welcomemat%3Aimpression%3ATH&v62=us-en&v63=D%3Dg&v70=toplevel%3Amoisturizers%3Askincare%3A%2A&v93=toplevel&v94=moisturizers&v95=skincare&v97=toplevel%3Amoisturizers%3Askincare%3A%2A&v119=Adobe%20Analytics%20Link%20Page%20Tracking%20from%20AL&pe=lnk_o&pev2=welcomemat%3Aimpression%3ATH&s=1920x1080&c=32&j=1.6&v=N&k=Y&bw=1904&bh=985&mcorgid=F6281253512D2BB50A490D45%40AdobeOrg&lrt=58&AQE=1",
+      "method": "GET",
+      "headers": {
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    },
+    {
+      "url": "https://sephora.cnstrc.com/v2/behavioral_action/browse_result_load?c=ciojs-2.1364.0&i=fe367eb5-e36c-4bf8-a96a-9285db9aa51c&s=1&key=u7PNVQx-prod-en-us&canonical_url=https%3A%2F%2Fwww.sephora.com%2Fshop%2Fmoisturizing-cream-oils-mists&ef-voicesearch=constructor&origin_referrer=www.sephora.com%2Fshop%2Fmoisturizing-cream-oils-mists&_dt=1772014167565",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "text/plain",
+        "Referer": "https://www.sephora.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\""
+      }
+    }
+  ]
+}
