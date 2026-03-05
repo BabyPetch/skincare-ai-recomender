@@ -64,19 +64,63 @@ INCI_CATEGORIES = {
 }
 
 ACTIVE_RULES = {
-    "retinol":["retinol"], "retinal":["retinal"],
-    "aha":["glycolic acid","lactic acid","mandelic acid"],
-    "bha":["salicylic acid"], "pha":["gluconolactone"],
-    "vitamin_c":["ascorb","ascorbyl"], "niacinamide":["niacinamide"],
-    "peptide":["peptide"], "ceramide":["ceramide"],
-    "zinc_oxide":["zinc oxide"], "titanium_dioxide":["titanium dioxide"],
+    "retinol":          ["retinol"],
+    "retinal":          ["retinal"],
+    "aha":              ["glycolic acid","lactic acid","mandelic acid"],
+    "bha":              ["salicylic acid"],
+    "pha":              ["gluconolactone"],
+    "vitamin_c":        ["ascorb","ascorbyl"],
+    "niacinamide":      ["niacinamide"],
+    "peptide":          ["peptide"],
+    "ceramide":         ["ceramide"],
+    "zinc_oxide":       ["zinc oxide"],
+    "titanium_dioxide": ["titanium dioxide"],
 }
+
 FUNCTION_RULES = {
-    "brightening":["ascorb","niacinamide","arbutin"],
-    "anti_aging":["retinol","retinal","peptide"],
-    "acne_control":["salicylic acid"], "calming":["centella","allantoin"],
-    "barrier_repair":["ceramide"], "hydrating":["hyaluronic","glycerin"],
-    "exfoliating":["glycolic","salicylic","lactic"],
+    "brightening":   ["ascorb","niacinamide","arbutin"],
+    "anti_aging":    ["retinol","retinal","peptide"],
+    "acne_control":  ["salicylic acid"],
+    "calming":       ["centella","allantoin"],
+    "barrier_repair":["ceramide"],
+    "hydrating":     ["hyaluronic","glycerin"],
+    "exfoliating":   ["glycolic","salicylic","lactic"],
+}
+
+# ================================================================
+# +++ SKINTYPE RULES (เพิ่มใหม่) +++
+# ================================================================
+
+SKINTYPE_RULES = {
+    "oily": [
+        "salicylic acid", "niacinamide", "zinc oxide", "kaolin", "bentonite",
+        "clay", "witch hazel", "tea tree", "sulfur", "zinc pca",
+    ],
+    "dry": [
+        "ceramide", "shea butter", "squalane", "hyaluronic acid",
+        "sodium hyaluronate", "glycerin", "glycerine", "petrolatum",
+        "lanolin", "urea", "cholesterol", "fatty acid",
+    ],
+    "sensitive": [
+        "centella asiatica", "madecassoside", "madecassic acid",
+        "asiaticoside", "allantoin", "bisabolol", "aloe barbadensis",
+        "aloe vera", "panthenol", "oat", "avena sativa",
+        "chamomile", "licorice root", "dipotassium glycyrrhizate",
+    ],
+    "combination": [
+        "glycolic acid", "lactic acid", "mandelic acid",
+        "azelaic acid", "retinol", "retinal",
+    ],
+}
+
+FUNCTION_TAG_HINTS = {
+    "acne_control":   "oily",
+    "exfoliating":    "combination",
+    "barrier_repair": "dry",
+    "calming":        "sensitive",
+    "hydrating":      "dry",
+    "brightening":    "combination",
+    "anti_aging":     "combination",
 }
 
 # ================================================================
@@ -88,6 +132,28 @@ def clean(t): return " ".join(str(t).split()).strip()
 def detect_tags(text, rules):
     t = text.lower()
     return sorted(tag for tag, kws in rules.items() if any(k in t for k in kws))
+
+# +++ เพิ่มใหม่ +++
+def detect_skintype(ingredients: str, function_tags: str) -> str:
+    ingr_lower = str(ingredients).lower()
+    tags_lower = str(function_tags).lower()
+
+    scores = {st: 0 for st in SKINTYPE_RULES}
+    for skintype, keywords in SKINTYPE_RULES.items():
+        for kw in keywords:
+            if kw in ingr_lower:
+                scores[skintype] += 1
+
+    max_score = max(scores.values())
+    if max_score > 0:
+        winners = [st for st, sc in scores.items() if sc == max_score]
+        return ",".join(winners)
+
+    for tag, skintype in FUNCTION_TAG_HINTS.items():
+        if tag in tags_lower:
+            return skintype
+
+    return "all"
 
 def detect_subtype(name, ingr, cat):
     t = (name + " " + ingr).lower()
@@ -289,6 +355,10 @@ def scrape_product(driver, url, category):
             ingr_raw   = clean(", ".join(ingr_list))
             img_local  = download_image(img_url)
 
+            # +++ เพิ่มใหม่: คำนวณ skintype ตั้งแต่ scrape +++
+            function_tags = ",".join(detect_tags(ingr_raw, FUNCTION_RULES))
+            skintype      = detect_skintype(ingr_raw, function_tags)
+
             return {
                 "product_url":      url,
                 "name":             name,
@@ -299,7 +369,8 @@ def scrape_product(driver, url, category):
                 "rating":           rating,
                 "rating_count":     rating_cnt,
                 "active_tags":      ",".join(detect_tags(ingr_raw, ACTIVE_RULES)),
-                "function_tags":    ",".join(detect_tags(ingr_raw, FUNCTION_RULES)),
+                "function_tags":    function_tags,
+                "skintype":         skintype,       # +++ เพิ่มใหม่ +++
                 "ingredients_raw":  ingr_raw,
                 "ingredients_list": ",".join(ingr_list),
                 "image_url":        img_url,
@@ -341,10 +412,12 @@ def _d(ws,r,c,v,bg=WHITE,bold=False,wrap=False,align="left",color="1A1A1A"):
     cell.alignment=Alignment(horizontal=align,vertical="center",wrap_text=wrap)
     cell.border=_b()
 
+# +++ เพิ่ม Skintype column ในตาราง +++
 COLUMNS=[
     ("Image",16,"_image"), ("#",5,"_num"), ("Brand",18,"brand"),
     ("Product Name",40,"name"), ("Category",14,"major_category"),
-    ("Subtype",22,"subtype"), ("Price",10,"price"), ("Rating",10,"rating"),
+    ("Subtype",22,"subtype"), ("Skin Type",18,"skintype"),
+    ("Price",10,"price"), ("Rating",10,"rating"),
     ("Reviews",10,"rating_count"), ("Active Tags",30,"active_tags"),
     ("Functions",28,"function_tags"), ("URL",42,"product_url"),
     ("Image URL",42,"image_url"), ("Ingredients",90,"ingredients_raw"),
@@ -393,6 +466,8 @@ def build_excel(products, filepath):
                 _d(ws,er,ci,ri,bg=bg,align="center",bold=True)
             elif key=="major_category":
                 _d(ws,er,ci,str(p.get(key,"")).upper(),bg=bg,align="center",bold=True,color=TEAL)
+            elif key=="skintype":
+                _d(ws,er,ci,p.get(key,"all"),bg=bg,align="center",bold=True,color="1B3A5C")
             elif key in("product_url","image_url"):
                 val=p.get(key,"")
                 cell=ws.cell(row=er,column=ci,value=val)
@@ -433,7 +508,30 @@ def build_excel(products, filepath):
     tr=max(len(cats),len(tags))+3
     _h(ws2,tr,1,"TOTAL",bg=NAVY); _h(ws2,tr,2,len(products),bg=NAVY)
 
-    # Sheet 3: Ingredient Index
+    # +++ Sheet 3: Skintype Summary (เพิ่มใหม่) +++
+    ws_skin=wb.create_sheet("Skintype Summary"); ws_skin.sheet_view.showGridLines=False
+    ws_skin.merge_cells("A1:B1"); t_skin=ws_skin["A1"]
+    t_skin.value="Skintype Distribution"
+    t_skin.font=Font(name="Arial",bold=True,size=13,color=WHITE)
+    t_skin.fill=PatternFill("solid",fgColor=NAVY)
+    t_skin.alignment=Alignment(horizontal="center",vertical="center")
+    ws_skin.row_dimensions[1].height=30
+    for ci,lbl in enumerate(["Skin Type","Count"],1):
+        _h(ws_skin,2,ci,lbl,bg=TEAL)
+        ws_skin.column_dimensions[get_column_letter(ci)].width=22
+    skin_c=Counter(
+        s.strip()
+        for p in products
+        for s in p.get("skintype","all").split(",")
+        if s.strip()
+    )
+    for i,(skin,cnt) in enumerate(sorted(skin_c.items(),key=lambda x:-x[1])):
+        r=i+3; bg=LIGHT if i%2==0 else WHITE
+        _d(ws_skin,r,1,skin,bg=bg,bold=True)
+        _d(ws_skin,r,2,cnt,bg=bg,align="center",bold=True)
+        ws_skin.row_dimensions[r].height=20
+
+    # Sheet 4: Ingredient Index
     ws3=wb.create_sheet("Ingredient Index"); ws3.sheet_view.showGridLines=False
     ws3.merge_cells("A1:C1"); t3=ws3["A1"]
     t3.value="Ingredient Frequency Index  (Top 200)"
@@ -505,7 +603,7 @@ def run():
                 if p:
                     products.append(p)
                     icon="🖼️ " if p.get("image_local") else "📷 "
-                    print(f"{icon}{p['brand']} — {p['name'][:45]}")
+                    print(f"{icon}{p['brand']} — {p['name'][:45]}  [{p['skintype']}]")
                 else:
                     print(f"❌ FAILED")
 

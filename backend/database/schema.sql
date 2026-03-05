@@ -1,3 +1,7 @@
+-- ================================================================
+-- schema.sql
+-- ================================================================
+
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -19,13 +23,20 @@ CREATE TABLE IF NOT EXISTS history (
 
 CREATE TABLE IF NOT EXISTS products (
     id SERIAL PRIMARY KEY,
+    product_url VARCHAR(500),
     name VARCHAR(255) NOT NULL,
     brand VARCHAR(100),
-    category VARCHAR(100),
-    skin_type VARCHAR(100),
-    ingredients TEXT,
-    description TEXT,
+    major_category VARCHAR(100),
+    subtype VARCHAR(100),
     price DECIMAL(10,2),
-    image_url VARCHAR(255),
+    rating DECIMAL(3,2),
+    rating_count INTEGER,
+    active_tags TEXT,
+    function_tags TEXT,
+    ingredients_raw TEXT,
+    ingredients_list TEXT,
+    image_url VARCHAR(500),
+    image_local VARCHAR(500),
+    skintype VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

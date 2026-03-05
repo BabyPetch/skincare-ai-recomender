@@ -10,72 +10,79 @@ import {
   Legend,
 } from 'chart.js';
 
-// ✅ Import CSS
-// import '../SkinAdvisorCss/StepResults.css';
-
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
 
-const StepResults = (props) => {
-  // 🛡️ ชั้นที่ 1: ดึงค่า results ออกมา, ถ้าไม่มีให้เป็น null
-  const { results, onRestart } = props;
+// แปลง function_tags string → radar chart data
+const getChartData = (functionTags) => {
+  const tags = typeof functionTags === 'string' 
+    ? functionTags.split(',').map(t => t.trim()) 
+    : [];
 
-  // 🛡️ ชั้นที่ 2: สร้างตัวแปรใหม่ 'finalResults'
-  // ถ้า results เป็น null หรือ undefined -> ให้ใช้ [] (อาเรย์ว่าง)
-  // ถ้า results ไม่ใช่อาเรย์ (Backend ส่งมาผิด) -> ให้ใช้ [] (อาเรย์ว่าง)
-  // ถ้าทุกอย่างถูกต้อง -> ใช้ค่า results เดิม
+  const CHART_KEYS = [
+    { label: 'ลดสิว',      tag: 'acne_control'   },
+    { label: 'กระจ่างใส',  tag: 'brightening'    },
+    { label: 'ชุ่มชื้น',   tag: 'hydrating'      },
+    { label: 'ลดริ้วรอย',  tag: 'anti_aging'     },
+    { label: 'อ่อนโยน',    tag: 'calming'        },
+  ];
+
+  return {
+    labels: CHART_KEYS.map(k => k.label),
+    datasets: [{
+      label: 'คะแนน',
+      data: CHART_KEYS.map(k => tags.includes(k.tag) ? 8 : 3),
+      backgroundColor: 'rgba(99, 102, 241, 0.2)',
+      borderColor: '#6366F1',
+      borderWidth: 2,
+      pointBackgroundColor: '#fff',
+      pointBorderColor: '#6366F1',
+      pointRadius: 3,
+    }],
+  };
+};
+
+const chartOptions = {
+  scales: {
+    r: {
+      min: 0, max: 10,
+      ticks: { display: false },
+      pointLabels: { font: { size: 12, family: "'Prompt', sans-serif" }, color: '#64748B' },
+      grid: { color: '#E2E8F0' }
+    }
+  },
+  plugins: { legend: { display: false } },
+  maintainAspectRatio: false,
+};
+
+// normalize final_score → % (0.0–1.0 → 0–100, เทียบกับ max ใน list)
+const calcMatchPercent = (score, maxScore) => {
+  if (!score || !maxScore || maxScore === 0) return 0;
+  return Math.round((score / maxScore) * 100);
+};
+
+const getCategoryLabel = (category) => {
+  const map = {
+    moisturizer: '🔒 มอยส์เจอไรเซอร์',
+    serum:       '✨ เซรั่ม',
+    sunscreen:   '☀️ กันแดด',
+    toner:       '💦 โทนเนอร์',
+    cleanser:    '🧼 คลีนเซอร์',
+    mask:        '🎭 มาส์ก',
+    exfoliator:  '🌀 เอ็กซ์โฟเลียเตอร์',
+    eye_care:    '👁️ ครีมตา',
+  };
+  return map[category] || category || '✨ บำรุงผิว';
+};
+
+const StepResults = ({ results, onRestart }) => {
   const finalResults = (results && Array.isArray(results)) ? results : [];
 
-  // 🛠 Debug: ดูค่าจริงๆ ที่ console ในเว็บ
-  console.log("Original results:", results);
-  console.log("Safe finalResults:", finalResults);
-
-  // 🔍 Helper Function
-  const normalizeScore = (val) => {
-    if (val && !isNaN(val)) {
-      let num = parseFloat(val);
-      if (num > 0 && num <= 1) return num * 10;
-      if (num > 10) return num / 10;
-      return num;
-    }
-    return Math.floor(Math.random() * (9 - 5 + 1)) + 5; 
-  };
-
-  const getChartData = (product) => {
-    const dataPoints = [
-      normalizeScore(product.acne_score),
-      normalizeScore(product.brightening_score),
-      normalizeScore(product.moisturizing_score),
-      normalizeScore(product.anti_aging_score),
-      normalizeScore(product.gentle_score)
-    ];
-
-    return {
-      labels: ['ลดสิว', 'กระจ่างใส', 'ชุ่มชื้น', 'ริ้วรอย', 'อ่อนโยน'],
-      datasets: [{
-        label: 'คะแนน',
-        data: dataPoints,
-        backgroundColor: 'rgba(99, 102, 241, 0.2)',
-        borderColor: '#6366F1',
-        borderWidth: 2,
-        pointBackgroundColor: '#fff',
-        pointBorderColor: '#6366F1',
-        pointRadius: 3,
-      }],
-    };
-  };
-
-  const chartOptions = {
-    scales: {
-      r: {
-        min: 0, max: 10,
-        ticks: { display: false, stepSize: 2 },
-        pointLabels: { font: { size: 12, family: "'Prompt', sans-serif" }, color: '#64748B' },
-        grid: { color: '#E2E8F0' }
-      }
-    },
-    plugins: { legend: { display: false } },
-    maintainAspectRatio: false,
-  };
+  // หา max score เพื่อ normalize
+  const maxScore = finalResults.length > 0 
+  ? Math.max(...finalResults.map(p => parseFloat(p.final_score) || 0))
+  : 1;
+  console.log("maxScore:", maxScore);
+  console.log("scores:", finalResults.map(p => p.final_score));
 
   return (
     <div className="step-content fadeIn">
@@ -83,43 +90,50 @@ const StepResults = (props) => {
       <p className="step-subtitle">คัดมาแล้วเน้นๆ จากความต้องการของคุณ</p>
 
       <div className="results-grid">
-        {/* ✅ ใช้ finalResults แทน results เสมอ */}
-        {/* และใช้ .map ได้เลย เพราะ finalResults ถูกบังคับให้เป็น Array แล้ว 100% */}
         {finalResults.length > 0 ? (
           finalResults.map((product, index) => {
-            
-            let rawScore = product.match_percent || product.match || product.score || 0;
-            let numScore = parseFloat(rawScore);
-            if (isNaN(numScore)) numScore = 0;
-            if (numScore > 0 && numScore <= 1) numScore = numScore * 100;
-            const showPercent = Math.round(numScore);
+            const matchPercent = calcMatchPercent(
+              parseFloat(product.final_score), 
+              maxScore
+            );
 
             return (
               <div key={index} className="result-card">
                 <div className="card-header">
-                  <span className="match-badge">{showPercent}% Match</span>
-                  <p className="brand-name">{product.brand}</p>
+                  <span className="match-badge">{matchPercent}% Match</span>
+                  <p className="brand-name">{product.brand || '-'}</p>
                   <h3 className="product-name">{product.name}</h3>
                 </div>
 
+                {/* รูปสินค้า (ถ้ามี) */}
+                {product.image_url && (
+                  <div style={{ textAlign: 'center', margin: '10px 0' }}>
+                    <img 
+                      src={product.image_url} 
+                      alt={product.name}
+                      style={{ width: '80px', height: '80px', objectFit: 'contain', borderRadius: '8px' }}
+                      onError={e => e.target.style.display = 'none'}
+                    />
+                  </div>
+                )}
+
                 <div className="chart-container">
-                  <Radar data={getChartData(product)} options={chartOptions} />
+                  <Radar data={getChartData(product.function_tags)} options={chartOptions} />
                 </div>
 
                 <div className="card-footer">
-                  <div className="price-tag">฿{product.price ? parseInt(product.price).toLocaleString() : '-'}</div>
+                  <div className="price-tag">{getCategoryLabel(product.major_category)}</div>
                   <div className="tags">
-                     <span className="tag">แนะนำ ✨</span>
+                    <span className="tag">{product.skintype || 'all'}</span>
                   </div>
                 </div>
               </div>
             );
           })
         ) : (
-          // ⚠️ กรณีไม่มีข้อมูล
           <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px', color: '#64748B' }}>
-             <h3>🤔 ไม่พบข้อมูลสินค้า</h3>
-             <p>Debug Info: Results is {Array.isArray(results) ? 'Empty Array' : String(results)}</p>
+            <h3>🤔 ไม่พบสินค้าที่ตรงกัน</h3>
+            <p>ลองเลือกสภาพผิวหรือปัญหาผิวใหม่อีกครั้ง</p>
           </div>
         )}
       </div>
@@ -131,4 +145,4 @@ const StepResults = (props) => {
   );
 };
 
-export default StepResults;
+export default StepResults; 
