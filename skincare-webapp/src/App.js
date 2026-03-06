@@ -7,6 +7,8 @@ import AdminPage from './pages/AdminPage';
 import LoginPage from './pages/LoginPage';
 import UserProfile from './pages/UserProfile';
 import SkinGuide from './pages/SkinGuide';
+import SearchPage from './pages/SearchPage';
+import BookmarkPage from './pages/BookmarkPage';  
 
 // Import Navbar ที่แยกไฟล์ออกไปแล้ว
 import Navbar from './components/์Navbar/Navbar'; 
@@ -37,6 +39,7 @@ function App() {
 
   return (
     <Router>
+      
       <div style={{ fontFamily: "'Kanit', sans-serif", minHeight: '100vh', background: '#F8FAFC' }}>
         
         {/* เรียกใช้งาน Navbar โดยส่ง user และฟังก์ชัน handleLogout ไปให้ */}
@@ -56,7 +59,12 @@ function App() {
               )
             } 
           />
-
+          {/* ✅ หน้า Bookmark สำหรับ User */}
+          <Route path="/bookmarks" element={user ? <BookmarkPage user={user} /> : <Navigate to="/login" />} />
+          
+          {/* ✅ หน้า Search */}
+          <Route path="/search" element={user ? <SearchPage user={user} /> : <Navigate to="/login" />} />
+          
           {/* ✅ หน้า Guide สำหรับ User */}
           <Route 
             path="/guide" 
@@ -91,6 +99,7 @@ function App() {
         </Routes>
       </div>
     </Router>
+    
   );
 }
 

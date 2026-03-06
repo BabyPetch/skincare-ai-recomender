@@ -4,22 +4,22 @@ from flask_cors import CORS
 from config import Config
 from services.ai_engine import DataLoader
 from services.user_manager import UserManager
-
 from routes.auth_routes import auth_bp, init_auth_routes
 from routes.admin_routes import admin_bp, init_admin_routes
 from routes.ai_routes import ai_bp, init_ai_routes
 from routes.user_routes import user_bp, init_user_routes
-
 from database.db import init_database
+from routes.bookmark_routes import bookmark_bp
 
 init_database()
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
-
+    
     CORS(app)
-
+    # Register bookmark blueprint
+    app.register_blueprint(bookmark_bp)
     # Initialize services
     user_manager = UserManager()
     ai = DataLoader()

@@ -1,14 +1,15 @@
 .navbar {
   padding: 15px 30px;
-  background: #1e293b;
-  color: white;
+  background: var(--navbar-bg, #1e293b);
+  color: var(--navbar-text, white);
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s ease;
 }
 
 .navbar-left {
@@ -50,10 +51,16 @@
   color: #94a3b8;
   transition: 0.2s;
   font-weight: 500;
+  font-family: 'Kanit', sans-serif;
 }
 
 .nav-btn.active {
   background: #4f46e5;
+  color: white;
+}
+
+.nav-btn:hover {
+  background: #334155;
   color: white;
 }
 
@@ -64,14 +71,57 @@
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  margin-left: 10px;
+  margin-left: 4px;
   font-weight: bold;
+  font-family: 'Kanit', sans-serif;
+  transition: background 0.2s;
 }
+
 .logout-btn:hover {
   background: #dc2626;
 }
-.nav-btn:hover {
-  background: #334155;
-  color: white;
+
+/* ===== Dark Mode Toggle ===== */
+.theme-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
 }
 
+.theme-toggle-track {
+  display: flex;
+  align-items: center;
+  width: 52px;
+  height: 28px;
+  background: #334155;
+  border-radius: 20px;
+  padding: 3px;
+  transition: background 0.3s ease;
+  position: relative;
+}
+
+body[data-theme='dark'] .theme-toggle-track {
+  background: #312E81;
+}
+
+.theme-toggle-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  position: absolute;
+  left: 3px;
+  transition: left 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+body[data-theme='dark'] .theme-toggle-thumb {
+  left: 27px;
+}

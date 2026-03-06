@@ -78,7 +78,6 @@ TEST_CASES = [
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--csv", default="data_products/incidecoder_20260225_143616_patched.csv")
-
     parser.add_argument("--top_n", type=int, default=5)
     args = parser.parse_args()
 

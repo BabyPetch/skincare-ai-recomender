@@ -1,0 +1,104 @@
+/* ===== Light Mode (default) ===== */
+body[data-theme='light'] {
+  --bg-page:       #F8FAFC;
+  --bg-card:       #FFFFFF;
+  --bg-input:      #FFFFFF;
+  --bg-hover:      #EEF2FF;
+  --bg-subtle:     #F1F5F9;
+
+  --text-primary:  #1E293B;
+  --text-secondary:#64748B;
+  --text-muted:    #94A3B8;
+
+  --border:        #E2E8F0;
+  --border-focus:  #6366F1;
+
+  --accent:        #4F46E5;
+  --accent-light:  #EEF2FF;
+  --accent-text:   #4F46E5;
+
+  --navbar-bg:     #1E293B;
+  --navbar-text:   #FFFFFF;
+
+  --shadow-sm:     0 2px 8px rgba(0,0,0,0.06);
+  --shadow-md:     0 6px 20px rgba(99,102,241,0.1);
+}
+
+/* ===== Dark Mode ===== */
+body[data-theme='dark'] {
+  --bg-page:       #0F172A;
+  --bg-card:       #1E293B;
+  --bg-input:      #1E293B;
+  --bg-hover:      #312E81;
+  --bg-subtle:     #1E293B;
+
+  --text-primary:  #F1F5F9;
+  --text-secondary:#94A3B8;
+  --text-muted:    #64748B;
+
+  --border:        #334155;
+  --border-focus:  #818CF8;
+
+  --accent:        #818CF8;
+  --accent-light:  #1E1B4B;
+  --accent-text:   #A5B4FC;
+
+  --navbar-bg:     #0F172A;
+  --navbar-text:   #F1F5F9;
+
+  --shadow-sm:     0 2px 8px rgba(0,0,0,0.3);
+  --shadow-md:     0 6px 20px rgba(0,0,0,0.4);
+}
+
+/* ===== Global apply ===== */
+html, body, #root {
+  background: var(--bg-page);
+  color: var(--text-primary);
+  transition: background 0.3s ease, color 0.3s ease;
+  margin: 0;
+  padding: 0;
+}
+
+/* Cards */
+.profile-card,
+.history-card,
+.modal-content,
+.result-card,
+.advisor-container {
+  background: var(--bg-card) !important;
+  border-color: var(--border) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Inputs */
+input, textarea, select {
+  background: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border) !important;
+}
+
+input::placeholder { color: var(--text-muted) !important; }
+
+/* Text helpers */
+.profile-email,
+.history-date,
+.history-concerns,
+.detail-label,
+.step-subtitle,
+.modal-date {
+  color: var(--text-secondary) !important;
+}
+
+/* Borders */
+.detail-row { border-bottom-color: var(--border) !important; }
+.modal-summary { background: var(--bg-subtle) !important; border-color: var(--border) !important; }
+.modal-product-item { background: var(--bg-subtle) !important; border-color: var(--border) !important; }
+
+/* empty-history */
+.empty-history { background: var(--bg-card) !important; border-color: var(--border) !important; color: var(--text-muted) !important; }
+
+/* Page backgrounds */
+.profile-container,
+.advisor-wrapper {
+  background: var(--bg-page) !important;
+}
