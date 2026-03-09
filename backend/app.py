@@ -10,13 +10,16 @@ from routes.ai_routes import ai_bp, init_ai_routes
 from routes.user_routes import user_bp, init_user_routes
 from database.db import init_database
 from routes.bookmark_routes import bookmark_bp
+from routes.review_routes import review_bp
 
 init_database()
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
-    
+
+        
+
     CORS(app)
     # Register bookmark blueprint
     app.register_blueprint(bookmark_bp)
@@ -35,7 +38,8 @@ def create_app():
     app.register_blueprint(admin_bp)
     app.register_blueprint(ai_bp)
     app.register_blueprint(user_bp)
-
+    app.register_blueprint(review_bp)
+    
     return app
 
 

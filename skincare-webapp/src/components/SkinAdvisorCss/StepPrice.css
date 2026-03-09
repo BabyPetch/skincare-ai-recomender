@@ -1,18 +1,16 @@
-/* --- Grid Layout --- */
 .price-grid {
   display: flex;
   flex-direction: column;
   gap: 12px;
   margin-bottom: 30px;
-  max-width: 500px; /* จำกัดความกว้างไม่ให้ยาวเกินไป */
+  max-width: 500px;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* --- Card Styles --- */
 .price-card {
-  background: #FFFFFF;
-  border: 2px solid #E2E8F0;
+  background: var(--bg-card);
+  border: 2px solid var(--border);
   border-radius: 16px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -21,17 +19,18 @@
   justify-content: space-between;
   align-items: center;
   text-align: left;
+  color: var(--text-primary);
 }
 
 .price-card:hover {
-  transform: translateX(5px); /* ขยับไปทางขวานิดนึง */
-  border-color: #C7D2FE;
-  background: #F8FAFC;
+  transform: translateX(5px);
+  border-color: var(--border-focus);
+  background: var(--bg-subtle);
 }
 
 .price-card.selected {
   border-color: #6366F1;
-  background-color: #EEF2FF;
-  color: #4F46E5;
+  background-color: var(--accent-light);
+  color: var(--accent-text);
   font-weight: 600;
 }

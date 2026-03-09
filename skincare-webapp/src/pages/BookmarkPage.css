@@ -1,0 +1,240 @@
+.bookmark-page {
+  min-height: 100vh;
+  background: var(--bg-page);
+  padding: 40px 20px;
+  font-family: 'Kanit', sans-serif;
+  transition: background 0.3s ease;
+}
+
+.bookmark-inner {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Header */
+.bookmark-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.bookmark-header h1 {
+  font-size: 26px;
+  font-weight: bold;
+  color: var(--text-primary);
+  margin: 0 0 4px;
+}
+
+.bookmark-header p {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: 14px;
+}
+
+.bookmark-back-btn {
+  background: none;
+  border: 2px solid var(--border);
+  padding: 8px 16px;
+  border-radius: 10px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 14px;
+  font-family: 'Kanit', sans-serif;
+  transition: all 0.2s;
+}
+
+.bookmark-back-btn:hover {
+  border-color: var(--border-focus);
+  color: var(--accent-text);
+}
+
+/* Filter tabs */
+.bookmark-filter-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.bookmark-filter-btn {
+  padding: 7px 16px;
+  border-radius: 20px;
+  border: none;
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: 'Kanit', sans-serif;
+  transition: all 0.2s;
+}
+
+.bookmark-filter-btn:hover {
+  background: var(--accent-light);
+  color: var(--accent-text);
+}
+
+.bookmark-filter-btn.active {
+  background: linear-gradient(135deg, #4F46E5, #8B5CF6);
+  color: white;
+}
+
+/* Loading */
+.bookmark-loading {
+  text-align: center;
+  padding: 80px;
+  color: var(--text-secondary);
+}
+
+/* Empty State */
+.bookmark-empty {
+  text-align: center;
+  padding: 80px 30px;
+  background: var(--bg-card);
+  border-radius: 20px;
+  border: 2px dashed var(--border);
+}
+
+.bookmark-empty h3 {
+  color: var(--text-primary);
+  margin: 0 0 8px;
+}
+
+.bookmark-empty p {
+  color: var(--text-secondary);
+  margin: 0 0 24px;
+}
+
+.bookmark-empty-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.btn-primary-gradient {
+  padding: 10px 24px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #4F46E5, #8B5CF6);
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: 'Kanit', sans-serif;
+  font-weight: 600;
+}
+
+.btn-outline-accent {
+  padding: 10px 24px;
+  border-radius: 10px;
+  border: 2px solid var(--border-focus);
+  background: var(--bg-card);
+  color: var(--accent-text);
+  cursor: pointer;
+  font-size: 14px;
+  font-family: 'Kanit', sans-serif;
+  font-weight: 600;
+}
+
+/* Product List */
+.bookmark-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bookmark-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
+}
+
+.bookmark-card:hover {
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-md);
+}
+
+.bookmark-img-box {
+  width: 65px;
+  height: 65px;
+  border-radius: 12px;
+  flex-shrink: 0;
+  background: var(--bg-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.bookmark-img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.bookmark-product-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.bookmark-brand {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.bookmark-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bookmark-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.bookmark-tag-cat {
+  background: var(--accent-light);
+  color: var(--accent-text);
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.bookmark-tag-skin {
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.bookmark-price-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.bookmark-price {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--accent);
+}
