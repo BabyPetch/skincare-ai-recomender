@@ -1,0 +1,99 @@
+/* ===== Shared Grid Layouts ===== */
+.shared-grid {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 30px;
+}
+
+.shared-grid-3 { grid-template-columns: repeat(3, 1fr); }
+.shared-grid-4 { grid-template-columns: repeat(4, 1fr); }
+.shared-grid-5 { grid-template-columns: repeat(5, 1fr); }
+
+/* ===== Shared Card ===== */
+.shared-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 18px 12px;
+  text-align: center;
+  color: var(--text-primary);
+  font-family: 'Kanit', sans-serif;
+}
+
+.shared-card:hover {
+  border-color: var(--border-focus);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-sm);
+  background: var(--bg-hover);
+}
+
+.shared-card.selected {
+  border-color: #6366F1;
+  background: var(--accent-light);
+  color: var(--accent-text);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.shared-card-tall {
+  min-height: 140px;
+}
+
+/* ===== Card Content ===== */
+.shared-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+
+.shared-icon-lg {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.shared-label {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.shared-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+.shared-card.selected .shared-sub {
+  color: var(--accent-text);
+  opacity: 0.8;
+}
+
+.shared-tip {
+  margin-top: 10px;
+  font-size: 11px;
+  background: rgba(99, 102, 241, 0.12);
+  color: #4F46E5;
+  padding: 4px 8px;
+  border-radius: 8px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+  .shared-grid-5 { grid-template-columns: repeat(3, 1fr); }
+  .shared-grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .shared-grid-3 { grid-template-columns: repeat(1, 1fr); }
+  .shared-card-tall { min-height: auto; }
+}
+
+@media (max-width: 400px) {
+  .shared-grid-5 { grid-template-columns: repeat(2, 1fr); }
+}

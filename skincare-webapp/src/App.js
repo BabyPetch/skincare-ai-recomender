@@ -9,6 +9,7 @@ import UserProfile from './pages/UserProfile';
 import SkinGuide from './pages/SkinGuide';
 import SearchPage from './pages/SearchPage';
 import BookmarkPage from './pages/BookmarkPage';  
+import DashboardPage from './pages/DashboardPage';
 
 // Import Navbar ที่แยกไฟล์ออกไปแล้ว
 import Navbar from './components/์Navbar/Navbar'; 
@@ -59,6 +60,10 @@ function App() {
               )
             } 
           />
+          {/* ✅ หน้า DashboardPage สำหรับ User */}
+
+          <Route path="/dashboard" element={<DashboardPage user={user} />} />
+
           {/* ✅ หน้า Bookmark สำหรับ User */}
           <Route path="/bookmarks" element={user ? <BookmarkPage user={user} /> : <Navigate to="/login" />} />
           

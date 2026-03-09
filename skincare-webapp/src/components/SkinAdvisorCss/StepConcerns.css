@@ -1,16 +1,13 @@
-/* --- Grid Layout --- */
 .concerns-grid {
   display: grid;
-  /* จัดเรียงอัตโนมัติ */
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 15px;
   margin-bottom: 30px;
 }
 
-/* --- Card Styles --- */
 .concern-card {
-  background: #FFFFFF;
-  border: 2px solid #E2E8F0;
+  background: var(--bg-card);
+  border: 2px solid var(--border);
   border-radius: 16px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -20,18 +17,19 @@
   justify-content: center;
   padding: 15px;
   min-height: 120px;
+  color: var(--text-primary);
 }
 
 .concern-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
-  border-color: #C7D2FE;
+  box-shadow: var(--shadow-sm);
+  border-color: var(--border-focus);
 }
 
 .concern-card.selected {
   border-color: #6366F1;
-  background-color: #EEF2FF;
-  color: #4F46E5;
+  background-color: var(--accent-light);
+  color: var(--accent-text);
   font-weight: 600;
 }
 

@@ -30,6 +30,9 @@ const Navbar = ({ user, onLogout }) => {
             วิเคราะห์ผิว
           </button>
         )}
+              
+        <button onClick={() => navigate('/dashboard')}>📊 Dashboard</button>
+
         <button onClick={() => navigate('/search')} className={getBtnClass('/search')}>
           🔍 ค้นหาสินค้า
         </button>
