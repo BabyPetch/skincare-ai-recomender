@@ -1,0 +1,293 @@
+.compare-page {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg-page);
+  padding: 40px 20px;
+  box-sizing: border-box;
+  font-family: 'Kanit', sans-serif;
+}
+
+.compare-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ── Empty State ── */
+.compare-empty {
+  text-align: center;
+  padding: 100px 20px;
+  color: var(--text-secondary);
+}
+.compare-empty-icon { font-size: 64px; margin-bottom: 20px; }
+.compare-empty h2   { font-size: 22px; font-weight: 700; color: var(--text-primary); margin: 0 0 10px; }
+.compare-empty p    { margin: 0 0 28px; font-size: 14px; }
+
+/* ── Header ── */
+.compare-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+}
+.compare-header h1  { font-size: 24px; font-weight: 800; color: var(--text-primary); margin: 0 0 4px; }
+.compare-header p   { font-size: 13px; color: var(--text-muted); margin: 0; }
+.cmp-hint           { color: #6366F1; font-weight: 600; }
+.compare-header-actions { display: flex; gap: 10px; }
+
+.cmp-back-btn {
+  padding: 9px 18px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Kanit', sans-serif;
+  transition: filter 0.2s;
+}
+.cmp-back-btn:hover { filter: brightness(1.15); }
+
+.cmp-clear-btn {
+  padding: 9px 18px;
+  border-radius: 10px;
+  border: 1.5px solid #FCA5A5;
+  background: transparent;
+  color: #EF4444;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Kanit', sans-serif;
+  transition: all 0.2s;
+}
+.cmp-clear-btn:hover { background: #EF4444; color: white; border-color: #EF4444; }
+
+/* ── Product card row ── */
+.cmp-card-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.cmp-product-card {
+  flex: 1;
+  background: var(--bg-card);
+  border: 2px solid var(--accent-col, #6366F1);
+  border-radius: 16px;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-col, #6366F1) 10%, transparent);
+  transition: transform 0.2s;
+}
+.cmp-product-card:hover { transform: translateY(-2px); }
+
+.cmp-remove-btn {
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: none;
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  line-height: 1;
+}
+.cmp-remove-btn:hover { background: #EF4444; color: white; }
+
+.cmp-product-img {
+  width: 90px; height: 90px;
+  border-radius: 14px;
+  background: var(--bg-subtle);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.cmp-product-img img  { width: 100%; height: 100%; object-fit: contain; }
+.cmp-product-img span { font-size: 36px; opacity: 0.35; }
+
+.cmp-product-brand {
+  font-size: 10px; color: var(--text-muted);
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
+}
+.cmp-product-name {
+  font-size: 13px; font-weight: 700;
+  color: var(--text-primary); line-height: 1.4;
+}
+.cmp-product-price {
+  font-size: 20px; font-weight: 800;
+  color: var(--accent-col, var(--accent));
+}
+
+/* ── Data Table ── */
+.cmp-table {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.cmp-table-row {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+.cmp-table-row:last-child { border-bottom: none; }
+
+.cmp-table-label {
+  flex: 0 0 150px;
+  padding: 14px 18px;
+  background: var(--bg-subtle);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid var(--border);
+}
+
+.cmp-table-cell {
+  flex: 1;
+  padding: 14px 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  line-height: 1.5;
+  border-right: 1px solid var(--border);
+}
+.cmp-table-cell:last-child { border-right: none; }
+
+/* ── Chart card ── */
+.cmp-chart-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+}
+.cmp-chart-card h3 {
+  font-size: 16px; font-weight: 700;
+  color: var(--text-primary); margin: 0 0 24px;
+}
+.cmp-chart-wrap {
+  height: 380px;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* ── Compare button (ใช้ใน SearchPage) ── */
+.compare-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 11px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Kanit', sans-serif;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.compare-btn:hover   { border-color: #6366F1; color: #6366F1; background: rgba(99,102,241,0.08); }
+.compare-btn.active  { border-color: #6366F1; background: rgba(99,102,241,0.14); color: #6366F1; }
+.compare-btn:disabled { opacity: 0.38; cursor: not-allowed; }
+
+/* ── Floating compare bar (ใช้ใน SearchPage) ── */
+.compare-bar {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+  z-index: 1000;
+  font-family: 'Kanit', sans-serif;
+}
+
+.compare-bar-count {
+  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.compare-bar-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.compare-bar-thumbs {
+  display: flex;
+  gap: 6px;
+}
+
+.compare-bar-thumb {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  background: var(--bg-subtle);
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  font-size: 16px;
+  transition: border-color 0.2s;
+}
+.compare-bar-thumb:hover { border-color: #EF4444; }
+.compare-bar-thumb img   { width: 100%; height: 100%; object-fit: contain; }
+
+.compare-bar-go {
+  padding: 7px 16px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Kanit', sans-serif;
+  transition: filter 0.2s;
+  white-space: nowrap;
+}
+.compare-bar-go:hover { filter: brightness(1.12); }
+
+.compare-bar-clear {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s;
+}
+.compare-bar-clear:hover { color: #EF4444; }
+
+/* ── Responsive ── */
+@media (max-width: 700px) {
+  .cmp-card-row    { flex-wrap: wrap; }
+  .cmp-table-label { flex: 0 0 100px; font-size: 10px; padding: 10px 10px; }
+  .cmp-table-cell  { padding: 10px 10px; font-size: 12px; }
+  .cmp-chart-wrap  { height: 280px; }
+}

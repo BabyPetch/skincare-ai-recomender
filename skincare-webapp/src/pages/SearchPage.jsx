@@ -60,9 +60,10 @@ const QUICK_TAGS = [
   ]},
 ];
 
-const getCategoryLabel = (cat) => CATEGORY_OPTIONS.find(c => c.value === cat)?.label || cat || '-';
+const getCategoryLabel = (cat) =>
+  CATEGORY_OPTIONS.find(c => c.value === cat)?.label || cat || '-';
 
-const SearchPage = ({ user }) => {
+const SearchPage = ({ user, compareList, setCompareList }) => {
   const [query, setQuery]           = useState('');
   const [results, setResults]       = useState([]);
   const [filtered, setFiltered]     = useState([]);
@@ -73,6 +74,18 @@ const SearchPage = ({ user }) => {
   const [skintypeFilter, setSkintypeFilter] = useState('all');
   const [priceFilter,    setPriceFilter]    = useState('all');
   const navigate = useNavigate();
+
+  const compare = compareList || [];
+
+  const toggleCompare = (product) => {
+    const isIn = compare.some(p => p.name === product.name);
+    if (isIn) {
+      setCompareList(compare.filter(p => p.name !== product.name));
+    } else {
+      if (compare.length >= 4) return;
+      setCompareList([...compare, product]);
+    }
+  };
 
   const applyFilters = useCallback((data, cat, skin, price) => {
     const priceOpt = PRICE_OPTIONS.find(p => p.value === price) || PRICE_OPTIONS[0];
@@ -111,7 +124,8 @@ const SearchPage = ({ user }) => {
     setCatFilter('all'); setSkintypeFilter('all'); setPriceFilter('all');
   };
 
-  const activeFilterCount = [catFilter, skintypeFilter, priceFilter].filter(v => v !== 'all').length;
+  const activeFilterCount =
+    [catFilter, skintypeFilter, priceFilter].filter(v => v !== 'all').length;
 
   return (
     <div className="search-page">
@@ -129,10 +143,13 @@ const SearchPage = ({ user }) => {
             placeholder="เช่น CeraVe, serum, niacinamide..."
             autoFocus
           />
-          <button className="search-btn" onClick={() => handleSearch()} disabled={loading || !query.trim()}>
+          <button className="search-btn"
+            onClick={() => handleSearch()}
+            disabled={loading || !query.trim()}>
             {loading ? '⏳' : 'ค้นหา'}
           </button>
-          <button className={`filter-toggle-btn ${activeFilterCount > 0 ? 'active' : ''}`}
+          <button
+            className={`filter-toggle-btn ${activeFilterCount > 0 ? 'active' : ''}`}
             onClick={() => setShowFilter(v => !v)}>
             🏷️ {activeFilterCount > 0 ? `Filter (${activeFilterCount})` : 'Filter'}
           </button>
@@ -208,8 +225,12 @@ const SearchPage = ({ user }) => {
           <div className="search-empty">
             <div style={{ fontSize: '40px', marginBottom: '8px' }}>🤔</div>
             <h3>{results.length > 0 ? 'ไม่มีสินค้าที่ตรง filter' : 'ไม่พบสินค้าที่ตรงกัน'}</h3>
-            <p>{results.length > 0 ? `มีสินค้า ${results.length} รายการ แต่ไม่ผ่าน filter` : 'ลองพิมพ์คำค้นหาอื่น'}</p>
-            <button className="back-btn" style={{ marginTop: '12px' }} onClick={handleClear}>ล้างทั้งหมด</button>
+            <p>{results.length > 0
+              ? `มีสินค้า ${results.length} รายการ แต่ไม่ผ่าน filter`
+              : 'ลองพิมพ์คำค้นหาอื่น'}</p>
+            <button className="back-btn" style={{ marginTop: '12px' }} onClick={handleClear}>
+              ล้างทั้งหมด
+            </button>
           </div>
         )}
 
@@ -225,38 +246,90 @@ const SearchPage = ({ user }) => {
             </div>
 
             <div className="search-product-list">
-              {filtered.map((product, index) => (
-                <div key={index} className="search-product-card">
-                  <div className="product-img-box">
-                    {product.image_url
-                      ? <img src={product.image_url} alt={product.name} onError={e => e.target.style.display = 'none'} />
-                      : <span style={{ fontSize: '24px' }}>🧴</span>}
-                  </div>
-                  <div className="product-info">
-                    <div className="product-brand-label">{product.brand}</div>
-                    <div className="product-name-label">{product.name}</div>
-                    <div className="product-tags">
-                      <span className="product-tag-cat">{getCategoryLabel(product.major_category)}</span>
-                      <span className="product-tag-skin">{product.skintype || 'all skin'}</span>
+              {filtered.map((product, index) => {
+                const inCompare = compare.some(p => p.name === product.name);
+                return (
+                  <div key={index} className="search-product-card">
+                    <div className="product-img-box">
+                      {product.image_url
+                        ? <img src={product.image_url} alt={product.name}
+                            onError={e => e.target.style.display = 'none'} />
+                        : <span style={{ fontSize: '24px' }}>🧴</span>}
                     </div>
+                    <div className="product-info">
+                      <div className="product-brand-label">{product.brand}</div>
+                      <div className="product-name-label">{product.name}</div>
+                      <div className="product-tags">
+                        <span className="product-tag-cat">
+                          {getCategoryLabel(product.major_category)}
+                        </span>
+                        <span className="product-tag-skin">
+                          {product.skintype || 'all skin'}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="product-price-col">
+                      <div className="product-price">
+                        ฿{product.price ? parseInt(product.price).toLocaleString() : '-'}
+                      </div>
+                      <BookmarkButton product={product} email={user?.email || null} />
+                      <ReviewButton   product={product} email={user?.email || null}
+                        userName={user?.name} />
+                      {/* ── ปุ่มเปรียบเทียบ ── */}
+                      <button
+                        className={`compare-btn ${inCompare ? 'active' : ''}`}
+                        onClick={() => toggleCompare(product)}
+                        disabled={!inCompare && compare.length >= 4}
+                        title={inCompare
+                          ? 'ยกเลิกเปรียบเทียบ'
+                          : compare.length >= 4
+                            ? 'เต็มแล้ว (สูงสุด 4 รายการ)'
+                            : 'เพิ่มเพื่อเปรียบเทียบ'}>
+                        {inCompare ? '✓ เปรียบเทียบ' : '⚖️ เปรียบเทียบ'}
+                      </button>
+                    </div>
+                    <ProductReviews productName={product.name} />
                   </div>
-                  <div className="product-price-col">
-                    <div className="product-price">฿{product.price ? parseInt(product.price).toLocaleString() : '-'}</div>
-                    <BookmarkButton product={product} email={user?.email || null} />
-                    <ReviewButton   product={product} email={user?.email || null} userName={user?.name} />
-                  </div>
-                  <ProductReviews productName={product.name} />
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
 
         <div className="search-back-row">
-          <button className="back-btn" onClick={() => navigate('/advisor')}>← กลับหน้าวิเคราะห์ผิว</button>
+          <button className="back-btn" onClick={() => navigate('/advisor')}>
+            ← กลับหน้าวิเคราะห์ผิว
+          </button>
         </div>
 
       </div>
+
+      {/* ── Floating compare bar ── */}
+      {compare.length > 0 && (
+        <div className="compare-bar">
+          <span className="compare-bar-count">{compare.length}/4</span>
+          <span className="compare-bar-text">สินค้าที่เลือก</span>
+          <div className="compare-bar-thumbs">
+            {compare.map((p, i) => (
+              <div key={i} className="compare-bar-thumb"
+                title={p.name}
+                onClick={() => toggleCompare(p)}>
+                {p.image_url
+                  ? <img src={p.image_url} alt={p.name}
+                      onError={e => e.target.style.display='none'} />
+                  : '🧴'}
+              </div>
+            ))}
+          </div>
+          <button className="compare-bar-go" onClick={() => navigate('/compare')}>
+            ⚖️ เปรียบเทียบเลย
+          </button>
+          <button className="compare-bar-clear"
+            onClick={() => setCompareList([])}
+            title="ล้างทั้งหมด">×</button>
+        </div>
+      )}
+
     </div>
   );
 };
