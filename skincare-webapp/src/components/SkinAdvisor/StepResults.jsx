@@ -46,7 +46,7 @@ const chartOptions = {
   scales: {
     r: {
       min: 0, max: 10, ticks: { display: false },
-      pointLabels: { font: { size: 12, family: "'Prompt',sans-serif" }, color: '#64748B' },
+      pointLabels: { font: { size: 13, family: "'Prompt',sans-serif" }, color: '#64748B' },
       grid: { color: 'rgba(148,163,184,0.2)' },
     }
   },
@@ -72,7 +72,7 @@ const ProductCard = ({ product, matchPercent, email }) => {
     <div className="result-card">
       <div className="card-main">
 
-        {/* ── ซ้าย: รูป + ข้อมูล + ราคา + ปุ่ม ── */}
+        {/* ── ซ้าย ── */}
         <div className="card-left">
           <div className="card-badge-row">
             <span className="match-badge">{matchPercent}% Match</span>
@@ -109,7 +109,7 @@ const ProductCard = ({ product, matchPercent, email }) => {
           </div>
         </div>
 
-        {/* ── ขวา: radar chart ── */}
+        {/* ── ขวา: chart ── */}
         <div className="card-right">
           <div className="chart-container">
             <Radar data={getChartData(product.function_tags)} options={chartOptions} />
