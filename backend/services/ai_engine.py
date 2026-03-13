@@ -13,7 +13,7 @@ ROUTINE_STEPS = [
 ]
 
 RETURN_COLS = ['name', 'brand', 'major_category', 'subtype',
-               'skintype', 'function_tags', 'image_url', 'price', 'final_score']
+                'skintype', 'function_tags', 'image_url', 'price', 'final_score']
 
 # ============================================================
 #  CONTEXT BOOST RULES
@@ -155,22 +155,22 @@ class DataLoader:
         return filtered
 
     def recommend_products(self, skin_type, concerns, min_price=0, max_price=100000,
-                           top_n=5, context=None):
+                            top_n=5, context=None):
         if self.df is None:
             return []
         scored = self._score(self.df.copy(), skin_type, concerns,
-                             min_price, max_price, context)
+                            min_price, max_price, context)
         if scored.empty:
             return []
         results = scored.sort_values('final_score', ascending=False).head(top_n)
         return results[RETURN_COLS].to_dict(orient='records')
 
     def recommend_routine(self, skin_type, concerns, min_price=0, max_price=100000,
-                          context=None):
+                        context=None):
         if self.df is None:
             return []
         scored = self._score(self.df.copy(), skin_type, concerns,
-                             min_price, max_price, context)
+                            min_price, max_price, context)
         if scored.empty:
             return []
 
@@ -188,7 +188,7 @@ class DataLoader:
 
         return routine
 
-    def search_products(self, query, top_n=10):
+    def search_products(self, query):
         if self.df is None:
             return []
         df = self.df.copy()
@@ -200,14 +200,14 @@ class DataLoader:
         ].copy()
 
         if not name_match.empty:
-            return name_match.head(top_n)[[
+            return name_match[[
                 'name', 'brand', 'major_category', 'subtype',
                 'skintype', 'function_tags', 'image_url', 'price'
             ]].to_dict(orient='records')
 
         user_vec    = self.vectorizer.transform([q])
         df['score'] = cosine_similarity(user_vec, self.tfidf_matrix).flatten()
-        return df.sort_values('score', ascending=False).head(top_n)[[
+        return df.sort_values('score', ascending=False)[[
             'name', 'brand', 'major_category', 'subtype',
             'skintype', 'function_tags', 'image_url', 'price'
         ]].to_dict(orient='records')
