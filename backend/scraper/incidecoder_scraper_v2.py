@@ -45,7 +45,7 @@ IMG_THUMB_SIZE = (300, 300)
 AUTOSAVE_EVERY = 50
 TARGET         = 5000
 
-OUTPUT_DIR = Path(r"C:\Users\Petch\Desktop\Projectskin\skincare-ai-recomender\backend\scraper\data_products")
+OUTPUT_DIR = Path(__file__).parent / "data_products"
 IMG_DIR    = OUTPUT_DIR / "images"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 IMG_DIR.mkdir(parents=True, exist_ok=True)
@@ -175,7 +175,7 @@ def make_driver():
         if HEADLESS: opts.add_argument("--headless=new")
         opts.add_argument("--window-size=1440,900")
         opts.add_argument("--lang=en-US")
-        return uc.Chrome(options=opts, version_main=None)
+        return uc.Chrome(options=opts, version_main=145)
     else:
         opts = Options()
         if HEADLESS: opts.add_argument("--headless=new")
