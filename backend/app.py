@@ -11,8 +11,10 @@ from routes.user_routes import user_bp, init_user_routes
 from database.db import init_database
 from routes.bookmark_routes import bookmark_bp
 from routes.review_routes import review_bp
+from database.db import init_database, init_active_ingredients
 
 init_database()
+init_active_ingredients() 
 
 def create_app():
     app = Flask(__name__)

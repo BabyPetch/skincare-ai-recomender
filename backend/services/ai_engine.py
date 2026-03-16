@@ -95,11 +95,17 @@ class DataLoader:
                 df[col] = df[col].fillna("")
 
         df['combined_features'] = (
-            df['skintype'] + " " +
-            df['function_tags'] + " " +
-            df['major_category'] + " " +
-            df['brand'] + " " +
-            df['ingredients_list']
+            df['skintype']          + " " +
+            df['function_tags']     + " " +
+            df['major_category']    + " " +
+            df['brand']             + " " +
+            df['ingredients_list']  + " " +
+            df['active_acne'].fillna("")       + " " +
+            df['active_whitening'].fillna("")  + " " +
+            df['active_wrinkle'].fillna("")    + " " +
+            df['active_hydration'].fillna("")  + " " +
+            df['active_barrier'].fillna("")    + " " +
+            df['active_soothing'].fillna("")
         )
 
         self.df = df
@@ -129,8 +135,35 @@ class DataLoader:
         ).flatten()
 
         # Layer 2: Skin type match
-        filtered['skin_boost'] = filtered['skintype'].apply(
-            lambda x: 0.15 if skin_type.lower() in str(x).lower() else 0
+        CONCERN_TO_COL = {
+            'acne_control':   'active_acne',
+            'brightening':    'active_whitening',
+            'anti_aging':     'active_wrinkle',
+            'exfoliating':    'active_exfoliation',
+            'hydrating':      'active_hydration',
+            'barrier_repair': 'active_barrier',
+            'calming':        'active_soothing',
+            'acne_control':   'active_oilct',
+            'antioxidant':    'active_antioxidant',
+        }
+        def _concern_boost(row, concerns):
+            score = 0
+            for concern in concerns:
+                col = CONCERN_TO_COL.get(concern)
+                if col and col in row and pd.notna(row[col]) and str(row[col]).strip():
+                    score += 0.15
+            return score
+        
+        # ใน _score() แทน skin_boost เดิม
+        filtered['concern_boost'] = filtered.apply(
+            lambda row: _concern_boost(row, concerns), axis=1
+        )
+
+        filtered['final_score'] = (
+            filtered['cosine_score']   * 0.45 +
+            filtered['skin_boost']     * 0.15 +
+            filtered['concern_boost']  * 0.25 +
+            filtered['context_score']  * 0.15
         )
 
         # Layer 3: Context rule-based
