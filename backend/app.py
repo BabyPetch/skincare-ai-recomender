@@ -2,7 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 
 from config import Config
-from services.ai_engine import DataLoader
+# from services.ai_engine import DataLoader
 from services.user_manager import UserManager
 from routes.auth_routes import auth_bp, init_auth_routes
 from routes.admin_routes import admin_bp, init_admin_routes
@@ -12,6 +12,7 @@ from database.db import init_database
 from routes.bookmark_routes import bookmark_bp
 from routes.review_routes import review_bp
 from database.db import init_database, init_active_ingredients
+from services.ai_engine_v2 import DataLoader
 
 init_database()
 init_active_ingredients() 

@@ -67,12 +67,12 @@ const SectionHeader = ({ icon, title, subtitle }) => (
 const ProductCard = ({ product, matchPercent, email }) => {
   const [showReviews, setShowReviews] = useState(false);
   const tags = parseTags(product.function_tags);
+  // ← เพิ่มตรงนี้
+  const explanation = Array.isArray(product.explanation) ? product.explanation : [];
 
   return (
     <div className="result-card">
       <div className="card-main">
-
-        {/* ── ซ้าย ── */}
         <div className="card-left">
           <div className="card-badge-row">
             <span className="match-badge">{matchPercent}% Match</span>
@@ -98,6 +98,32 @@ const ProductCard = ({ product, matchPercent, email }) => {
             </div>
           )}
 
+          {/* ← เพิ่ม explanation block */}
+          {explanation.length > 0 && (
+            <div style={{
+              marginTop: '10px',
+              padding: '10px 12px',
+              background: 'var(--bg-subtle)',
+              borderRadius: '10px',
+              border: '1px solid var(--border)',
+            }}>
+              <div style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '6px' }}>
+                🤖 ทำไมถึงแนะนำ?
+              </div>
+              {explanation.map((reason, i) => (
+                <div key={i} style={{
+                  fontSize: '11px',
+                  color: 'var(--text-secondary)',
+                  padding: '2px 0',
+                  borderBottom: i < explanation.length - 1 ? '1px dashed var(--border)' : 'none',
+                  lineHeight: '1.5',
+                }}>
+                  ✓ {reason}
+                </div>
+              ))}
+            </div>
+          )}
+
           <div className="card-footer">
             <div className="price-tag">
               ฿{product.price ? parseInt(product.price).toLocaleString() : '-'}
@@ -109,16 +135,13 @@ const ProductCard = ({ product, matchPercent, email }) => {
           </div>
         </div>
 
-        {/* ── ขวา: chart ── */}
         <div className="card-right">
           <div className="chart-container">
             <Radar data={getChartData(product.function_tags)} options={chartOptions} />
           </div>
         </div>
-
       </div>
 
-      {/* REVIEWS */}
       <div className="card-reviews-toggle">
         <button className="rv-toggle-btn" onClick={() => setShowReviews(v => !v)}>
           ⭐ รีวิวสินค้า {showReviews ? '▲' : '▼'}
