@@ -58,7 +58,7 @@ const LoginPage = ({ onLoginSuccess }) => {
     <div className="login-container">
       <div className="login-card">
         <h2 className="login-title">
-          {isLogin ? 'ยินดีต้อนรับ 👋' : 'สมัครสมาชิกใหม่ ✨'}
+          {isLogin ? 'ยินดีต้อนรับ' : 'สมัครสมาชิกใหม่ ✨'}
         </h2>
 
         {error && <div className="error-message">{error}</div>}

@@ -31,7 +31,11 @@ const Navbar = ({ user, onLogout }) => {
           </button>
         )}
               
-        <button onClick={() => navigate('/dashboard')}>📊 Dashboard</button>
+        {user?.role !== 'guest' && (
+          <button onClick={() => navigate('/dashboard')} className={getBtnClass('/dashboard')}>
+            📊 Dashboard
+          </button>
+        )}
 
         <button onClick={() => navigate('/search')} className={getBtnClass('/search')}>
           🔍 ค้นหาสินค้า
