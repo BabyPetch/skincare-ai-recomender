@@ -11,7 +11,6 @@ def init_auth_routes(user_manager):
             data.get('email'),
             data.get('password')
         )
-
         if success:
             return jsonify({'message': 'Login successful', 'user': result})
         return jsonify({'error': result}), 401
@@ -23,9 +22,9 @@ def init_auth_routes(user_manager):
             data.get('name'),
             data.get('email'),
             data.get('password'),
-            data.get('birthdate')
+            data.get('birthdate'),
+            data.get('gender', 'other'),   # ← เพิ่ม
         )
-
         if success:
             return jsonify({'message': message}), 201
         return jsonify({'error': message}), 400

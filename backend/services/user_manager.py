@@ -24,13 +24,13 @@ class UserManager:
         finally:
             conn.close()
 
-    def register(self, name, email, password, birthdate):
+    def register(self, name, email, password, birthdate, gender='other'):
         conn = get_connection()
         try:
             cur = conn.cursor()
             cur.execute(
-                "INSERT INTO users (name, email, password, birthdate) VALUES (%s, %s, %s, %s)",
-                (name, email, password, birthdate)
+                "INSERT INTO users (name, email, password, birthdate, gender) VALUES (%s, %s, %s, %s, %s)",
+                (name, email, password, birthdate, gender)
             )
             conn.commit()
             return True, "สมัครสมาชิกสำเร็จ"
@@ -39,9 +39,6 @@ class UserManager:
         finally:
             conn.close()
 
-    # =========================
-    # ADD HISTORY — รับทั้ง recommend และ routine
-    # =========================
     def add_history(self, email, skin_type, concerns, recommend_results, routine_results=None):
         conn = get_connection()
         try:
@@ -64,9 +61,6 @@ class UserManager:
         finally:
             conn.close()
 
-    # =========================
-    # GET USER + HISTORY
-    # =========================
     def get_user_with_history(self, email):
         conn = get_connection()
         try:
@@ -88,18 +82,17 @@ class UserManager:
             """, (email,))
 
             history = cur.fetchall()
-            formatted_history = []
-            for h in history:
-                formatted_history.append({
-                    "date":             str(h['timestamp']) if h.get('timestamp') else "",
-                    "skin_type":        h.get('skin_type'),
-                    "concerns":         h.get('concerns', []),
-                    "results":          h.get('recommended_products', []),
-                    "routine":          h.get('routine_products', []),
-                    "history_type":     h.get('history_type', 'recommend'),
-                })
-
-            user['history'] = formatted_history
+            user['history'] = [
+                {
+                    "date":         str(h['timestamp']) if h.get('timestamp') else "",
+                    "skin_type":    h.get('skin_type'),
+                    "concerns":     h.get('concerns', []),
+                    "results":      h.get('recommended_products', []),
+                    "routine":      h.get('routine_products', []),
+                    "history_type": h.get('history_type', 'recommend'),
+                }
+                for h in history
+            ]
             return user
         finally:
             conn.close()
@@ -108,7 +101,9 @@ class UserManager:
         conn = get_connection()
         try:
             cur = conn.cursor(cursor_factory=RealDictCursor)
-            cur.execute("SELECT id, email, name, role, birthdate, created_at FROM users ORDER BY id ASC")
+            cur.execute(
+                "SELECT id, email, name, role, birthdate, gender, created_at FROM users ORDER BY id ASC"
+            )
             users = cur.fetchall()
             for user in users:
                 if user.get('birthdate'):

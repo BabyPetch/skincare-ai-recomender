@@ -1,34 +1,60 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-
-# testing
-/coverage
-
-# production
-/build
-
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
+# ===== Python / Backend =====
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
 
+# Virtual Environment
+venv/
+env/
+.venv/
+.env/
 
-# Excel temp files
-~$*.xlsx
+# Environment Variables (สำคัญมาก!)
+.env
+.env.local
+.env.production
+config.py          # ถ้ามี credentials อยู่ใน config
 
-# CSV output files
-*.csv
-*.xlsx
+# ===== Database =====
+*.db
+*.sqlite3
+*.sql
+
+# ===== Scraper Output =====
+backend/scraper/data_products/*.csv
+backend/scraper/data_products/images/
+
+# ===== Frontend (React/Node) =====
+node_modules/
+frontend/node_modules/
+npm-debug.log*
+yarn-error.log
+.next/
+dist/
+build/
+
+# ===== IDE =====
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== Logs =====
+*.log
+logs/
+
+# ===== Testing =====
+.coverage
+htmlcov/
+.pytest_cache/

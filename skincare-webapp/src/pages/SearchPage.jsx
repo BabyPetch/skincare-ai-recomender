@@ -10,13 +10,14 @@ const API = 'http://127.0.0.1:5000/api';
 const CATEGORY_OPTIONS = [
   { value: 'all',         label: 'ทุกประเภท' },
   { value: 'cleanser',    label: '🧼 คลีนเซอร์' },
+  { value: 'cleansing',   label: '🫧 คลีนซิ่ง' },   // ← เพิ่ม
   { value: 'toner',       label: '💦 โทนเนอร์' },
   { value: 'serum',       label: '✨ เซรั่ม' },
   { value: 'moisturizer', label: '🔒 มอยส์เจอไรเซอร์' },
   { value: 'sunscreen',   label: '☀️ กันแดด' },
   { value: 'mask',        label: '🎭 มาส์ก' },
-  { value: 'exfoliator',  label: '🌀 เอ็กซ์โฟเลียเตอร์' },
   { value: 'eye_care',    label: '👁️ ครีมตา' },
+
 ];
 
 const SKINTYPE_OPTIONS = [
@@ -70,7 +71,6 @@ const SearchPage = ({ user, compareList, setCompareList }) => {
   const [loading, setLoading]       = useState(false);
   const [searched, setSearched]     = useState(false);
   const [showFilter, setShowFilter] = useState(false);
-  const [catFilter,      setCatFilter]      = useState('all');
   const [skintypeFilter, setSkintypeFilter] = useState('all');
   const [priceFilter,    setPriceFilter]    = useState('all');
   const navigate = useNavigate();
@@ -87,16 +87,16 @@ const SearchPage = ({ user, compareList, setCompareList }) => {
     }
   };
 
-  const applyFilters = useCallback((data, cat, skin, price) => {
+  const applyFilters = useCallback((data, skin, price) => {
     const priceOpt = PRICE_OPTIONS.find(p => p.value === price) || PRICE_OPTIONS[0];
     return data.filter(p => {
-      const matchCat   = cat  === 'all' || p.major_category === cat;
       const matchSkin  = skin === 'all' || (p.skintype || '').toLowerCase().includes(skin);
       const matchPrice = !p.price || (parseInt(p.price) >= priceOpt.min && parseInt(p.price) <= priceOpt.max);
-      return matchCat && matchSkin && matchPrice;
+      return matchSkin && matchPrice;
     });
   }, []);
 
+// แก้ handleSearch — ลบ catFilter ออก
   const handleSearch = useCallback(async (overrideQuery) => {
     const trimmed = (overrideQuery !== undefined ? overrideQuery : query).trim();
     if (!trimmed) return;
@@ -106,26 +106,33 @@ const SearchPage = ({ user, compareList, setCompareList }) => {
       const data = await res.json();
       const list = Array.isArray(data) ? data : [];
       setResults(list);
-      setFiltered(applyFilters(list, catFilter, skintypeFilter, priceFilter));
+      setFiltered(applyFilters(list, skintypeFilter, priceFilter));  // ← ลบ catFilter
     } catch { setResults([]); setFiltered([]); }
     finally { setLoading(false); }
-  }, [query, catFilter, skintypeFilter, priceFilter, applyFilters]);
+  }, [query, skintypeFilter, priceFilter, applyFilters]);  // ← ลบ catFilter
 
   const handleFilterChange = (type, value) => {
-    const newCat   = type === 'cat'   ? value : catFilter;
     const newSkin  = type === 'skin'  ? value : skintypeFilter;
     const newPrice = type === 'price' ? value : priceFilter;
-    setCatFilter(newCat); setSkintypeFilter(newSkin); setPriceFilter(newPrice);
-    setFiltered(applyFilters(results, newCat, newSkin, newPrice));
+
+    setSkintypeFilter(newSkin);
+    setPriceFilter(newPrice);
+
+    if (results.length > 0) {
+      // มี results อยู่แล้ว → filter ทันที
+      setFiltered(applyFilters(results, newSkin, newPrice));
+    } else if (type === 'cat' && value !== 'all') {
+      // ยังไม่ได้ search → auto search ด้วย category ที่กด
+      handleSearch(value);
+    }
   };
+
 
   const handleClear = () => {
     setSearched(false); setQuery(''); setResults([]); setFiltered([]);
-    setCatFilter('all'); setSkintypeFilter('all'); setPriceFilter('all');
   };
 
-  const activeFilterCount =
-    [catFilter, skintypeFilter, priceFilter].filter(v => v !== 'all').length;
+  const activeFilterCount = [skintypeFilter, priceFilter].filter(v => v !== 'all').length;
 
   return (
     <div className="search-page">
@@ -158,16 +165,6 @@ const SearchPage = ({ user, compareList, setCompareList }) => {
         {showFilter && (
           <div className="filter-panel">
             <div className="filter-group">
-              <p className="filter-group-label">📦 ประเภทสินค้า</p>
-              <div className="filter-pills">
-                {CATEGORY_OPTIONS.map(opt => (
-                  <button key={opt.value}
-                    className={`filter-pill ${catFilter === opt.value ? 'active' : ''}`}
-                    onClick={() => handleFilterChange('cat', opt.value)}>{opt.label}</button>
-                ))}
-              </div>
-            </div>
-            <div className="filter-group">
               <p className="filter-group-label">🌿 สภาพผิว</p>
               <div className="filter-pills">
                 {SKINTYPE_OPTIONS.map(opt => (
@@ -189,7 +186,7 @@ const SearchPage = ({ user, compareList, setCompareList }) => {
             </div>
             {activeFilterCount > 0 && (
               <button className="filter-reset-btn" onClick={() => {
-                setCatFilter('all'); setSkintypeFilter('all'); setPriceFilter('all');
+                setSkintypeFilter('all'); setPriceFilter('all');
                 setFiltered(results);
               }}>✕ ล้าง filter ทั้งหมด</button>
             )}

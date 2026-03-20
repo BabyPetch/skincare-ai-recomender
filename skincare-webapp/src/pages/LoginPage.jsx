@@ -1,44 +1,34 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // 1. ต้องมีตัวนี้
-import { loginUser, registerUser } from '../services/api'; 
-import './LoginPage.css'; 
+import { useNavigate } from 'react-router-dom';
+import { loginUser, registerUser } from '../services/api';
+import './LoginPage.css';
 
 const LoginPage = ({ onLoginSuccess }) => {
-  const navigate = useNavigate(); // 2. ประกาศตัวแปร
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
-  
-  // State
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
+
+  const [email,     setEmail]     = useState('');
+  const [password,  setPassword]  = useState('');
+  const [name,      setName]      = useState('');
   const [birthdate, setBirthdate] = useState('');
-  const [error, setError] = useState('');
+  const [gender,    setGender]    = useState('other');
+  const [error,     setError]     = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
     try {
       if (isLogin) {
-        // --- 🟢 ล็อกอิน ---
         const data = await loginUser({ email, password });
-        
-        onLoginSuccess(data.user); 
-        
-        // 👑 3. เพิ่มการเช็ค Role ตรงนี้
-        if (data.user.role === 'admin') {
-          navigate('/admin'); // ถ้าเป็นแอดมิน ให้เด้งไปหน้าแอดมิน
-        } else {
-          navigate('/guide'); // ถ้าเป็น user ทั่วไป ให้ไปหน้า Guide
-        }
-
+        onLoginSuccess(data.user);
+        navigate(data.user.role === 'admin' ? '/admin' : '/guide');
       } else {
-        // --- 🔵 สมัครสมาชิก ---
-        await registerUser({ name, email, password, birthdate });
+        await registerUser({ name, email, password, birthdate, gender });
         alert('สมัครสมาชิกสำเร็จ! กรุณาล็อกอิน');
         setIsLogin(true);
         setPassword('');
         setBirthdate('');
+        setGender('other');
       }
     } catch (err) {
       console.error(err);
@@ -46,11 +36,8 @@ const LoginPage = ({ onLoginSuccess }) => {
     }
   };
 
-  // Guest Login
   const handleGuestLogin = () => {
-    onLoginSuccess({ name: 'Guest', role: 'guest', age: 25 });
-
-    // 4. Guest ก็สั่งให้ไปหน้า Guide เหมือนกัน
+    onLoginSuccess({ name: 'Guest', role: 'guest', age: 25, gender: 'other' });
     navigate('/guide');
   };
 
@@ -65,45 +52,60 @@ const LoginPage = ({ onLoginSuccess }) => {
 
         <form onSubmit={handleSubmit} className="login-form">
           {!isLogin && (
-            <input 
+            <input
               className="form-input"
-              type="text" 
-              placeholder="ชื่อของคุณ" 
+              type="text"
+              placeholder="ชื่อของคุณ"
               required
-              value={name} 
+              value={name}
               onChange={e => setName(e.target.value)}
             />
           )}
 
-          <input 
+          <input
             className="form-input"
-            type="email" 
-            placeholder="อีเมล" 
+            type="email"
+            placeholder="อีเมล"
             required
-            value={email} 
+            value={email}
             onChange={e => setEmail(e.target.value)}
           />
 
-          <input 
+          <input
             className="form-input"
-            type="password" 
-            placeholder="รหัสผ่าน" 
+            type="password"
+            placeholder="รหัสผ่าน"
             required
-            value={password} 
+            value={password}
             onChange={e => setPassword(e.target.value)}
           />
 
           {!isLogin && (
-            <div className="form-group">
-              <label>วันเดือนปีเกิด:</label>
-              <input 
-                className="form-input"
-                type="date" 
-                required
-                value={birthdate} 
-                onChange={e => setBirthdate(e.target.value)}
-              />
-            </div>
+            <>
+              <div className="form-group">
+                <label>วันเดือนปีเกิด:</label>
+                <input
+                  className="form-input"
+                  type="date"
+                  required
+                  value={birthdate}
+                  onChange={e => setBirthdate(e.target.value)}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>เพศ:</label>
+                <select
+                  className="form-input"
+                  value={gender}
+                  onChange={e => setGender(e.target.value)}
+                >
+                  <option value="other">ไม่ระบุ</option>
+                  <option value="female">หญิง</option>
+                  <option value="male">ชาย</option>
+                </select>
+              </div>
+            </>
           )}
 
           <button type="submit" className="btn-primary">
@@ -112,8 +114,8 @@ const LoginPage = ({ onLoginSuccess }) => {
         </form>
 
         <div className="toggle-container">
-          {isLogin ? "ยังไม่มีบัญชี? " : "มีบัญชีแล้ว? "}
-          <span 
+          {isLogin ? 'ยังไม่มีบัญชี? ' : 'มีบัญชีแล้ว? '}
+          <span
             className="toggle-link"
             onClick={() => { setIsLogin(!isLogin); setError(''); }}
           >
@@ -123,9 +125,9 @@ const LoginPage = ({ onLoginSuccess }) => {
 
         {isLogin && (
           <div className="divider">
-              <button onClick={handleGuestLogin} className="btn-guest">
-                เข้าใช้งานแบบ Guest (ไม่ต้องสมัคร)
-              </button>
+            <button onClick={handleGuestLogin} className="btn-guest">
+              เข้าใช้งานแบบ Guest (ไม่ต้องสมัคร)
+            </button>
           </div>
         )}
       </div>

@@ -333,3 +333,9 @@ CREATE TABLE IF NOT EXISTS reviews (
 );
 
 CREATE INDEX IF NOT EXISTS idx_reviews_product ON reviews(product_name);
+
+ALTER TABLE users ADD COLUMN IF NOT EXISTS gender VARCHAR(10) DEFAULT 'other';
+-- Default admin account
+INSERT INTO users (name, email, password, role)
+VALUES ('Admin', 'admin@admin.com', 'admin1234', 'admin')
+ON CONFLICT (email) DO NOTHING;

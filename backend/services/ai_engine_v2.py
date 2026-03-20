@@ -193,6 +193,13 @@ MODEL_TO_COL = {
 # อ้างอิง: dermatology guidelines สำหรับ age-appropriate skincare
 # ================================================================
 CONTEXT_RULES = {
+    "gender": {
+    # อ้างอิง: Dao H, Kazin RA. Gender differences in skin: a review of the literature.
+    # Gender Medicine. 2007;4(4):308-328. doi:10.1016/S1550-8579(07)80061-1
+    "male":   {"acne_control": 0.10, "oilcontrol": 0.10, "exfoliating": 0.05},
+    "female": {"hydrating": 0.10, "barrier_repair": 0.05, "brightening": 0.05},
+    "other":  {},
+    },
     "age": {
         "teen":   {"acne_control": 0.20, "hydrating": 0.10},
         "young":  {"brightening": 0.10,  "antioxidant": 0.10},
