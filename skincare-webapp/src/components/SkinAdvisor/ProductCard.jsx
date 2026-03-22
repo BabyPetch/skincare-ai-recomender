@@ -76,7 +76,7 @@ const ProductCard = ({ product }) => {
 
       <div className="highlights">
         {product.highlights?.map((h, i) => (
-          <span key={i} className="ing-tag">🧪 {h}</span>
+          <span key={i} className="ing-tag"> {h}</span>
         ))}
       </div>
 

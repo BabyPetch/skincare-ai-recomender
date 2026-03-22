@@ -92,7 +92,7 @@ const ComparePage = ({ compareList, setCompareList }) => {
           <div className="compare-empty">
             <div className="compare-empty-icon">⚖️</div>
             <h2>ยังไม่มีสินค้าที่เลือก</h2>
-            <p>กดปุ่ม <strong>⚖️ เปรียบเทียบ</strong> ที่สินค้าในหน้าค้นหาได้เลยครับ</p>
+            <p>กดปุ่ม <strong>เปรียบเทียบ</strong> ที่สินค้าในหน้าค้นหาได้เลยครับ</p>
             <button className="cmp-back-btn" onClick={() => navigate('/search')}>
               ← ไปหน้าค้นหา
             </button>
@@ -109,7 +109,7 @@ const ComparePage = ({ compareList, setCompareList }) => {
         {/* ── Header ── */}
         <div className="compare-header">
           <div>
-            <h1>⚖️ เปรียบเทียบสินค้า</h1>
+            <h1>เปรียบเทียบสินค้า</h1>
             <p>
               {products.length} รายการ
               {products.length < 4 &&
@@ -163,7 +163,7 @@ const ComparePage = ({ compareList, setCompareList }) => {
 
         {/* ── Radar chart ── */}
         <div className="cmp-chart-card">
-          <h3>📊 เปรียบเทียบคุณสมบัติ</h3>
+          <h3>เปรียบเทียบคุณสมบัติ</h3>
           <div className="cmp-chart-wrap">
             <Radar data={getChartData(products)} options={chartOptions} />
           </div>

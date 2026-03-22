@@ -2,14 +2,14 @@ import React from 'react';
 import '../SkinAdvisorCss/StepShared.css';
 
 const OPTIONS = [
-  { id: 'morning', label: 'เช้าอย่างเดียว',  sub: 'Cleanser → Toner → SPF',              icon: '🌅' },
-  { id: 'evening', label: 'เย็นอย่างเดียว',  sub: 'Double cleanse → Serum → Moisturizer', icon: '🌙' },
-  { id: 'both',    label: 'ทั้งเช้าและเย็น',  sub: 'Full AM + PM routine',                 icon: '☀️🌙' },
+  { id: 'morning', label: 'เช้าอย่างเดียว',  sub: 'Cleanser → Toner → SPF',              icon: '' },
+  { id: 'evening', label: 'เย็นอย่างเดียว',  sub: 'Double cleanse → Serum → Moisturizer', icon: '' },
+  { id: 'both',    label: 'ทั้งเช้าและเย็น',  sub: 'Full AM + PM routine',                 icon: '' },
 ];
 
 const StepRoutineTime = ({ value, onSelect, onBack, onNext }) => (
   <div className="step-content fadeIn">
-    <h2 className="step-title">🌙 ทำ Skincare ตอนไหน?</h2>
+    <h2 className="step-title">ทำ Skincare ตอนไหน?</h2>
     <p className="step-subtitle">จะได้แนะนำสินค้าที่เหมาะกับช่วงเวลาที่คุณใช้</p>
 
     <div className="shared-grid shared-grid-3">

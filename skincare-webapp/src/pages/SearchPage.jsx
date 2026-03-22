@@ -9,30 +9,30 @@ const API = 'http://127.0.0.1:5000/api';
 
 const CATEGORY_OPTIONS = [
   { value: 'all',         label: 'ทุกประเภท' },
-  { value: 'cleanser',    label: '🧼 คลีนเซอร์' },
-  { value: 'cleansing',   label: '🫧 คลีนซิ่ง' },
-  { value: 'toner',       label: '💦 โทนเนอร์' },
-  { value: 'serum',       label: '✨ เซรั่ม' },
-  { value: 'moisturizer', label: '🔒 มอยส์เจอไรเซอร์' },
-  { value: 'sunscreen',   label: '☀️ กันแดด' },
-  { value: 'mask',        label: '🎭 มาส์ก' },
-  { value: 'eye_care',    label: '👁️ ครีมตา' },
+  { value: 'cleanser',    label: 'คลีนเซอร์' },
+  { value: 'cleansing',   label: 'คลีนซิ่ง' },
+  { value: 'toner',       label: 'โทนเนอร์' },
+  { value: 'serum',       label: 'เซรั่ม' },
+  { value: 'moisturizer', label: 'มอยส์เจอไรเซอร์' },
+  { value: 'sunscreen',   label: 'กันแดด' },
+  { value: 'mask',        label: 'มาส์ก' },
+  { value: 'eye_care',    label: 'ครีมตา' },
 ];
 
 const SKINTYPE_OPTIONS = [
   { value: 'all',         label: 'ทุกสภาพผิว' },
-  { value: 'oily',        label: '💧 ผิวมัน' },
-  { value: 'dry',         label: '🌵 ผิวแห้ง' },
-  { value: 'sensitive',   label: '🌸 ผิวแพ้ง่าย' },
-  { value: 'normal',      label: '✅ ผิวธรรมดา' },
-  { value: 'combination', label: '☯️ ผิวผสม' },
+  { value: 'oily',        label: 'ผิวมัน' },
+  { value: 'dry',         label: 'ผิวแห้ง' },
+  { value: 'sensitive',   label: 'ผิวแพ้ง่าย' },
+  { value: 'normal',      label: 'ผิวธรรมดา' },
+  { value: 'combination', label: 'ผิวผสม' },
 ];
 
 const PRICE_OPTIONS = [
   { value: 'all',  label: 'ทุกราคา',          min: 0,    max: 999999 },
-  { value: 'low',  label: '💚 ไม่เกิน ฿500',   min: 0,    max: 500 },
-  { value: 'mid',  label: '💛 ฿500–1,500',     min: 500,  max: 1500 },
-  { value: 'high', label: '🧡 ฿1,500 ขึ้นไป',  min: 1500, max: 999999 },
+  { value: 'low',  label: 'ไม่เกิน ฿500',   min: 0,    max: 500 },
+  { value: 'mid',  label: '฿500–1,500',     min: 500,  max: 1500 },
+  { value: 'high', label: '฿1,500 ขึ้นไป',  min: 1500, max: 999999 },
 ];
 
 // ── แบรนด์ยอดนิยม แบ่งตาม tier ──
@@ -40,7 +40,7 @@ const POPULAR_BRANDS = [
   // 🔥 Top tier — เป็นที่รู้จักมากที่สุด
   {
     tier: 'top',
-    label: '🔥 แบรนด์ฮิตติดชาร์ต',
+    label: 'แบรนด์ฮิตติดชาร์ต',
     brands: [
       { label: 'CeraVe',         value: 'CeraVe',         desc: 'Ceramide + Hyaluronic' },
       { label: 'The Ordinary',   value: 'The Ordinary',   desc: 'Active ingredients ราคาดี' },
@@ -53,7 +53,7 @@ const POPULAR_BRANDS = [
   // ⭐ Popular — ได้รับความนิยมสูง
   {
     tier: 'popular',
-    label: '⭐ ยอดนิยมในไทย',
+    label: 'ยอดนิยมในไทย',
     brands: [
       { label: 'Cetaphil',    value: 'Cetaphil',    desc: 'Gentle สำหรับผิวแพ้ง่าย' },
       { label: 'Bioderma',    value: 'Bioderma',    desc: 'Micellar water ชื่อดัง' },
@@ -68,7 +68,7 @@ const POPULAR_BRANDS = [
   // 💎 Premium
   {
     tier: 'premium',
-    label: '💎 พรีเมียม',
+    label: 'พรีเมียม',
     brands: [
       { label: 'Clinique',      value: 'Clinique',      desc: 'Allergy tested' },
       { label: 'Estee Lauder',  value: 'Estee Lauder',  desc: 'Luxury skincare' },
@@ -79,7 +79,7 @@ const POPULAR_BRANDS = [
 ];
 
 const QUICK_TAGS = [
-  { group: '📦 ประเภทสินค้า', tags: [
+  { group: 'ประเภทสินค้า', tags: [
     { label: 'มอยส์เจอไรเซอร์', value: 'moisturizer' },
     { label: 'เซรั่ม',           value: 'serum' },
     { label: 'คลีนเซอร์',        value: 'cleanser' },
@@ -87,7 +87,7 @@ const QUICK_TAGS = [
     { label: 'โทนเนอร์',         value: 'toner' },
     { label: 'มาส์ก',            value: 'mask' },
   ]},
-  { group: '🌿 ส่วนผสมยอดนิยม', tags: [
+  { group: 'ส่วนผสมยอดนิยม', tags: [
     { label: 'Niacinamide',     value: 'niacinamide' },
     { label: 'Hyaluronic Acid', value: 'hyaluronic' },
     { label: 'Retinol',         value: 'retinol' },
@@ -227,7 +227,7 @@ const SearchPage = ({ user, compareList, setCompareList }) => {
         {showFilter && (
           <div className="filter-panel">
             <div className="filter-group">
-              <p className="filter-group-label">🌿 สภาพผิว</p>
+              <p className="filter-group-label">สภาพผิว</p>
               <div className="filter-pills">
                 {SKINTYPE_OPTIONS.map(opt => (
                   <button key={opt.value}
@@ -237,7 +237,7 @@ const SearchPage = ({ user, compareList, setCompareList }) => {
               </div>
             </div>
             <div className="filter-group">
-              <p className="filter-group-label">💰 ช่วงราคา</p>
+              <p className="filter-group-label">ช่วงราคา</p>
               <div className="filter-pills">
                 {PRICE_OPTIONS.map(opt => (
                   <button key={opt.value}
@@ -269,7 +269,7 @@ const SearchPage = ({ user, compareList, setCompareList }) => {
                 margin: '0 0 16px', fontWeight: '800',
                 display: 'flex', alignItems: 'center', gap: '6px',
               }}>
-                🏆 แบรนด์ยอดนิยม
+                แบรนด์ยอดนิยม
                 <span style={{
                   fontSize: '11px', fontWeight: '500',
                   color: 'var(--text-muted)', marginLeft: '2px',
@@ -344,7 +344,7 @@ const SearchPage = ({ user, compareList, setCompareList }) => {
 
             {/* Quick tags */}
             <div className="quick-tags-panel">
-              <p className="quick-tags-title">💡 ลองค้นหาด้วย...</p>
+              <p className="quick-tags-title">ลองค้นหาด้วย...</p>
               {QUICK_TAGS.map((group, gi) => (
                 <div key={gi} className="quick-tag-group">
                   <p className="quick-tag-group-label">{group.group}</p>
@@ -364,7 +364,7 @@ const SearchPage = ({ user, compareList, setCompareList }) => {
         {/* ── Loading ── */}
         {loading && (
           <div className="search-loading">
-            <div style={{ fontSize: '32px', marginBottom: '8px' }}>⏳</div>
+            <div style={{ fontSize: '32px', marginBottom: '8px' }}></div>
             <p>กำลังค้นหา...</p>
           </div>
         )}
@@ -372,7 +372,7 @@ const SearchPage = ({ user, compareList, setCompareList }) => {
         {/* ── Empty ── */}
         {!loading && searched && filtered.length === 0 && (
           <div className="search-empty">
-            <div style={{ fontSize: '40px', marginBottom: '8px' }}>🤔</div>
+            <div style={{ fontSize: '40px', marginBottom: '8px' }}></div>
             <h3>{results.length > 0 ? 'ไม่มีสินค้าที่ตรง filter' : 'ไม่พบสินค้าที่ตรงกัน'}</h3>
             <p>{results.length > 0
               ? `มีสินค้า ${results.length} รายการ แต่ไม่ผ่าน filter`
@@ -404,7 +404,7 @@ const SearchPage = ({ user, compareList, setCompareList }) => {
                       {product.image_url
                         ? <img src={product.image_url} alt={product.name}
                             onError={e => e.target.style.display = 'none'} />
-                        : <span style={{ fontSize: '24px' }}>🧴</span>}
+                        : <span style={{ fontSize: '24px' }}></span>}
                     </div>
                     <div className="product-info">
                       <div className="product-brand-label">{product.brand}</div>
@@ -430,7 +430,7 @@ const SearchPage = ({ user, compareList, setCompareList }) => {
                         onClick={() => toggleCompare(product)}
                         disabled={!inCompare && compare.length >= 4}
                         title={inCompare ? 'ยกเลิกเปรียบเทียบ' : compare.length >= 4 ? 'เต็มแล้ว' : 'เพิ่มเพื่อเปรียบเทียบ'}>
-                        {inCompare ? '✓ เปรียบเทียบ' : '⚖️ เปรียบเทียบ'}
+                        {inCompare ? '✓ เปรียบเทียบ' : 'เปรียบเทียบ'}
                       </button>
                     </div>
                     <ProductReviews productName={product.name} />
@@ -461,12 +461,12 @@ const SearchPage = ({ user, compareList, setCompareList }) => {
                 {p.image_url
                   ? <img src={p.image_url} alt={p.name}
                       onError={e => e.target.style.display='none'} />
-                  : '🧴'}
+                  : ''}
               </div>
             ))}
           </div>
           <button className="compare-bar-go" onClick={() => navigate('/compare')}>
-            ⚖️ เปรียบเทียบเลย
+            เปรียบเทียบเลย
           </button>
           <button className="compare-bar-clear"
             onClick={() => setCompareList([])} title="ล้างทั้งหมด">×</button>

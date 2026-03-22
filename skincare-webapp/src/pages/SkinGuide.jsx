@@ -8,7 +8,7 @@ const SkinGuide = () => {
     return (
         <div className="guide-page">
         <div className="guide-header">
-            <h1>✨ เช็คสภาพผิวเบื้องต้น</h1>
+            <h1>เช็คสภาพผิวเบื้องต้น</h1>
             <p>เลือกวิธีทดสอบที่สะดวก แล้วจำผลลัพธ์ไว้ใช้วิเคราะห์นะครับ</p>
         </div>
 

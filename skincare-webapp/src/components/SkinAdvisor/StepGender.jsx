@@ -5,26 +5,26 @@ const OPTIONS = [
     {
         id: 'female',
         label: 'หญิง',
-        icon: '👩',
+        icon: '',
         sub: 'ผิวบาง แห้งง่าย ฮอร์โมนมีผล',
     },
     {
         id: 'male',
         label: 'ชาย',
-        icon: '👨',
+        icon: '',
         sub: 'ผิวหนา มันกว่า รูขุมขนกว้าง',
     },
     {
         id: 'other',
         label: 'ไม่ระบุ',
-        icon: '🧑',
+        icon: '',
         sub: 'ไม่นำเพศมาคำนวณ',
     },
 ];
 
 const StepGender = ({ value, onSelect, onBack, onNext }) => (
     <div className="step-content fadeIn">
-        <h2 className="step-title">🧬 เพศของคุณ?</h2>
+        <h2 className="step-title">เพศของคุณ?</h2>
         <p className="step-subtitle">เพศมีผลต่อลักษณะผิวและฮอร์โมน ช่วยให้แนะนำได้แม่นขึ้น</p>
 
         <div className="shared-grid shared-grid-3">

@@ -83,7 +83,7 @@ const AdminPage = ({ user }) => {
     return (
         <div className="admin-container">
             <div className="admin-header">
-                <h1 className="admin-title">👑 Admin Control Panel</h1>
+                <h1 className="admin-title">Admin Control Panel</h1>
                 
                 {/* ปุ่มสลับ Tab */}
                 <div className="admin-tabs">

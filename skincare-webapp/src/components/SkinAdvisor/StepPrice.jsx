@@ -12,7 +12,7 @@ const StepPrice = ({ currentPrice, onSelect, onBack, onSubmit }) => {
 
   return (
     <div className="step-content fadeIn">
-      <h2 className="step-title">💰 งบประมาณของคุณ?</h2>
+      <h2 className="step-title">งบประมาณของคุณ?</h2>
       <p className="step-subtitle">เลือกช่วงราคาที่คุณสะดวก เพื่อให้เราแนะนำได้ตรงใจ</p>
 
       <div className="price-grid">
@@ -34,7 +34,7 @@ const StepPrice = ({ currentPrice, onSelect, onBack, onSubmit }) => {
           onClick={onSubmit}
           disabled={!currentPrice}
         >
-          วิเคราะห์ผล ✨
+          วิเคราะห์ผล
         </button>
       </div>
     </div>

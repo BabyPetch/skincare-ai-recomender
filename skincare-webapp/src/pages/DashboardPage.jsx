@@ -5,33 +5,33 @@ import './DashboardPage.css';
 const API = 'http://127.0.0.1:5000/api';
 
 const CONCERN_LABELS = {
-  acne_control:   { label: 'สิว',             icon: '🌋', color: '#F97316' },
-  brightening:    { label: 'หมองคล้ำ/ฝ้า',    icon: '🌞', color: '#EAB308' },
-  anti_aging:     { label: 'ริ้วรอย',          icon: '👵', color: '#8B5CF6' },
-  hydrating:      { label: 'แห้งกร้าน',        icon: '🍂', color: '#3B82F6' },
-  barrier_repair: { label: 'ผิวเสีย/แพ้ง่าย', icon: '🛡️', color: '#10B981' },
-  calming:        { label: 'ผิวแดง/อักเสบ',   icon: '❄️', color: '#06B6D4' },
-  exfoliating:    { label: 'รูขุมขนกว้าง',    icon: '🕳️', color: '#6366F1' },
-  antioxidant:    { label: 'ริ้วรอยดำ/กระ',   icon: '🐞', color: '#EC4899' },
+  acne_control:   { label: 'สิว',             icon: '', color: '#F97316' },
+  brightening:    { label: 'หมองคล้ำ/ฝ้า',    icon: '', color: '#EAB308' },
+  anti_aging:     { label: 'ริ้วรอย',          icon: '', color: '#8B5CF6' },
+  hydrating:      { label: 'แห้งกร้าน',        icon: '', color: '#3B82F6' },
+  barrier_repair: { label: 'ผิวเสีย/แพ้ง่าย', icon: '', color: '#10B981' },
+  calming:        { label: 'ผิวแดง/อักเสบ',   icon: '', color: '#06B6D4' },
+  exfoliating:    { label: 'รูขุมขนกว้าง',    icon: '', color: '#6366F1' },
+  antioxidant:    { label: 'ริ้วรอยดำ/กระ',   icon: '', color: '#EC4899' },
 };
 
 const SKIN_LABELS = {
-  oily:        { label: 'หน้ามัน',   icon: '🍋', color: '#EAB308' },
-  dry:         { label: 'หน้าแห้ง',  icon: '🌵', color: '#F97316' },
-  combination: { label: 'ผิวผสม',    icon: '⚖️', color: '#8B5CF6' },
-  sensitive:   { label: 'แพ้ง่าย',  icon: '🛡️', color: '#EC4899' },
-  normal:      { label: 'ผิวธรรมดา', icon: '✨', color: '#10B981' },
+  oily:        { label: 'หน้ามัน',   icon: '', color: '#EAB308' },
+  dry:         { label: 'หน้าแห้ง',  icon: '', color: '#F97316' },
+  combination: { label: 'ผิวผสม',    icon: '', color: '#8B5CF6' },
+  sensitive:   { label: 'แพ้ง่าย',  icon: '', color: '#EC4899' },
+  normal:      { label: 'ผิวธรรมดา', icon: '', color: '#10B981' },
 };
 
 const CAT_LABELS = {
-  moisturizer: '🔒 มอยส์เจอไรเซอร์',
-  serum:       '✨ เซรั่ม',
-  sunscreen:   '☀️ กันแดด',
-  toner:       '💦 โทนเนอร์',
-  cleanser:    '🧼 คลีนเซอร์',
-  mask:        '🎭 มาส์ก',
-  exfoliator:  '🌀 เอ็กซ์โฟเลียเตอร์',
-  eye_care:    '👁️ ครีมตา',
+  moisturizer: 'มอยส์เจอไรเซอร์',
+  serum:       'เซรั่ม',
+  sunscreen:   'กันแดด',
+  toner:       'โทนเนอร์',
+  cleanser:    'คลีนเซอร์',
+  mask:        'มาส์ก',
+  exfoliator:  'เอ็กซ์โฟเลียเตอร์',
+  eye_care:    'ครีมตา',
 };
 
 /* ---- helpers ---- */
@@ -130,7 +130,7 @@ const DashboardPage = ({ user }) => {
         {/* ===== Header ===== */}
         <div className="dash-header">
           <div>
-            <h1 className="dash-title">📊 Dashboard ผิวของคุณ</h1>
+            <h1 className="dash-title">Dashboard ผิวของคุณ</h1>
             <p className="dash-subtitle">วิเคราะห์จาก {totalSessions} ครั้งที่ผ่านมา</p>
           </div>
           <button className="dash-back-btn" onClick={() => navigate(-1)}>← กลับ</button>
@@ -172,7 +172,7 @@ const DashboardPage = ({ user }) => {
 
           {/* Concerns Bar */}
           <div className="dash-card">
-            <h3 className="dash-card-title">😟 ปัญหาผิวที่พบบ่อย</h3>
+            <h3 className="dash-card-title">ปัญหาผิวที่พบบ่อย</h3>
             {topConcerns.length === 0
               ? <p className="dash-empty-text">ไม่มีข้อมูล</p>
               : topConcerns.map(([key, count]) => {
@@ -196,7 +196,7 @@ const DashboardPage = ({ user }) => {
 
           {/* Category Bar */}
           <div className="dash-card">
-            <h3 className="dash-card-title">📦 ประเภทสินค้าที่ได้รับแนะนำ</h3>
+            <h3 className="dash-card-title">ประเภทสินค้าที่ได้รับแนะนำ</h3>
             {topCats.length === 0
               ? <p className="dash-empty-text">ไม่มีข้อมูล</p>
               : topCats.map(([key, count]) => {
@@ -219,7 +219,7 @@ const DashboardPage = ({ user }) => {
 
         {/* ===== Skin Type Trend ===== */}
         <div className="dash-card">
-          <h3 className="dash-card-title">🧬 ประเภทผิวในแต่ละครั้ง</h3>
+          <h3 className="dash-card-title">ประเภทผิวในแต่ละครั้ง</h3>
           <div className="dash-timeline">
             {history.slice(0, 8).map((h, i) => {
               const skin = SKIN_LABELS[h.skin_type] || { label: h.skin_type, icon: '●', color: '#94A3B8' };
@@ -253,7 +253,7 @@ const DashboardPage = ({ user }) => {
 
         {/* ===== Top Recommended Products ===== */}
         <div className="dash-card">
-          <h3 className="dash-card-title">⭐ สินค้าที่ได้รับแนะนำล่าสุด</h3>
+          <h3 className="dash-card-title">สินค้าที่ได้รับแนะนำล่าสุด</h3>
           <div className="dash-product-list">
             {(() => {
               const seen = new Set();

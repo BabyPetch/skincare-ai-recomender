@@ -4,14 +4,14 @@ import '../SkinAdvisorCss/StepConcerns.css';
 const StepConcerns = ({ concerns, toggleConcern, onBack, onNext }) => {
   
   const concernList = [
-    { id: 'acne_control',   label: 'สิว',              icon: '🌋' },
-    { id: 'brightening',    label: 'หมองคล้ำ/ฝ้า',     icon: '🌞' },
-    { id: 'anti_aging',     label: 'ริ้วรอย',           icon: '👵' },
-    { id: 'hydrating',      label: 'แห้งกร้าน',         icon: '🍂' },
-    { id: 'barrier_repair', label: 'ผิวเสีย/แพ้ง่าย',   icon: '🛡️' },
-    { id: 'calming',        label: 'ผิวแดง/อักเสบ',     icon: '❄️' },
-    { id: 'exfoliating',    label: 'รูขุมขนกว้าง',      icon: '🕳️' },
-    { id: 'antioxidant',    label: 'ริ้วรอยดำ/กระ',     icon: '🐞' },
+    { id: 'acne_control',   label: 'สิว',              icon: '' },
+    { id: 'brightening',    label: 'หมองคล้ำ/ฝ้า',     icon: '' },
+    { id: 'anti_aging',     label: 'ริ้วรอย',           icon: '' },
+    { id: 'hydrating',      label: 'แห้งกร้าน',         icon: '' },
+    { id: 'barrier_repair', label: 'ผิวเสีย/แพ้ง่าย',   icon: '' },
+    { id: 'calming',        label: 'ผิวแดง/อักเสบ',     icon: '' },
+    { id: 'exfoliating',    label: 'รูขุมขนกว้าง',      icon: '' },
+    { id: 'antioxidant',    label: 'ริ้วรอยดำ/กระ',     icon: '' },
   ];
 
   return (
@@ -39,7 +39,7 @@ const StepConcerns = ({ concerns, toggleConcern, onBack, onNext }) => {
           onClick={onNext}
           disabled={concerns.length === 0}
         >
-          ไปเลือกช่วงราคา 💰
+          ไปเลือกช่วงราคา 
         </button>
       </div>
     </div>

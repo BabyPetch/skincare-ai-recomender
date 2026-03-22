@@ -44,26 +44,26 @@ const getRankEmoji = (rank) => {
    Input Summary Bar
 ═══════════════════════════════ */
 const SKIN_LABELS_S = {
-  oily: '🍋 หน้ามัน', dry: '🌵 หน้าแห้ง',
-  combination: '⚖️ ผิวผสม', sensitive: '🛡️ แพ้ง่าย', normal: '✨ ผิวธรรมดา',
+  oily: 'หน้ามัน', dry: 'หน้าแห้ง',
+  combination: 'ผิวผสม', sensitive: 'แพ้ง่าย', normal: 'ผิวธรรมดา',
 };
 const CONCERN_LABELS_S = {
-  acne_control: '🌋 สิว', brightening: '🌞 หมองคล้ำ/ฝ้า',
-  anti_aging: '👵 ริ้วรอย', hydrating: '🍂 แห้งกร้าน',
-  barrier_repair: '🛡️ ผิวเสีย', calming: '❄️ ผิวแดง',
-  exfoliating: '🕳️ รูขุมขน', antioxidant: '🐞 กระ/ริ้วรอยดำ',
+  acne_control: 'สิว', brightening: 'หมองคล้ำ/ฝ้า',
+  anti_aging: 'ริ้วรอย', hydrating: 'แห้งกร้าน',
+  barrier_repair: 'ผิวเสีย', calming: 'ผิวแดง',
+  exfoliating: 'รูขุมขน', antioxidant: 'กระ/ริ้วรอยดำ',
 };
 const AGE_LABELS_S = {
-  teen: '🧑‍🎓 วัยรุ่น', young: '✨ 20–29', adult: '💼 30–39',
-  mature: '🌿 40–49', senior: '🌸 50+',
+  teen: 'วัยรุ่น', young: '20–29', adult: '30–39',
+  mature: '40–49', senior: '50+',
 };
 const PRICE_LABELS_S = {
-  low: '💚 < ฿500', medium: '💛 ฿500–1,500',
-  high: '🧡 > ฿1,500', any: '✨ ไม่จำกัด',
+  low: '< ฿500', medium: '฿500–1,500',
+  high: '> ฿1,500', any: 'ไม่จำกัด',
 };
 const ENV_LABELS_S = {
-  hot_humid: '☀️ ร้อนชื้น', ac_all_day: '❄️ แอร์ตลอดวัน',
-  mixed: '🌤️ ผสมผสาน', pollution: '🏙️ มลภาวะสูง', tropical: '🌴 ชายทะเล',
+  hot_humid: 'ร้อนชื้น', ac_all_day: 'แอร์ตลอดวัน',
+  mixed: 'ผสมผสาน', pollution: 'มลภาวะสูง', tropical: 'ชายทะเล',
 };
 
 const Chip = ({ text }) => (
@@ -99,7 +99,7 @@ const SummaryBar = ({ summary }) => {
         fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)',
         marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px',
       }}>
-        📋 วิเคราะห์จาก
+        วิเคราะห์จาก
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
         {chips.map((c, i) => <Chip key={i} text={c} />)}
@@ -188,7 +188,7 @@ const ExplanationModal = ({ product, matchPercent, rank, onClose, userSkinType }
             {product.brand}
           </div>
           <h3 style={{ margin: '0 0 12px', fontSize: '20px', fontWeight: '800', color: 'var(--text-primary)', lineHeight: 1.4 }}>
-            🤖 ทำไมถึงแนะนำ "{product.name}"?
+            ทำไมถึงแนะนำ "{product.name}"?
           </h3>
           <div style={{ display: 'flex', gap: '6px' }}>
             <span style={{
@@ -206,7 +206,7 @@ const ExplanationModal = ({ product, matchPercent, rank, onClose, userSkinType }
         {breakdown && (
           <div style={{ marginBottom: '20px' }}>
             <div style={{ fontSize: '14px', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              📊 Score Breakdown
+              Score Breakdown
               <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '400' }}>
                 (คะแนนรวม {breakdown.final?.toFixed ? (breakdown.final * 100).toFixed(1) : '-'}%)
               </span>
@@ -258,7 +258,7 @@ const ExplanationModal = ({ product, matchPercent, rank, onClose, userSkinType }
           border: `1.5px solid ${skinStatus.color}`,
           marginBottom: '16px',
         }}>
-          <span style={{ fontSize: '18px', flexShrink: 0 }}>🧴</span>
+          <span style={{ fontSize: '18px', flexShrink: 0 }}></span>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: '12px', fontWeight: '800', color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               Skin Type (Hard Filter)
@@ -286,7 +286,7 @@ const ExplanationModal = ({ product, matchPercent, rank, onClose, userSkinType }
         {concernReasons.length > 0 && (
           <div style={{ marginBottom: '16px' }}>
             <div style={{ fontSize: '14px', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '12px' }}>
-              🎯 ตรงกับปัญหาผิวของคุณ
+              ตรงกับปัญหาผิวของคุณ
             </div>
             {concernReasons.map((cr, i) => (
               <div key={i} style={{
@@ -309,7 +309,7 @@ const ExplanationModal = ({ product, matchPercent, rank, onClose, userSkinType }
                         background: '#EEF2FF', color: '#4F46E5',
                         padding: '4px 10px', borderRadius: '20px',
                         fontSize: '12px', fontWeight: '600',
-                      }}>🧪 {ing}</span>
+                      }}>{ing}</span>
                     ))}
                   </div>
                 )}
@@ -322,7 +322,7 @@ const ExplanationModal = ({ product, matchPercent, rank, onClose, userSkinType }
         {summaryList.length > 0 && concernReasons.length === 0 && (
           <div style={{ marginBottom: '16px' }}>
             <div style={{ fontSize: '12px', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '10px' }}>
-              🎯 เหตุผลที่แนะนำ
+              เหตุผลที่แนะนำ
             </div>
             {summaryList.map((reason, i) => (
               <div key={i} style={{
@@ -341,7 +341,7 @@ const ExplanationModal = ({ product, matchPercent, rank, onClose, userSkinType }
         {otherReasons.length > 0 && (
           <div>
             <div style={{ fontSize: '12px', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '10px' }}>
-              💡 ข้อมูลเพิ่มเติม
+              ข้อมูลเพิ่มเติม
             </div>
             {otherReasons.map((r, i) => (
               <div key={i} style={{
@@ -436,7 +436,7 @@ const ProductCard = ({ product, matchPercent, rank, email, userName, onDismiss, 
                 ? <img src={product.image_url} alt={product.name}
                     className="card-img-thumb"
                     onError={e => e.target.style.display = 'none'} />
-                : <div className="card-img-placeholder">🧴</div>
+                : <div className="card-img-placeholder">-</div>
               }
             </div>
 
@@ -458,7 +458,7 @@ const ProductCard = ({ product, matchPercent, rank, email, userName, onDismiss, 
               onMouseEnter={e => Object.assign(e.currentTarget.style, { background: '#6366F1', color: 'white' })}
               onMouseLeave={e => Object.assign(e.currentTarget.style, { background: 'var(--accent-light)', color: '#6366F1' })}
             >
-              🤖 ทำไมถึงแนะนำ?
+              ทำไมถึงแนะนำ?
             </button>
 
             <div className="card-footer">
@@ -493,7 +493,7 @@ const ProductCard = ({ product, matchPercent, rank, email, userName, onDismiss, 
                   {/* ── 1. Active Ingredients ── */}
                   <div>
                     <div style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '10px' }}>
-                      🧪 Active Ingredients
+                      Active Ingredients
                     </div>
                     {topIngr.length > 0 ? (
                       <div style={{
@@ -509,7 +509,7 @@ const ProductCard = ({ product, matchPercent, rank, email, userName, onDismiss, 
                             display: 'flex', flexDirection: 'column', gap: '3px',
                             flexShrink: 0,
                           }}>
-                            <span>🧬 {ing.name}</span>
+                            <span>{ing.name}</span>
                             <span style={{ fontSize: '10px', color: '#6366F1', fontWeight: '600' }}>
                               ช่วย{ing.label} · {Math.round(ing.conf * 100)}%
                             </span>
@@ -529,7 +529,7 @@ const ProductCard = ({ product, matchPercent, rank, email, userName, onDismiss, 
                             fontSize: '12px', fontWeight: '600', color: 'var(--text-secondary)',
                             flexShrink: 0,
                           }}>
-                            🧬 {ing.trim()}
+                            {ing.trim()}
                           </div>
                         ))}
                       </div>
@@ -542,7 +542,7 @@ const ProductCard = ({ product, matchPercent, rank, email, userName, onDismiss, 
                   {tags.length > 0 && (
                     <div>
                       <div style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '10px' }}>
-                        🏷️ คุณสมบัติ
+                        คุณสมบัติ
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                         {tags.map((tag, i) => (
@@ -565,7 +565,7 @@ const ProductCard = ({ product, matchPercent, rank, email, userName, onDismiss, 
                     background: 'var(--bg-subtle)', border: '1px solid var(--border)',
                     display: 'flex', alignItems: 'center', gap: '10px',
                   }}>
-                    <span style={{ fontSize: '20px' }}>🧴</span>
+                    
                     <div>
                       <div style={{ fontSize: '10px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '3px' }}>
                         Suitable For
@@ -651,7 +651,7 @@ const RoutineCard = ({ product, email }) => (
       <div className="routine-img-box">
         {product.image_url
           ? <img src={product.image_url} alt={product.name} className="routine-img" onError={e => e.target.style.display = 'none'} />
-          : <span className="routine-img-placeholder">🧴</span>}
+          : <span className="routine-img-placeholder"></span>}
       </div>
       <div className="routine-product-info">
         <div className="routine-brand">{product.brand}</div>
@@ -696,7 +696,7 @@ const BrandDropdown = ({ brandList, brandFilter, allPool, dismissedIdxs, onToggl
         transition: 'all 0.15s', width: '100%', justifyContent: 'space-between',
       }}>
         <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          🏷️ กรองตามแบรนด์
+          กรองตามแบรนด์
           {selectedCount > 0 && (
             <span style={{ background: '#6366F1', color: 'white', borderRadius: '20px', padding: '1px 8px', fontSize: '11px', fontWeight: '800' }}>{selectedCount}</span>
           )}
@@ -758,7 +758,6 @@ const BrandDropdown = ({ brandList, brandFilter, allPool, dismissedIdxs, onToggl
                     <span style={{ width: '16px', height: '16px', borderRadius: '4px', border: active ? '2px solid #6366F1' : '2px solid var(--border)', background: active ? '#6366F1' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'all 0.12s' }}>
                       {active && <span style={{ color: 'white', fontSize: '10px', fontWeight: '900' }}>✓</span>}
                     </span>
-                    {isPopular && <span style={{ fontSize: '12px' }}>⭐</span>}
                     {brand}
                   </span>
                   <span style={{ fontSize: '11px', color: 'var(--text-muted)', background: 'var(--bg-subtle)', padding: '1px 7px', borderRadius: '20px', fontWeight: '600' }}>{count}</span>
@@ -829,7 +828,7 @@ const StepResults = ({ recommend, routine, user, onRestart, summary }) => {
       <SummaryBar summary={summary} />
 
       <SectionHeader
-        icon="✨"
+        icon=""
         title="สินค้าที่เหมาะกับคุณ"
         subtitle={
           brandFilter.length > 0
@@ -872,7 +871,7 @@ const StepResults = ({ recommend, routine, user, onRestart, summary }) => {
 
       {visiblePool.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '48px 24px', background: 'var(--bg-card)', borderRadius: '20px', border: '2px dashed var(--border)', marginBottom: '40px' }}>
-          <div style={{ fontSize: '52px', marginBottom: '14px' }}>{brandFilter.length > 0 ? '🔍' : '🧴'}</div>
+          <div style={{ fontSize: '52px', marginBottom: '14px' }}>{'🔍'}</div>
           <h3 style={{ color: 'var(--text-primary)', margin: '0 0 8px', fontSize: '18px' }}>{brandFilter.length > 0 ? 'ไม่พบสินค้าของแบรนด์นี้' : 'ดูครบทุกตัวแล้ว!'}</h3>
           <p style={{ color: 'var(--text-secondary)', margin: '0 0 22px', fontSize: '14px' }}>{brandFilter.length > 0 ? 'ลองเลือกแบรนด์อื่น หรือล้าง filter' : 'ลองปรับเงื่อนไขแล้ววิเคราะห์ใหม่'}</p>
           <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
@@ -913,7 +912,7 @@ const StepResults = ({ recommend, routine, user, onRestart, summary }) => {
 
       <div className="results-divider" />
 
-      <SectionHeader icon="📋" title="Skincare Routine ของคุณ" subtitle="เรียงตามลำดับการใช้งาน step 1 → 5" />
+      <SectionHeader icon="" title="Skincare Routine ของคุณ" subtitle="เรียงตามลำดับการใช้งาน step 1 → 5" />
 
       {routineList.length > 0 ? (
         <div className="routine-list">

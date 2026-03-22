@@ -90,8 +90,8 @@ const HistoryModal = ({ item, onClose }) => {
         {hasRoutine && (
           <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
             {[
-              { key: 'recommend', label: '✨ สินค้าแนะนำ' },
-              { key: 'routine',   label: '📋 Routine' },
+              { key: 'recommend', label: 'สินค้าแนะนำ' },
+              { key: 'routine',   label: 'Routine' },
             ].map(t => (
               <button key={t.key} onClick={() => setTab(t.key)} style={{
                 flex: 1, padding: '10px', borderRadius: '10px', border: 'none',
@@ -110,7 +110,7 @@ const HistoryModal = ({ item, onClose }) => {
         <div className="modal-results">
           {tab === 'recommend' && (
             <>
-              <h3>✨ สินค้าที่แนะนำ</h3>
+              <h3>สินค้าที่แนะนำ</h3>
               {recList.length > 0
                 ? recList.map((prod, i) => <ProductItem key={i} prod={prod} idx={i} />)
                 : <p style={{ color: '#94A3B8', textAlign: 'center' }}>ไม่มีข้อมูล</p>
@@ -119,7 +119,7 @@ const HistoryModal = ({ item, onClose }) => {
           )}
           {tab === 'routine' && (
             <>
-              <h3>📋 Skincare Routine</h3>
+              <h3>Skincare Routine</h3>
               {routineList.length > 0
                 ? routineList.map((prod, i) => <RoutineItem key={i} prod={prod} />)
                 : <p style={{ color: '#94A3B8', textAlign: 'center' }}>ไม่มีข้อมูล routine</p>
@@ -169,11 +169,11 @@ const UserProfile = ({ user }) => {
         </div>
         <div className="profile-details">
           <div className="detail-row">
-            <span className="detail-label">🎂 วันเกิด</span>
+            <span className="detail-label">วันเกิด</span>
             <span className="detail-value">{currentUser.birthdate || '-'}</span>
           </div>
           <div className="detail-row">
-            <span className="detail-label">📅 อายุ</span>
+            <span className="detail-label">อายุ</span>
             <span className="detail-value">{currentUser.age || 0} ปี</span>
           </div>
         </div>
@@ -184,7 +184,7 @@ const UserProfile = ({ user }) => {
       </div>
 
       <div className="history-section">
-        <h3 className="history-title">🕒 ประวัติการวิเคราะห์ผิว ({history.length})</h3>
+        <h3 className="history-title">ประวัติการวิเคราะห์ผิว ({history.length})</h3>
         <div className="history-list">
           {history.length > 0 ? history.map((item, index) => (
             <div key={index} className="history-card clickable" onClick={() => setSelectedItem(item)}>
@@ -195,7 +195,7 @@ const UserProfile = ({ user }) => {
                     <span style={{
                       background: '#EEF2FF', color: '#4F46E5', padding: '3px 8px',
                       borderRadius: '12px', fontSize: '11px', fontWeight: '600'
-                    }}>📋 Routine</span>
+                    }}>Routine</span>
                   )}
                   <span className="skin-badge">{item.skin_type}</span>
                 </div>

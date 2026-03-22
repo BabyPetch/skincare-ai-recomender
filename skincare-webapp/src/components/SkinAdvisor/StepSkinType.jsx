@@ -2,11 +2,11 @@ import React from 'react';
 import '../SkinAdvisorCss/StepSkinType.css';
 
 const skinTypes = [
-  { id: 'oily',        label: 'หน้ามัน',   icon: '🍋' },
-  { id: 'dry',         label: 'หน้าแห้ง',  icon: '🌵' },
-  { id: 'combination', label: 'ผิวผสม',    icon: '⚖️' },
-  { id: 'sensitive',   label: 'แพ้ง่าย',  icon: '🛡️' },
-  { id: 'normal',      label: 'ผิวธรรมดา', icon: '✨' },
+  { id: 'oily',        label: 'หน้ามัน',   icon: '' },
+  { id: 'dry',         label: 'หน้าแห้ง',  icon: '' },
+  { id: 'combination', label: 'ผิวผสม',    icon: '' },
+  { id: 'sensitive',   label: 'แพ้ง่าย',  icon: '' },
+  { id: 'normal',      label: 'ผิวธรรมดา', icon: '' },
 ];
 
 const StepSkinType = ({ onSelect, onNext, currentSelection, userName }) => (

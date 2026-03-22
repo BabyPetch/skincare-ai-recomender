@@ -2,16 +2,16 @@ import React from 'react';
 import '../SkinAdvisorCss/StepShared.css';
 
 const AGE_RANGES = [
-  { id: 'teen',   label: 'วัยรุ่น',     sub: '13–19 ปี',    icon: '🧑‍🎓' },
-  { id: 'young',  label: 'วัยหนุ่มสาว', sub: '20–29 ปี',    icon: '✨' },
-  { id: 'adult',  label: 'วัยทำงาน',    sub: '30–39 ปี',    icon: '💼' },
-  { id: 'mature', label: 'วัยกลางคน',   sub: '40–49 ปี',    icon: '🌿' },
-  { id: 'senior', label: 'วัยผู้ใหญ่',  sub: '50 ปีขึ้นไป', icon: '🌸' },
+  { id: 'teen',   label: 'วัยรุ่น',     sub: '13–19 ปี',    icon: '' },
+  { id: 'young',  label: 'วัยหนุ่มสาว', sub: '20–29 ปี',    icon: '' },
+  { id: 'adult',  label: 'วัยทำงาน',    sub: '30–39 ปี',    icon: '' },
+  { id: 'mature', label: 'วัยกลางคน',   sub: '40–49 ปี',    icon: '' },
+  { id: 'senior', label: 'วัยผู้ใหญ่',  sub: '50 ปีขึ้นไป', icon: '' },
 ];
 
 const StepAge = ({ value, onSelect, onBack, onNext }) => (
   <div className="step-content fadeIn">
-    <h2 className="step-title">🎂 ช่วงอายุของคุณ?</h2>
+    <h2 className="step-title">ช่วงอายุของคุณ?</h2>
     <p className="step-subtitle">ผิวแต่ละวัยมีความต้องการที่แตกต่างกัน</p>
 
     <div className="shared-grid shared-grid-5">

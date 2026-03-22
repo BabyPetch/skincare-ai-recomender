@@ -16,7 +16,7 @@ const Navbar = ({ user, onLogout }) => {
       <div className="navbar-left">
         <h3 className="navbar-title"
           onClick={() => navigate(user?.role === 'admin' ? '/admin' : '/advisor')}>
-          SkinCare AI ✨
+          SkinCare AI 
         </h3>
         <span className="navbar-user">
           สวัสดี, {user?.name || 'Guest'}
@@ -33,26 +33,26 @@ const Navbar = ({ user, onLogout }) => {
               
         {user?.role !== 'guest' && (
           <button onClick={() => navigate('/dashboard')} className={getBtnClass('/dashboard')}>
-            📊 Dashboard
+            Dashboard
           </button>
         )}
 
         <button onClick={() => navigate('/search')} className={getBtnClass('/search')}>
-          🔍 ค้นหาสินค้า
+          ค้นหาสินค้า
         </button>
         {user?.role !== 'admin' && user?.role !== 'guest' && (
           <button onClick={() => navigate('/bookmarks')} className={getBtnClass('/bookmarks')}>
-            🔖 บันทึกไว้
+            บันทึกไว้
           </button>
         )}
         {user?.role === 'admin' && (
           <button onClick={() => navigate('/admin')} className={getBtnClass('/admin')}>
-            👑 ระบบหลังบ้าน
+            ระบบหลังบ้าน
           </button>
         )}
         {user?.role !== 'guest' && user?.role !== 'admin' && (
           <button onClick={() => navigate('/profile')} className={getBtnClass('/profile')}>
-            👤 โปรไฟล์
+            โปรไฟล์
           </button>
         )}
 
