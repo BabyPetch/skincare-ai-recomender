@@ -29,9 +29,6 @@ const SkinCareAdvisor = ({ user }) => {
   const hasAge    = !isGuest && user.age > 0;
   const hasGender = !isGuest && user.gender && user.gender !== 'other';
 
-  // step จริงใน internal logic: 1→2(age)→3(gender)→4→5→6→7→8→9→10(loading)→11(results)
-  // steps ที่ข้าม: age=2, gender=3
-  // TOTAL_STEPS สำหรับ progress bar
   const TOTAL_STEPS = 9 - (hasAge ? 1 : 0) - (hasGender ? 1 : 0);
 
   const [step,        setStep]        = useState(1);
@@ -47,20 +44,19 @@ const SkinCareAdvisor = ({ user }) => {
   const [recommend,   setRecommend]   = useState([]);
   const [routine,     setRoutine]     = useState([]);
 
-  // step แรกหลัง skin type ขึ้นอยู่กับ hasAge/hasGender
   const nextAfterSkinType = () => {
-    if (hasAge && hasGender) return setStep(4);  // ข้ามทั้ง age + gender
-    if (hasAge)              return setStep(3);  // ข้ามแค่ age → gender
-    setStep(2);                                  // ไป age ปกติ
+    if (hasAge && hasGender) return setStep(4);
+    if (hasAge)              return setStep(3);
+    setStep(2);
   };
 
   const nextAfterAge = () => {
-    if (hasGender) return setStep(4);  // ข้าม gender
+    if (hasGender) return setStep(4);
     setStep(3);
   };
 
   const backFromGender = () => {
-    if (hasAge) return setStep(1);  // ข้ามกลับไป skin type
+    if (hasAge) return setStep(1);
     setStep(2);
   };
 
@@ -74,7 +70,6 @@ const SkinCareAdvisor = ({ user }) => {
       prev.includes(concern) ? prev.filter(c => c !== concern) : [...prev, concern]
     );
 
-  // loading/results step ขึ้นอยู่กับจำนวน steps ที่ข้าม
   const skipped      = (hasAge ? 1 : 0) + (hasGender ? 1 : 0);
   const LOADING_STEP = 98 - skipped;
   const RESULTS_STEP = 99 - skipped;
@@ -102,7 +97,7 @@ const SkinCareAdvisor = ({ user }) => {
     } catch (err) {
       console.error(err);
       alert('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์');
-      setStep(9); // กลับไปหน้า price เพื่อให้ลอง submit ใหม่
+      setStep(9);
     }
   };
 
@@ -116,11 +111,19 @@ const SkinCareAdvisor = ({ user }) => {
     setRecommend([]); setRoutine([]);
   };
 
-  // progress display
   const skippedSoFar = (hasAge && step >= 3 ? 1 : 0) + (hasGender && step >= 4 ? 1 : 0);
   const displayStep  = step - skippedSoFar;
   const progressPct  = Math.min((displayStep / TOTAL_STEPS) * 100, 100);
   const showProgress = step <= PRICE_STEP;
+
+  // ✅ FIX: summary object ส่งไปยัง StepResults
+  const resultSummary = {
+    skinType,
+    age,
+    concerns,
+    priceRange,
+    environment,
+  };
 
   return (
     <div id="skin-advisor-scope">
@@ -225,6 +228,8 @@ const SkinCareAdvisor = ({ user }) => {
               routine={routine}
               user={user}
               onRestart={handleRestart}
+              // ✅ FIX: ส่ง summary ให้ StepResults แสดง SummaryBar
+              summary={resultSummary}
             />
           )}
 

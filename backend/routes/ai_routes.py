@@ -24,9 +24,10 @@ def init_ai_routes(ai_engine, user_manager):
         result = ai_engine.recommend_products(
             skin_type=skin_type, concerns=concerns,
             min_price=min_p, max_price=max_p, context=context,
+            top_n=100,  # ← ส่งทั้งหมดไม่จำกัด
         )
         if email:
-            user_manager.add_history(email, skin_type, concerns, result)
+            user_manager.add_history(email, skin_type, concerns, result[:5])
         return jsonify(result)
 
 
@@ -56,16 +57,18 @@ def init_ai_routes(ai_engine, user_manager):
         context   = data.get('context', {})
         min_p, max_p = PRICE_RANGES.get(price_key, (0, 100000))
 
-        rec     = ai_engine.recommend_products(
+        rec = ai_engine.recommend_products(
             skin_type=skin_type, concerns=concerns,
             min_price=min_p, max_price=max_p, context=context,
+            top_n=100,  # ← ส่งทั้งหมด frontend จัด pagination เอง
         )
         routine = ai_engine.recommend_routine(
             skin_type=skin_type, concerns=concerns,
             min_price=min_p, max_price=max_p, context=context,
         )
+        # บันทึก history แค่ top 5
         if email:
-            user_manager.add_history(email, skin_type, concerns, rec, routine)
+            user_manager.add_history(email, skin_type, concerns, rec[:5], routine)
         return jsonify({"recommend": rec, "routine": routine})
 
 

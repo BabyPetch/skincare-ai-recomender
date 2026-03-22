@@ -1,48 +1,18 @@
 """
 ai_engine_v2.py
 ===============
-Skincare Recommendation Engine — Evidence-Based Scoring
-
 SCORING FORMULA
 ---------------
-final_score = (cosine × 0.35) + (concern × 0.40) + (skin × 0.10) + (context × 0.15)
+final_score = (cosine × 0.35) + (concern × 0.45) + (skin × 0.05) + (context × 0.15)
+
+skin_type เป็น Hard Filter ก่อน scoring — ผลิตภัณฑ์ต้องตรง skin type ก่อนเสมอ
 
 Layer 1 — TF-IDF cosine similarity (35%)
-  user_text = skin_type + concerns  →  cosine similarity กับ product combined_features
+Layer 2 — Concern ML score normalized (45%)
+Layer 3 — Skin type bonus (5%)
+Layer 4 — Context boost normalized (15%)
 
-Layer 2 — Concern × Active Ingredient score (40%)  ← main driver
-  concern_score = Σ [ confidence(mcat) × relative_weight(concern, mcat) × α ]
-  capped at 1.0
-  relative_weight อ้างอิงจาก dermatologist consensus (Delphi method):
-    Alvarez GV et al. JAAD 2025;93(6):1509-1525. doi:10.1016/j.jaad.2025.04.021
-
-Layer 3 — Skin type match (10%)
-  +0.10 ถ้า user skin_type อยู่ใน product skintype field
-
-Layer 4 — Context boost (15%)
-  age / hydration / environment / experience / routine_time
-  เพิ่ม weight ให้ concern ที่สอดคล้องกับ context ของ user
-
-REFERENCES
-----------
-[1] Alvarez GV, Kang BY, Richmond AM, et al.
-    Skincare ingredients recommended by cosmetic dermatologists: A Delphi consensus study.
-    J Am Acad Dermatol. 2025;93(6):1509-1525. doi:10.1016/j.jaad.2025.04.021
-    → 62 dermatologists, 43 centers, 2-round Delphi (Sep 2023–Sep 2024)
-    → consensus ≥70% recommend + ≤15% discourage on 9-point Likert scale
-    → 318 ingredients → 83 → 23 consensus ingredients
-
-[2] Thiboutot D, et al. Guidelines of care for the management of acne vulgaris.
-    J Am Acad Dermatol. 2024;90:1006.e1-30.
-    → salicylic acid, benzoyl peroxide, retinoids Level A evidence
-
-[3] Crous C, Pretorius J, Petzer A. Overview of popular cosmeceuticals in dermatology.
-    Skin Health Dis. 2024;4(2):ski2-340. doi:10.1002/ski2.340
-    → niacinamide, retinoids, vitamin C, hyaluronic acid mechanism review
-
-[4] Boo YC. Mechanistic basis and clinical evidence for the applications of
-    nicotinamide (niacinamide) to control skin aging and pigmentation.
-    Antioxidants. 2021;10(8):1315. doi:10.3390/antiox10081315
+อ้างอิง: Alvarez GV et al. JAAD 2025;93(6):1509-1525.
 """
 
 import json
@@ -54,9 +24,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from database.repository import get_all_products
 
-# ================================================================
-# PATHS
-# ================================================================
 MODEL_DIR = Path(__file__).parent.parent / "training" / "model"
 
 # ================================================================
@@ -75,9 +42,6 @@ RETURN_COLS = [
     "skintype", "function_tags", "image_url", "price", "final_score",
 ]
 
-# ================================================================
-# CONCERN LABELS (UI → Thai)
-# ================================================================
 CONCERN_LABEL = {
     "acne_control":   "สิว",
     "brightening":    "หมองคล้ำ/ฝ้า",
@@ -90,80 +54,55 @@ CONCERN_LABEL = {
 }
 
 # ================================================================
-# EVIDENCE-BASED ACTIVE FEATURE WEIGHTS
-#
-# อ้างอิง: Alvarez GV et al. JAAD 2025 [1]
-# วิธีคำนวณ: normalize consensus % ของแต่ละ ingredient-concern pair
-# เช่น acne concern:
-#   benzoyl peroxide 95.2%, salicylic acid 93.6% → acne weight = 1.0
-#   salicylic acid 79% for oily skin → oilcontrol weight = 0.85
-#   glycolic acid for acne dark spots 82% → exfoliation weight = 0.70
-#   niacinamide anti-inflammatory → soothing weight = 0.50
-#
-# CONCERN_ACTIVE_WEIGHTS[concern][model_category] = relative_weight (0.0–1.0)
-# weight สูง = dermatologist consensus สูงว่า ingredient นี้ช่วย concern นี้
+# CONCERN WEIGHTS  (อ้างอิง Alvarez GV et al. JAAD 2025)
 # ================================================================
 CONCERN_ACTIVE_WEIGHTS = {
     "acne_control": {
-        # [1] benzoyl peroxide 95.2%, salicylic acid 93.6% for acne
-        # [2] salicylic acid, retinoids Level A evidence for acne
         "acne":        1.00,
-        "oilcontrol":  0.85,  # [1] salicylic 79% for oily skin
-        "exfoliation": 0.70,  # [1] glycolic acid 82% for acne/dark spots
-        "soothing":    0.50,  # [3] niacinamide anti-inflammatory
+        "oilcontrol":  0.85,
+        "exfoliation": 0.70,
+        "soothing":    0.50,
     },
     "brightening": {
-        # [1] hydroquinone 98.4%, kojic 93.6%, tranexamic 87.1%, Vit C 87.1%
         "whitening":   1.00,
-        "antioxidant": 0.80,  # [1] Vit C 88.7% anti-aging + brightening
-        "exfoliation": 0.60,  # [1] glycolic acid 82% for dark spots
-        "hydration":   0.30,  # supporting moisture for even skin tone
+        "antioxidant": 0.80,
+        "exfoliation": 0.60,
+        "hydration":   0.30,
     },
     "anti_aging": {
-        # [1] retinoids 96.8%, Vit C 88.7%, mineral sunscreen 96.8%
-        # [3] retinoids gold standard for collagen stimulation
-        "wrinkle":      1.00,
-        "antioxidant":  0.85,  # [1] Vit C collagen synthesis 88.7%
-        "hydration":    0.65,  # [1] hyaluronic acid 79%
-        "barrierrepair":0.50,  # [1] ceramides 82.1%
+        "wrinkle":       1.00,
+        "antioxidant":   0.85,
+        "hydration":     0.65,
+        "barrierrepair": 0.50,
     },
     "hydrating": {
-        # [1] petrolatum 85.5%, ceramides 82.1%, hyaluronic acid 79%, urea 79%
-        "hydration":    1.00,
-        "barrierrepair":0.85,  # [1] ceramides lock moisture barrier
-        "soothing":     0.40,  # [4] niacinamide barrier support
+        "hydration":     1.00,
+        "barrierrepair": 0.85,
+        "soothing":      0.40,
     },
     "barrier_repair": {
-        # [1] ceramides 82.1%, [3] niacinamide barrier function
-        "barrierrepair":1.00,
-        "soothing":     0.80,  # [4] niacinamide reduces inflammation
-        "hydration":    0.60,  # moisture retention supports barrier
+        "barrierrepair": 1.00,
+        "soothing":      0.80,
+        "hydration":     0.60,
     },
     "calming": {
-        # [1] niacinamide for redness, mineral sunscreen 95.2% for redness
-        # [3] niacinamide anti-inflammatory
-        "soothing":     1.00,
-        "barrierrepair":0.75,  # repair reduces sensitivity
-        "hydration":    0.40,  # supporting
+        "soothing":      1.00,
+        "barrierrepair": 0.75,
+        "hydration":     0.40,
     },
     "exfoliating": {
-        # [1] salicylic acid 93.6%, glycolic acid 82%
-        # [3] AHA/BHA dissolve corneodesmosomes, reduce hyperkeratotic plugs
         "exfoliation":  1.00,
-        "oilcontrol":   0.75,  # [1] salicylic 79% for oily/large pores
-        "acne":         0.50,  # pore clearing → fewer acne
+        "oilcontrol":   0.75,
+        "acne":         0.50,
     },
     "antioxidant": {
-        # [1] Vit C 88.7% anti-aging + 87.1% dark spots
-        # [3] retinoids, niacinamide antioxidant mechanism
         "antioxidant":  1.00,
-        "whitening":    0.70,  # [1] Vit C dark spots 87.1%
-        "wrinkle":      0.60,  # [1] Vit C fine lines 88.7%
-        "exfoliation":  0.40,  # AHA with antioxidant effect
+        "whitening":    0.70,
+        "wrinkle":      0.60,
+        "exfoliation":  0.40,
     },
 }
 
-# concern (UI) → model output categories
 CONCERN_TO_MODEL = {
     "acne_control":   ["acne", "oilcontrol", "exfoliation", "soothing"],
     "brightening":    ["whitening", "antioxidant", "exfoliation", "hydration"],
@@ -175,37 +114,33 @@ CONCERN_TO_MODEL = {
     "antioxidant":    ["antioxidant", "whitening", "wrinkle", "exfoliation"],
 }
 
-# model category → DB column
 MODEL_TO_COL = {
-    "acne":         "active_acne",
-    "whitening":    "active_whitening",
-    "wrinkle":      "active_wrinkle",
-    "exfoliation":  "active_exfoliation",
-    "hydration":    "active_hydration",
-    "barrierrepair":"active_barrier",
-    "soothing":     "active_soothing",
-    "oilcontrol":   "active_oilct",
-    "antioxidant":  "active_antioxidant",
+    "acne":          "active_acne",
+    "whitening":     "active_whitening",
+    "wrinkle":       "active_wrinkle",
+    "exfoliation":   "active_exfoliation",
+    "hydration":     "active_hydration",
+    "barrierrepair": "active_barrier",
+    "soothing":      "active_soothing",
+    "oilcontrol":    "active_oilct",
+    "antioxidant":   "active_antioxidant",
 }
 
 # ================================================================
-# CONTEXT BOOST RULES
-# อ้างอิง: dermatology guidelines สำหรับ age-appropriate skincare
+# CONTEXT RULES
 # ================================================================
 CONTEXT_RULES = {
     "gender": {
-    # อ้างอิง: Dao H, Kazin RA. Gender differences in skin: a review of the literature.
-    # Gender Medicine. 2007;4(4):308-328. doi:10.1016/S1550-8579(07)80061-1
-    "male":   {"acne_control": 0.10, "oilcontrol": 0.10, "exfoliating": 0.05},
-    "female": {"hydrating": 0.10, "barrier_repair": 0.05, "brightening": 0.05},
-    "other":  {},
+        "male":   {"acne_control": 0.10, "oilcontrol": 0.10, "exfoliating": 0.05},
+        "female": {"hydrating": 0.10, "barrier_repair": 0.05, "brightening": 0.05},
+        "other":  {},
     },
     "age": {
         "teen":   {"acne_control": 0.20, "hydrating": 0.10},
-        "young":  {"brightening": 0.10,  "antioxidant": 0.10},
-        "adult":  {"anti_aging": 0.15,   "brightening": 0.10},
-        "mature": {"anti_aging": 0.25,   "hydrating": 0.15,  "barrier_repair": 0.10},
-        "senior": {"anti_aging": 0.30,   "hydrating": 0.20,  "barrier_repair": 0.15},
+        "young":  {"brightening": 0.10, "antioxidant": 0.10},
+        "adult":  {"anti_aging": 0.15, "brightening": 0.10},
+        "mature": {"anti_aging": 0.25, "hydrating": 0.15, "barrier_repair": 0.10},
+        "senior": {"anti_aging": 0.30, "hydrating": 0.20, "barrier_repair": 0.15},
     },
     "hydration": {
         "very_dry": {"hydrating": 0.25, "barrier_repair": 0.20},
@@ -215,10 +150,10 @@ CONTEXT_RULES = {
     },
     "environment": {
         "hot_humid":  {"acne_control": 0.10, "exfoliating": 0.10},
-        "ac_all_day": {"hydrating": 0.20,    "barrier_repair": 0.15},
+        "ac_all_day": {"hydrating": 0.20, "barrier_repair": 0.15},
         "mixed":      {"hydrating": 0.10},
-        "pollution":  {"antioxidant": 0.20,  "brightening": 0.10},
-        "tropical":   {"antioxidant": 0.15,  "brightening": 0.10},
+        "pollution":  {"antioxidant": 0.20, "brightening": 0.10},
+        "tropical":   {"antioxidant": 0.15, "brightening": 0.10},
     },
     "experience": {
         "beginner":     {"calming": 0.10, "hydrating": 0.10},
@@ -228,7 +163,7 @@ CONTEXT_RULES = {
     "routine_time": {
         "morning": {"antioxidant": 0.10},
         "evening": {"anti_aging": 0.15, "barrier_repair": 0.15, "hydrating": 0.10},
-        "both":    {"hydrating": 0.05,  "barrier_repair": 0.05},
+        "both":    {"hydrating": 0.05, "barrier_repair": 0.05},
     },
 }
 
@@ -243,15 +178,61 @@ def _merge_boosts(context: dict) -> dict:
     return merged
 
 
-def _context_score(function_tags: str, boost_map: dict) -> float:
+def _context_score_normalized(function_tags: str, boost_map: dict) -> float:
+    """
+    Normalize context score → [0, 1]
+    raw     = Σ boost_w ของ tag ที่ match ใน function_tags
+    max_pos = Σ boost_w ทั้งหมดใน boost_map
+    return  = raw / max_pos
+    """
     if not boost_map:
         return 0.0
     tags = function_tags.lower()
-    return sum(w for tag, w in boost_map.items() if tag.lower() in tags)
+    raw = sum(w for tag, w in boost_map.items() if tag.lower() in tags)
+    max_possible = sum(boost_map.values())
+    if max_possible == 0:
+        return 0.0
+    return min(raw / max_possible, 1.0)
+
+
+def _concern_score_normalized(pred: dict, concerns: list) -> tuple:
+    """
+    Normalize concern score → [0, 1]
+    concern_score_i = Σ(conf × rel_w) / Σ(rel_w)  ต่อ concern หนึ่งตัว
+    final           = mean ของทุก concern ที่เลือก
+    """
+    if not pred or not concerns:
+        return 0.0, {}
+
+    scores_per_concern = []
+    matched = {}
+
+    for concern in concerns:
+        weights = CONCERN_ACTIVE_WEIGHTS.get(concern, {})
+        mcats   = CONCERN_TO_MODEL.get(concern, [])
+
+        numerator   = 0.0
+        denominator = 0.0
+        cat_confs   = []
+
+        for mcat in mcats:
+            conf  = pred.get(mcat, 0.0)
+            rel_w = weights.get(mcat, 0.3)
+            numerator   += conf * rel_w
+            denominator += rel_w
+            if conf > 0:
+                cat_confs.append((mcat, conf, rel_w))
+
+        concern_score = (numerator / denominator) if denominator > 0 else 0.0
+        scores_per_concern.append(concern_score)
+        if cat_confs:
+            matched[concern] = cat_confs
+
+    final = float(np.mean(scores_per_concern)) if scores_per_concern else 0.0
+    return min(final, 1.0), matched
 
 
 def _top_ingredients(row: pd.Series, model_cats: list, n: int = 3) -> list:
-    """ดึง active ingredients จาก columns ที่ match model_cats เรียงตาม weight สูงสุด"""
     seen, result = set(), []
     for mcat in model_cats:
         col = MODEL_TO_COL.get(mcat, "")
@@ -266,14 +247,9 @@ def _top_ingredients(row: pd.Series, model_cats: list, n: int = 3) -> list:
 
 
 # ================================================================
-# CONCERN MODEL
+# CONCERN MODEL (ML)
 # ================================================================
 class ConcernModel:
-    """
-    Multi-label classifier: ingredients → { category: confidence }
-    trained บน 5090 products × 210 active ingredients จาก Active_group.csv
-    """
-
     def __init__(self):
         self.model       = None
         self.categories  = []
@@ -302,8 +278,7 @@ class ConcernModel:
                 x[idx] = 1.0
         return x
 
-    def predict_proba(self, ingredients_list_str: str, threshold: float = 0.30) -> dict:
-        """returns { category: confidence } for categories above threshold"""
+    def predict_proba(self, ingredients_list_str: str, threshold: float = 0.25) -> dict:
         if self.model is None:
             return {}
         x = self._vectorize(ingredients_list_str)
@@ -317,27 +292,10 @@ class ConcernModel:
         }
 
     def score_and_match(self, row: pd.Series, concerns: list) -> tuple:
-        """
-        concern_score = Σ [ confidence(mcat) × relative_weight(concern, mcat) × 0.15 ]
-        capped at 1.0
-
-        อ้างอิง weight จาก CONCERN_ACTIVE_WEIGHTS ซึ่งอิงจาก Alvarez GV et al. JAAD 2025
-        """
         pred = self.predict_proba(row.get("ingredients_list", ""))
         if not pred:
             return 0.0, {}
-
-        total, matched = 0.0, {}
-        for concern in concerns:
-            weights = CONCERN_ACTIVE_WEIGHTS.get(concern, {})
-            for mcat in CONCERN_TO_MODEL.get(concern, []):
-                conf        = pred.get(mcat, 0.0)
-                rel_weight  = weights.get(mcat, 0.3)  # default 0.3 ถ้าไม่มีใน table
-                if conf > 0:
-                    total += conf * rel_weight * 0.15
-                    matched.setdefault(concern, []).append((mcat, conf, rel_weight))
-
-        return min(total, 1.0), matched
+        return _concern_score_normalized(pred, concerns)
 
 
 # ================================================================
@@ -345,30 +303,20 @@ class ConcernModel:
 # ================================================================
 def build_explanation(row: pd.Series, skin_type: str, concerns: list,
                       matched: dict, scores: dict) -> dict:
-    """
-    คืน explanation dict ที่มีทั้ง:
-    1. score_breakdown — แต่ละ layer contribute เท่าไหร่
-    2. concern_reasons — ingredient ไหนทำให้ได้ concern นั้น + confidence
-    3. other_reasons — skin type, key ingredients, free-from
-    """
-    # score breakdown
     breakdown = {
         "final":   round(scores.get("final", 0), 4),
-        "concern": {"score": round(scores.get("concern", 0), 4), "weight": "40%"},
+        "concern": {"score": round(scores.get("concern", 0), 4), "weight": "45%"},
         "tfidf":   {"score": round(scores.get("cosine", 0), 4),  "weight": "35%"},
-        "skin":    {"score": round(scores.get("skin", 0), 4),    "weight": "10%"},
+        "skin":    {"score": round(scores.get("skin", 0), 4),    "weight": "5%"},
         "context": {"score": round(scores.get("context", 0), 4), "weight": "15%"},
     }
 
-    # concern reasons พร้อม ingredients + confidence
     concern_reasons = []
     for concern, cat_confs in matched.items():
-        label = CONCERN_LABEL.get(concern, concern)
-        # เรียงตาม rel_weight × confidence สูงสุด
+        label       = CONCERN_LABEL.get(concern, concern)
         sorted_cats = sorted(cat_confs, key=lambda x: -(x[1] * x[2]))
         top_cats    = [mc for mc, _, _ in sorted_cats]
         ingrs       = _top_ingredients(row, top_cats, n=3)
-
         concern_reasons.append({
             "concern":     concern,
             "label":       label,
@@ -377,17 +325,14 @@ def build_explanation(row: pd.Series, skin_type: str, concerns: list,
             "text":        f"ช่วย{label}: {', '.join(ingrs)}" if ingrs else f"ช่วย{label}",
         })
 
-    # other reasons
     other = []
     if skin_type and skin_type.lower() in str(row.get("skintype", "")).lower():
         other.append(f"เหมาะกับผิว {skin_type}")
-
     key = str(row.get("key_ingredients", "") or "").strip()
     if key:
         top = [v.strip() for v in key.split(",") if v.strip()][:3]
         if top:
             other.append(f"Key ingredients: {', '.join(top)}")
-
     free = str(row.get("free_from", "") or "").strip()
     if free and free.upper() != "NA":
         other.append(f"ปลอดภัย: {free}")
@@ -396,7 +341,6 @@ def build_explanation(row: pd.Series, skin_type: str, concerns: list,
         "score_breakdown":  breakdown,
         "concern_reasons":  concern_reasons,
         "other_reasons":    other,
-        # summary text สำหรับ display
         "summary": [r["text"] for r in concern_reasons] + other,
     }
 
@@ -405,13 +349,6 @@ def build_explanation(row: pd.Series, skin_type: str, concerns: list,
 # DATA LOADER
 # ================================================================
 class DataLoader:
-    """
-    โหลด products จาก DB → build TF-IDF → score → recommend
-
-    Scoring formula (อ้างอิง doc string ด้านบน):
-    final_score = cosine×0.35 + concern×0.40 + skin×0.10 + context×0.15
-    """
-
     ACTIVE_COLS = [
         "active_acne", "active_whitening", "active_wrinkle", "active_exfoliation",
         "active_hydration", "active_barrier", "active_soothing",
@@ -457,44 +394,69 @@ class DataLoader:
     def _score(self, df: pd.DataFrame, skin_type: str, concerns: list,
                min_price: float, max_price: float, context: dict) -> pd.DataFrame:
 
+        # ── กรองราคาก่อน ─────────────────────────────────────────────────────
         has_price = df["price"] > 0
         filtered = pd.concat([
             df[has_price & (df["price"] >= min_price) & (df["price"] <= max_price)],
             df[~has_price],
-        ]).copy()
+        ]).drop_duplicates().copy()
+
         if filtered.empty:
             return filtered
 
-        # Layer 1: TF-IDF cosine (35%)
-        user_vec = self.vectorizer.transform([skin_type + " " + " ".join(concerns)])
-        filtered["cosine_score"] = cosine_similarity(
-            user_vec, self.tfidf_matrix[filtered.index]
-        ).flatten()
+        # ── STEP 1: Hard Filter Skin Type (ปัจจัยหลัก — ทำก่อน scoring) ──────
+        # กรองเฉพาะสินค้าที่ตรง skin type ออกมาก่อน
+        # สินค้า "all" / "ทุกสภาพผิว" ผ่านได้เสมอ
+        # ถ้าไม่เจอเลย → fallback ใช้ทั้งหมด (ป้องกัน empty result)
+        if skin_type and skin_type.lower() != "all":
+            skin_match = filtered[
+                filtered["skintype"].str.lower().str.contains(skin_type.lower(), na=False) |
+                filtered["skintype"].str.lower().str.contains("all", na=False) |
+                filtered["skintype"].str.lower().str.contains("ทุกสภาพผิว", na=False)
+            ]
+            if not skin_match.empty:
+                filtered = skin_match
 
-        # Layer 2: ML concern model with evidence-based weights (40%)
+        if filtered.empty:
+            return filtered
+
+        # ── STEP 2: Layer 1 — Concern × Active Ingredient (55%) ─────────────
+        # หลังกรอง skin แล้ว concern เป็นตัวจัดอันดับหลักใน pool
         results = filtered.apply(
             lambda row: self.concern_model.score_and_match(row, concerns), axis=1
         )
         filtered["concern_score"] = results.apply(lambda x: x[0])
         filtered["_matched"]      = results.apply(lambda x: x[1])
 
-        # Layer 3: Skin type match (10%)
-        filtered["skin_boost"] = filtered["skintype"].apply(
-            lambda x: 0.10 if skin_type.lower() in str(x).lower() else 0.0
-        )
+        # ── STEP 3: Layer 2 — TF-IDF Cosine (25%) ────────────────────────────
+        # ลดลงจาก 35% เพราะ text similarity มักต่ำโดยไม่จำเป็น
+        # (ปัญหา char ngram กับ mixed Thai-English)
+        user_vec = self.vectorizer.transform([skin_type + " " + " ".join(concerns)])
+        filtered["cosine_score"] = cosine_similarity(
+            user_vec, self.tfidf_matrix[filtered.index]
+        ).flatten()
 
-        # Layer 4: Context boost (15%)
+        # ── STEP 4: Layer 3 — Context normalized (20%) ───────────────────────
         boost_map = _merge_boosts(context)
         filtered["context_score"] = filtered["function_tags"].apply(
-            lambda tags: _context_score(tags, boost_map)
+            lambda tags: _context_score_normalized(tags, boost_map)
         )
 
-        # Final weighted score
+        # ── STEP 5: Skin Bonus (bonus เล็กน้อยสำหรับสินค้าที่ระบุ skin ตรงๆ)
+        # สินค้าที่ระบุ skin type ชัดเจน (ไม่ใช่ "all") ได้ bonus เพิ่ม
+        filtered["skin_boost"] = filtered["skintype"].apply(
+            lambda x: 1.0 if skin_type and skin_type.lower() in str(x).lower() else 0.0
+        )
+
+        # ── Final Score ───────────────────────────────────────────────────────
+        # Concern  : 55% — active ingredients เป็นตัวจัดอันดับหลักใน pool
+        # Cosine   : 25% — feature similarity
+        # Context  : 20% — บริบทผู้ใช้
+        # skin_boost ไม่มี weight แยก เพราะ hard filter ทำหน้าที่ไปแล้ว
         filtered["final_score"] = (
-            filtered["cosine_score"]  * 0.35 +
-            filtered["concern_score"] * 0.40 +
-            filtered["skin_boost"]    * 0.10 +
-            filtered["context_score"] * 0.15
+            filtered["concern_score"] * 0.55 +
+            filtered["cosine_score"]  * 0.25 +
+            filtered["context_score"] * 0.20
         ).round(4)
 
         return filtered
