@@ -302,7 +302,7 @@ class ConcernModel:
 # EXPLANATION BUILDER
 # ================================================================
 def build_explanation(row: pd.Series, skin_type: str, concerns: list,
-                      matched: dict, scores: dict) -> dict:
+                        matched: dict, scores: dict) -> dict:
     breakdown = {
         "final":   round(scores.get("final", 0), 4),
         "concern": {"score": round(scores.get("concern", 0), 4), "weight": "45%"},
@@ -392,7 +392,7 @@ class DataLoader:
         print(f"✅ AI Engine v2 ready — {len(df):,} products loaded")
 
     def _score(self, df: pd.DataFrame, skin_type: str, concerns: list,
-               min_price: float, max_price: float, context: dict) -> pd.DataFrame:
+                min_price: float, max_price: float, context: dict) -> pd.DataFrame:
 
         # ── กรองราคาก่อน ─────────────────────────────────────────────────────
         has_price = df["price"] > 0
@@ -462,12 +462,12 @@ class DataLoader:
         return filtered
 
     def recommend_products(self, skin_type: str, concerns: list,
-                           min_price: float = 0, max_price: float = 100000,
-                           top_n: int = 5, context: dict = None) -> list:
+                            min_price: float = 0, max_price: float = 100000,
+                            top_n: int = 5, context: dict = None) -> list:
         if self.df is None:
             return []
         scored = self._score(self.df.copy(), skin_type, concerns,
-                             min_price, max_price, context or {})
+                                min_price, max_price, context or {})
         if scored.empty:
             return []
 
@@ -488,12 +488,12 @@ class DataLoader:
         return output
 
     def recommend_routine(self, skin_type: str, concerns: list,
-                          min_price: float = 0, max_price: float = 100000,
-                          context: dict = None) -> list:
+                            min_price: float = 0, max_price: float = 100000,
+                            context: dict = None) -> list:
         if self.df is None:
             return []
         scored = self._score(self.df.copy(), skin_type, concerns,
-                             min_price, max_price, context or {})
+                                min_price, max_price, context or {})
         if scored.empty:
             return []
 
@@ -535,7 +535,7 @@ class DataLoader:
         if not name_match.empty:
             return name_match[
                 ["name", "brand", "major_category", "subtype",
-                 "skintype", "function_tags", "image_url", "price"]
+                    "skintype", "function_tags", "image_url", "price"]
             ].to_dict(orient="records")
 
         scores = cosine_similarity(
@@ -543,5 +543,5 @@ class DataLoader:
         ).flatten()
         return df.assign(score=scores).sort_values("score", ascending=False)[
             ["name", "brand", "major_category", "subtype",
-             "skintype", "function_tags", "image_url", "price"]
+                "skintype", "function_tags", "image_url", "price"]
         ].to_dict(orient="records")
