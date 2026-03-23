@@ -140,7 +140,8 @@ const ExplanationModal = ({ product, matchPercent, rank, onClose, userSkinType }
     if (!productSkintype)
       return { label: 'ไม่ระบุ', color: '#94A3B8', bg: 'var(--bg-subtle)', icon: '❓' };
     if (productSkintype.includes('all') || productSkintype.includes('ทุกสภาพผิว'))
-      return { label: `ทุกสภาพผิว — ใช้ได้กับผิวคุณ`, color: '#0EA5E9', bg: '#EFF6FF', icon: '✓' };
+      return { label: `ใช้ได้ทุกผิว — ไม่ได้ระบุตรง ${userSkintype}`, 
+            color: '#F59E0B', bg: '#FFFBEB', icon: '△' };
     if (userSkintype && productSkintype.includes(userSkintype))
       return { label: `ตรงผิวคุณ (${product.skintype})`, color: '#10B981', bg: '#ECFDF5', icon: '✓✓' };
     return { label: `ไม่ตรงผิวคุณ (${product.skintype})`, color: '#EF4444', bg: '#FEF2F2', icon: '✗' };

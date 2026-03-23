@@ -1,332 +1,418 @@
-import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-from database.repository import get_all_products
+"""
+test_algorithm.py
+=================
+ASA — Algorithm Test Cases
+รัน: python3 test_algorithm.py
 
+ทดสอบ 3 เคสหลัก แล้วพิมพ์ผลลัพธ์แบบ clean table
+เปรียบเทียบ: สินค้าที่ algorithm แนะนำ vs สิ่งที่คาดหวัง (expected)
+"""
 
-ROUTINE_STEPS = [
-    { "step": 1, "label": "ล้างหน้า",        "icon": "🧼", "categories": ["cleanser", "cleansing"] },
-    { "step": 2, "label": "โทนเนอร์",         "icon": "💦", "categories": ["toner"] },
-    { "step": 3, "label": "เซรั่ม",           "icon": "✨", "categories": ["serum", "essence", "ampoule"] },
-    { "step": 4, "label": "มอยส์เจอไรเซอร์", "icon": "🔒", "categories": ["moisturizer", "eye_care"] },
-    { "step": 5, "label": "กันแดด",           "icon": "☀️", "categories": ["sunscreen"] },
+import requests
+from tabulate import tabulate   # pip install tabulate
+
+BASE_URL = "http://127.0.0.1:5000/api"
+
+# ─────────────────────────────────────────
+# แปลภาษา
+# ─────────────────────────────────────────
+SKIN_TH = {
+    "oily":        "หน้ามัน",
+    "dry":         "หน้าแห้ง",
+    "sensitive":   "แพ้ง่าย",
+    "normal":      "ผิวธรรมดา",
+    "combination": "ผิวผสม",
+}
+# ตรงกับ CONCERN_LABEL ใน ai_engine_v2.py และ StepConcerns.jsx
+CONCERN_TH = {
+    "acne_control":   "สิว",
+    "brightening":    "หมองคล้ำ/ฝ้า",
+    "anti_aging":     "ริ้วรอย",
+    "hydrating":      "แห้งกร้าน",
+    "barrier_repair": "ผิวเสีย/แพ้ง่าย",
+    "calming":        "ผิวแดง/อักเสบ",
+    "exfoliating":    "รูขุมขนกว้าง",
+    "antioxidant":    "ริ้วรอยดำ/กระ",
+}
+
+# ตรงกับ StepPrice.jsx
+PRICE_TH = {
+    "low":    "ประหยัด (< 500 บาท)",
+    "medium": "ปานกลาง (500–1,500 บาท)",
+    "high":   "พรีเมียม (> 1,500 บาท)",
+    "any":    "ไม่จำกัดงบ",
+}
+
+# ตรงกับ StepAge.jsx
+AGE_TH = {
+    "teen":   "วัยรุ่น (13–19 ปี)",
+    "young":  "วัยหนุ่มสาว (20–29 ปี)",
+    "adult":  "วัยทำงาน (30–39 ปี)",
+    "mature": "วัยกลางคน (40–49 ปี)",
+    "senior": "วัยผู้ใหญ่ (50+ ปี)",
+}
+
+# ตรงกับ StepGender.jsx
+GENDER_TH = {"female": "หญิง", "male": "ชาย", "other": "ไม่ระบุ"}
+
+# ตรงกับ StepHydration.jsx
+HYD_TH = {
+    "very_dry": "แห้งตึงมาก",
+    "dry":      "ค่อนข้างแห้ง",
+    "normal":   "โอเค",
+    "oily":     "มันเยิ้ม",
+}
+
+# ตรงกับ StepEnvironment.jsx
+ENV_TH = {
+    "hot_humid":  "ร้อนชื้น",
+    "ac_all_day": "แอร์ตลอดวัน",
+    "mixed":      "ผสมผสาน",
+    "pollution":  "มลภาวะสูง",
+    "tropical":   "ชายทะเล/ป่า",
+}
+
+# ตรงกับ StepExperience.jsx
+EXP_TH = {
+    "beginner":     "มือใหม่",
+    "intermediate": "ใช้อยู่แล้ว",
+    "advanced":     "สกินแคร์จริงจัง",
+}
+
+# ตรงกับ StepRoutineTime.jsx
+TIME_TH = {
+    "morning": "เช้าอย่างเดียว",
+    "evening": "เย็นอย่างเดียว",
+    "both":    "ทั้งเช้าและเย็น",
+}
+
+# ตรงกับ ROUTINE_STEPS ใน ai_engine_v2.py (step_label เป็นภาษาไทยอยู่แล้ว)
+# map ไว้เผื่อ API เก่าส่ง key ภาษาอังกฤษมา
+STEP_LABEL_TH = {
+    "ล้างหน้า":        "ล้างหน้า",
+    "โทนเนอร์":        "โทนเนอร์",
+    "เซรั่ม":          "เซรั่ม",
+    "มอยส์เจอไรเซอร์": "มอยส์เจอไรเซอร์",
+    "กันแดด":          "กันแดด",
+    # fallback สำหรับ key ภาษาอังกฤษ (backward compat)
+    "cleanser":    "ล้างหน้า",
+    "toner":       "โทนเนอร์",
+    "serum":       "เซรั่ม",
+    "moisturizer": "มอยส์เจอไรเซอร์",
+    "sunscreen":   "กันแดด",
+    "eye_care":    "อายครีม",
+    "essence":     "เอสเซนส์",
+    "ampoule":     "แอมพูล",
+}
+
+# ─────────────────────────────────────────
+# TEST CASES
+# ─────────────────────────────────────────
+TEST_CASES = [
+    {
+        "id": "TC1",
+        "name": "วัยรุ่น ผิวมัน สิว",
+        "payload": {
+            "skin_type": "oily",
+            "concerns":  ["acne_control", "exfoliating"],
+            "price_range": "low",
+            "context": {
+                "age":          "teen",
+                "gender":       "other",
+                "hydration":    "oily",
+                "environment":  "hot_humid",
+                "experience":   "beginner",
+                "routine_time": "morning",
+            },
+        },
+        "expected_keywords": ["salicylic", "bha", "acne", "exfol"],
+        "expected_skin":     "oily",
+    },
+    {
+        "id": "TC2",
+        "name": "วัยทำงาน ผิวแห้ง ริ้วรอย",
+        "payload": {
+            "skin_type": "dry",
+            "concerns":  ["anti_aging", "hydrating"],
+            "price_range": "medium",
+            "context": {
+                "age":          "adult",
+                "gender":       "female",
+                "hydration":    "very_dry",
+                "environment":  "ac_all_day",
+                "experience":   "intermediate",
+                "routine_time": "both",
+            },
+        },
+        "expected_keywords": ["hyaluronic", "ceramide", "retinol", "hydrat", "moistur"],
+        "expected_skin":     "dry",
+    },
+    {
+        "id": "TC3",
+        "name": "วัยกลางคน ผิวแพ้ง่าย ฝ้า",
+        "payload": {
+            "skin_type": "sensitive",
+            "concerns":  ["brightening", "barrier_repair"],
+            "price_range": "high",
+            "context": {
+                "age":          "mature",
+                "gender":       "female",
+                "hydration":    "dry",
+                "environment":  "pollution",
+                "experience":   "advanced",
+                "routine_time": "both",
+            },
+        },
+        "expected_keywords": ["niacinamide", "vitamin c", "tranexamic", "ceramide", "brightening"],
+        "expected_skin":     "sensitive",
+    },
+    {
+        "id": "TC4",
+        "name": "[Negative] ผิวมัน — แต่ expected สินค้าผิวแห้ง (ตั้งใจให้ไม่ผ่าน)",
+        "negative": True,
+        "note": "ทดสอบว่า algorithm ไม่แนะนำสินค้าผิวแห้งให้คนผิวมัน → ถ้า FAIL = algorithm ทำงานถูกต้อง",
+        "payload": {
+            "skin_type": "oily",
+            "concerns":  ["acne_control", "exfoliating"],
+            "price_range": "low",
+            "context": {
+                "age":          "teen",
+                "gender":       "other",
+                "hydration":    "oily",
+                "environment":  "hot_humid",
+                "experience":   "beginner",
+                "routine_time": "morning",
+            },
+        },
+        # ตั้งใจให้ไม่ตรง: input เป็น oily แต่ expected เป็น keyword และ skin ของ dry
+        # → ถ้า algorithm ดี ผลควรออกมาเป็น "ไม่ผ่าน" (= algorithm ไม่แนะนำสินค้าผิวแห้งให้คนผิวมัน)
+        "expected_keywords": ["hyaluronic acid cream", "rich moisturizer", "ceramide oil", "retinol dry"],
+        "expected_skin":     "dry",
+    },
+    {
+        "id": "TC5",
+        "name": "ผิวผสม ไม่มี concern (edge case)",
+        "payload": {
+            "skin_type": "combination",
+            "concerns":  [],
+            "price_range": "any",
+            "context": {
+                "age":          "young",
+                "gender":       "other",
+                "hydration":    "normal",
+                "environment":  "mixed",
+                "experience":   "beginner",
+                "routine_time": "both",
+            },
+        },
+        "expected_keywords": ["cleanser", "moisturizer", "sunscreen", "gentle", "hydrat"],
+        "expected_skin":     "combination",
+    },
+    {
+        "id": "TC6",
+        "name": "ผิวมัน + ริ้วรอย (concern conflict)",
+        "payload": {
+            "skin_type": "oily",
+            "concerns":  ["anti_aging"],
+            "price_range": "high",
+            "context": {
+                "age":          "adult",
+                "gender":       "female",
+                "hydration":    "oily",
+                "environment":  "ac_all_day",
+                "experience":   "advanced",
+                "routine_time": "both",
+            },
+        },
+        "expected_keywords": ["retinol", "peptide", "anti-aging", "niacinamide", "vitamin c"],
+        "expected_skin":     "oily",
+    },
+    {
+        "id": "TC7",
+        "name": "[Hard Negative] ผิวมันสิว — expected สินค้าผิวแห้งคนละโลก",
+        "negative": True,
+        "note": "ตั้ง expected keyword ให้คนละโลกกับผิวมัน → ถ้า algorithm ดี ต้องไม่ match = ถูกต้อง",
+        "payload": {
+            "skin_type": "oily",
+            "concerns":  ["acne_control"],
+            "price_range": "low",
+            "context": {
+                "age":          "teen",
+                "gender":       "other",
+                "hydration":    "oily",
+                "environment":  "hot_humid",
+                "experience":   "beginner",
+                "routine_time": "morning",
+            },
+        },
+        "expected_keywords": [
+            "ultra rich cream",
+            "intensive repair balm",
+            "deep nourishing oil",
+            "anti-aging night cream",
+            "wrinkle lifting",
+        ],
+        "expected_skin": "dry",
+    },
 ]
 
-RETURN_COLS = [
-    'name', 'brand', 'major_category', 'subtype',
-    'skintype', 'function_tags', 'image_url', 'price', 'final_score'
-]
 
-# ================================================================
-# CONCERN → active columns (จาก image ที่ส่งมา)
-# ================================================================
-CONCERN_ACTIVE_MAP = {
-    'acne_control':   ['active_acne', 'active_oilct', 'active_exfoliation', 'active_soothing'],
-    'brightening':    ['active_whitening', 'active_antioxidant', 'active_hydration'],
-    'anti_aging':     ['active_wrinkle', 'active_antioxidant', 'active_hydration'],
-    'hydrating':      ['active_hydration', 'active_barrier'],
-    'barrier_repair': ['active_barrier', 'active_soothing'],
-    'calming':        ['active_barrier', 'active_soothing'],
-    'exfoliating':    ['active_oilct', 'active_exfoliation'],
-    'antioxidant':    ['active_whitening', 'active_exfoliation', 'active_antioxidant'],
-}
-
-# label ภาษาไทยสำหรับ explanation
-ACTIVE_COL_LABEL = {
-    'active_acne':        'รักษาสิว',
-    'active_whitening':   'ลดหมองคล้ำ/ฝ้า',
-    'active_wrinkle':     'ลดริ้วรอย',
-    'active_exfoliation': 'ผลัดเซลล์ผิว',
-    'active_hydration':   'ให้ความชุ่มชื้น',
-    'active_barrier':     'เสริมเกราะผิว',
-    'active_soothing':    'ลดการอักเสบ',
-    'active_oilct':       'ควบคุมความมัน',
-    'active_antioxidant': 'ต้านอนุมูลอิสระ',
-}
-
-CONCERN_LABEL = {
-    'acne_control':   'สิว',
-    'brightening':    'หมองคล้ำ/ฝ้า',
-    'anti_aging':     'ริ้วรอย',
-    'hydrating':      'แห้งกร้าน',
-    'barrier_repair': 'ผิวเสีย/แพ้ง่าย',
-    'calming':        'ผิวแดง/อักเสบ',
-    'exfoliating':    'รูขุมขนกว้าง',
-    'antioxidant':    'ริ้วรอยดำ/กระ',
-}
-
-# ================================================================
-# CONTEXT BOOST RULES
-# ================================================================
-AGE_BOOST = {
-    'teen':   {'acne_control': 0.20, 'gentle': 0.10, 'lightweight': 0.10},
-    'young':  {'brightening': 0.10, 'antioxidant': 0.10, 'hydrating': 0.05},
-    'adult':  {'anti_aging': 0.15, 'brightening': 0.10, 'barrier_repair': 0.05},
-    'mature': {'anti_aging': 0.25, 'hydrating': 0.15, 'barrier_repair': 0.10},
-    'senior': {'anti_aging': 0.30, 'hydrating': 0.20, 'barrier_repair': 0.15},
-}
-HYDRATION_BOOST = {
-    'very_dry': {'hydrating': 0.25, 'barrier_repair': 0.20, 'ceramide': 0.15},
-    'dry':      {'hydrating': 0.15, 'barrier_repair': 0.10},
-    'normal':   {},
-    'oily':     {'acne_control': 0.15, 'lightweight': 0.15, 'oil_control': 0.10},
-}
-ENV_BOOST = {
-    'hot_humid':  {'lightweight': 0.15, 'oil_control': 0.15, 'acne_control': 0.10},
-    'ac_all_day': {'hydrating': 0.20, 'barrier_repair': 0.15, 'ceramide': 0.10},
-    'mixed':      {'hydrating': 0.10, 'lightweight': 0.10},
-    'pollution':  {'antioxidant': 0.20, 'brightening': 0.10, 'barrier_repair': 0.10},
-    'tropical':   {'sunscreen': 0.25, 'antioxidant': 0.15, 'lightweight': 0.10},
-}
-EXPERIENCE_BOOST = {
-    'beginner':     {'gentle': 0.20, 'calming': 0.10, 'hydrating': 0.10},
-    'intermediate': {'brightening': 0.10, 'hydrating': 0.05},
-    'advanced':     {'anti_aging': 0.15, 'antioxidant': 0.15, 'exfoliating': 0.10},
-}
-ROUTINE_TIME_BOOST = {
-    'morning': {'sunscreen': 0.20, 'lightweight': 0.10, 'antioxidant': 0.10},
-    'evening': {'anti_aging': 0.15, 'barrier_repair': 0.15, 'hydrating': 0.10},
-    'both':    {'hydrating': 0.05, 'barrier_repair': 0.05},
-}
+# ─────────────────────────────────────────
+# HELPERS
+# ─────────────────────────────────────────
+def call_api(payload: dict) -> dict:
+    r = requests.post(f"{BASE_URL}/recommend-all", json=payload, timeout=30)
+    r.raise_for_status()
+    return r.json()
 
 
-def _merge_boosts(*boost_dicts):
-    merged = {}
-    for d in boost_dicts:
-        for tag, w in d.items():
-            merged[tag] = merged.get(tag, 0) + w
-    return merged
+def check_keyword(product: dict, keywords: list) -> bool:
+    haystack = " ".join([
+        str(product.get("name", "")),
+        str(product.get("function_tags", "")),
+        str(product.get("brand", "")),
+    ]).lower()
+    return any(kw.lower() in haystack for kw in keywords)
 
 
-def _context_score(row, boost_map):
-    if not boost_map:
-        return 0.0
-    tags = str(row.get('function_tags', '')).lower()
-    return sum(w for tag, w in boost_map.items() if tag.lower() in tags)
+def check_skin(product: dict, expected: str) -> bool:
+    skin = str(product.get("skintype", "")).lower()
+    return expected.lower() in skin or "all" in skin
 
 
-# ================================================================
-# CONCERN SCORE — นับจำนวน active ingredients ที่ match
-# ================================================================
-def _concern_score(row, concerns):
-    total = 0.0
-    for concern in concerns:
-        cols = CONCERN_ACTIVE_MAP.get(concern, [])
-        for col in cols:
-            val = str(row.get(col, '') or '').strip()
-            if val:
-                count = len([x for x in val.split(',') if x.strip()])
-                total += count * 0.05
-    return min(total, 1.0)
+def score_breakdown(product: dict) -> str:
+    expl = product.get("explanation", {})
+    bd   = expl.get("score_breakdown", {}) if isinstance(expl, dict) else {}
+    if not bd:
+        fs = product.get("final_score", "-")
+        return f"final={fs}"
+    return (
+        f"concern={bd.get('concern', {}).get('score', '-'):.3f} | "
+        f"cosine={bd.get('tfidf', {}).get('score', '-'):.3f} | "
+        f"context={bd.get('context', {}).get('score', '-'):.3f} | "
+        f"final={bd.get('final', '-'):.4f}"
+    )
 
 
-# ================================================================
-# EXPLANATION — อธิบายว่าทำไมถึงแนะนำสินค้านี้
-# ================================================================
-def _build_explanation(row, skin_type, concerns):
-    reasons = []
+# ─────────────────────────────────────────
+# MAIN
+# ─────────────────────────────────────────
+def run_tests():
+    all_results = []
+    summary     = []
 
-    # 1. skin type
-    product_skin = str(row.get('skintype', '') or '').lower()
-    if skin_type and skin_type.lower() in product_skin:
-        reasons.append(f"เหมาะกับผิว {skin_type}")
+    for tc in TEST_CASES:
+        p   = tc["payload"]
+        ctx = p["context"]
 
-    # 2. concern → active ingredients
-    for concern in concerns:
-        concern_label = CONCERN_LABEL.get(concern, concern)
-        cols = CONCERN_ACTIVE_MAP.get(concern, [])
-        matched_ingrs = []
-        for col in cols:
-            val = str(row.get(col, '') or '').strip()
-            if val:
-                ingrs = [x.strip() for x in val.split(',') if x.strip()][:3]
-                matched_ingrs.extend(ingrs)
-        matched_ingrs = list(dict.fromkeys(matched_ingrs))[:4]  # dedupe, max 4
-        if matched_ingrs:
-            reasons.append(
-                f"ช่วย{concern_label}: {', '.join(matched_ingrs)}"
-            )
+        skin_th     = SKIN_TH.get(p["skin_type"], p["skin_type"])
+        concerns_th = [CONCERN_TH.get(c, c) for c in p["concerns"]]
+        price_th    = PRICE_TH.get(p["price_range"], p["price_range"])
+        ctx_th = {
+            "อายุ":         AGE_TH.get(ctx.get("age", ""), ctx.get("age", "")),
+            "เพศ":          GENDER_TH.get(ctx.get("gender", ""), ctx.get("gender", "")),
+            "ความชุ่มชื้น": HYD_TH.get(ctx.get("hydration", ""), ctx.get("hydration", "")),
+            "สภาพแวดล้อม":  ENV_TH.get(ctx.get("environment", ""), ctx.get("environment", "")),
+            "ประสบการณ์":   EXP_TH.get(ctx.get("experience", ""), ctx.get("experience", "")),
+            "ช่วงเวลา":     TIME_TH.get(ctx.get("routine_time", ""), ctx.get("routine_time", "")),
+        }
 
-    # 3. key ingredients
-    key = str(row.get('key_ingredients', '') or '').strip()
-    if key:
-        key_list = [x.strip() for x in key.split(',') if x.strip()][:3]
-        if key_list:
-            reasons.append(f"Key ingredients: {', '.join(key_list)}")
+        is_negative = tc.get("negative", False)
 
-    # 4. free from
-    free = str(row.get('free_from', '') or '').strip()
-    if free and free != 'NA':
-        reasons.append(f"ปลอดภัย: {free}")
+        print(f"\n{'='*70}")
+        print(f"  {tc['id']} — {tc['name']}")
+        print(f"{'='*70}")
+        if is_negative:
+            print(f"  ⚠️  หมายเหตุ: {tc['note']}")
+        print(f"  Input: ผิว={skin_th}  ปัญหา={concerns_th}  ราคา={price_th}")
+        print(f"  บริบท: {ctx_th}\n")
 
-    return reasons
+        try:
+            data = call_api(p)
+        except Exception as e:
+            print(f"  [ผิดพลาด] ไม่สามารถเรียก API ได้: {e}")
+            summary.append([tc["id"], tc["name"], "ผิดพลาด", "-", "-"])
+            continue
 
+        products = data.get("recommend", [])
+        routine  = data.get("routine",  [])
 
-class DataLoader:
+        if not products:
+            print("  [แจ้งเตือน] API ตอบกลับแต่ไม่มีสินค้าแนะนำ")
+            summary.append([tc["id"], tc["name"], "ไม่มีผล", "-", "-"])
+            continue
 
-    def __init__(self):
-        self.df = None
-        self.vectorizer = None
-        self.tfidf_matrix = None
-        self._build()
+        # ── ตาราง Top 5 Recommend ──
+        rows = []
+        passed_count = 0
+        for i, prod in enumerate(products[:5], 1):
+            kw_ok   = check_keyword(prod, tc["expected_keywords"])
+            skin_ok = check_skin(prod, tc["expected_skin"])
 
-    def _build(self):
-        rows = get_all_products()
-        if not rows:
-            print("⚠️  No products found in DB")
-            return
-
-        df = pd.DataFrame(rows)
-        df['price'] = pd.to_numeric(df['price'], errors='coerce').fillna(0)
-
-        for col in ['skintype', 'function_tags', 'major_category', 'brand',
-                    'ingredients_list', 'subtype', 'key_ingredients', 'free_from',
-                    'active_acne', 'active_whitening', 'active_wrinkle',
-                    'active_exfoliation', 'active_hydration', 'active_barrier',
-                    'active_soothing', 'active_oilct', 'active_antioxidant']:
-            if col not in df.columns:
-                df[col] = ""
+            if is_negative:
+                # negative: "ผ่าน" = ระบบ ไม่ match expected ผิวแห้ง = ถูกต้อง
+                passed = not (kw_ok or skin_ok)
+                row_label = "✓ ถูกต้อง" if passed else "✗ แนะนำผิด"
             else:
-                df[col] = df[col].fillna("")
+                passed = kw_ok or skin_ok
+                row_label = "ผ่าน" if passed else "ไม่ผ่าน"
 
-        df['combined_features'] = (
-            df['skintype']          + " " +
-            df['function_tags']     + " " +
-            df['major_category']    + " " +
-            df['brand']             + " " +
-            df['ingredients_list']  + " " +
-            df['active_acne']       + " " +
-            df['active_whitening']  + " " +
-            df['active_wrinkle']    + " " +
-            df['active_hydration']  + " " +
-            df['active_barrier']    + " " +
-            df['active_soothing']
-        )
+            if passed:
+                passed_count += 1
+            rows.append([
+                i,
+                f"{prod.get('brand','-')} — {prod.get('name','-')[:40]}",
+                prod.get("major_category", "-"),
+                f"฿{int(prod.get('price', 0)):,}",
+                score_breakdown(prod),
+                "✓" if kw_ok   else "✗",
+                "✓" if skin_ok else "✗",
+                row_label,
+            ])
 
-        self.df = df
-        self.vectorizer = TfidfVectorizer(analyzer='char_wb', ngram_range=(3, 5))
-        self.tfidf_matrix = self.vectorizer.fit_transform(df['combined_features'])
-        print(f"✅ AI Engine ready — {len(df):,} products loaded")
+        headers = ["#", "สินค้า", "ประเภท", "ราคา", "Score Breakdown", "Keyword", "ผิว", "ผล"]
+        print(tabulate(rows, headers=headers, tablefmt="simple"))
 
-    def _score(self, df, skin_type, concerns, min_price, max_price, context=None):
-        """
-        Final score:
-          TF-IDF cosine   35%
-          skin_boost      10%
-          concern_score   40%  ← นับ active ingredients ที่ match concern จริงๆ
-          context_score   15%
-        """
-        has_price = df['price'] > 0
-        filtered = pd.concat([
-            df[has_price & (df['price'] >= min_price) & (df['price'] <= max_price)],
-            df[~has_price]
-        ]).copy()
+        # ── Routine ──
+        if routine:
+            print(f"\n  Routine ({len(routine)} ขั้นตอน):")
+            r_rows = []
+            for prod in routine:
+                label_raw = prod.get("step_label", "")
+                label_th  = STEP_LABEL_TH.get(label_raw, label_raw)
+                r_rows.append([
+                    prod.get("step", ""),
+                    label_th,
+                    prod.get("brand", ""),
+                    prod.get("name", "")[:40],
+                ])
+            print(tabulate(r_rows, headers=["ขั้น", "ประเภท", "แบรนด์", "สินค้า"], tablefmt="simple"))
 
-        if filtered.empty:
-            return filtered
+        # ── Verdict ──
+        total   = min(len(products), 5)
+        rate    = passed_count / total * 100 if total else 0
 
-        # Layer 1: TF-IDF cosine similarity
-        user_text = skin_type + " " + " ".join(concerns)
-        user_vec  = self.vectorizer.transform([user_text])
-        indices   = filtered.index
-        filtered['cosine_score'] = cosine_similarity(
-            user_vec, self.tfidf_matrix[indices]
-        ).flatten()
+        if is_negative:
+            # Negative TC: ถ้า algorithm ดี ควรไม่ผ่าน (passed_count ต่ำ) = algorithm ถูกต้อง
+            algo_correct = rate < 60
+            verdict      = "✓ Algorithm ถูกต้อง" if algo_correct else "✗ Algorithm แนะนำผิด"
+            print(f"\n  ผลลัพธ์: {verdict}  (ตรงกับ expected ผิวแห้ง {passed_count}/{total} รายการ, {rate:.0f}%)")
+            print(f"  → ถ้า algorithm ดี ควรแนะนำสินค้าผิวมัน ไม่ใช่ผิวแห้ง")
+        else:
+            verdict = "ผ่าน" if rate >= 60 else "ไม่ผ่าน"
+            print(f"\n  ผลลัพธ์: {verdict}  ({passed_count}/{total} รายการผ่าน, {rate:.0f}%)")
 
-        # Layer 2: Skin type match
-        filtered['skin_boost'] = filtered['skintype'].apply(
-            lambda x: 0.10 if skin_type.lower() in str(x).lower() else 0
-        )
+        summary.append([tc["id"], tc["name"], verdict, f"{passed_count}/{total}", f"{rate:.0f}%"])
+        all_results.append({"tc": tc["id"], "data": data})
 
-        # Layer 3: Concern → active ingredients (main driver)
-        filtered['concern_score'] = filtered.apply(
-            lambda row: _concern_score(row, concerns), axis=1
-        )
+    # ── Summary ──
+    print(f"\n{'='*70}")
+    print("  สรุปผลการทดสอบ")
+    print(f"{'='*70}")
+    print(tabulate(summary, headers=["ID", "เคสทดสอบ", "ผลลัพธ์", "ผ่าน", "อัตรา"], tablefmt="simple"))
 
-        # Layer 4: Context rule-based
-        ctx = context or {}
-        boost_map = _merge_boosts(
-            AGE_BOOST.get(ctx.get('age', ''), {}),
-            HYDRATION_BOOST.get(ctx.get('hydration', ''), {}),
-            ENV_BOOST.get(ctx.get('environment', ''), {}),
-            EXPERIENCE_BOOST.get(ctx.get('experience', ''), {}),
-            ROUTINE_TIME_BOOST.get(ctx.get('routine_time', ''), {}),
-        )
-        filtered['context_score'] = filtered.apply(
-            lambda row: _context_score(row, boost_map), axis=1
-        )
+    return all_results
 
-        # Final score
-        filtered['final_score'] = (
-            filtered['cosine_score']   * 0.35 +
-            filtered['skin_boost']     * 0.10 +
-            filtered['concern_score']  * 0.40 +
-            filtered['context_score']  * 0.15
-        ).round(4)
 
-        return filtered
-
-    def recommend_products(self, skin_type, concerns, min_price=0, max_price=100000,
-                           top_n=5, context=None):
-        if self.df is None:
-            return []
-        scored = self._score(self.df.copy(), skin_type, concerns,
-                             min_price, max_price, context)
-        if scored.empty:
-            return []
-
-        results = scored.sort_values('final_score', ascending=False).head(top_n)
-        output = []
-        for _, row in results.iterrows():
-            p = row[RETURN_COLS].to_dict()
-            p['explanation'] = _build_explanation(row, skin_type, concerns)
-            output.append(p)
-        return output
-
-    def recommend_routine(self, skin_type, concerns, min_price=0, max_price=100000,
-                          context=None):
-        if self.df is None:
-            return []
-        scored = self._score(self.df.copy(), skin_type, concerns,
-                             min_price, max_price, context)
-        if scored.empty:
-            return []
-
-        routine = []
-        for step_info in ROUTINE_STEPS:
-            step_df = scored[scored['major_category'].isin(step_info["categories"])]
-            if step_df.empty:
-                continue
-            best    = step_df.sort_values('final_score', ascending=False).iloc[0]
-            product = best[RETURN_COLS].to_dict()
-            product['step']        = step_info['step']
-            product['step_label']  = step_info['label']
-            product['step_icon']   = step_info['icon']
-            product['explanation'] = _build_explanation(best, skin_type, concerns)
-            routine.append(product)
-
-        return routine
-
-    def search_products(self, query):
-        if self.df is None:
-            return []
-        df = self.df.copy()
-        q  = query.lower().strip()
-
-        name_match = df[
-            df['name'].str.lower().str.contains(q, na=False) |
-            df['brand'].str.lower().str.contains(q, na=False)
-        ].copy()
-
-        if not name_match.empty:
-            return name_match[[
-                'name', 'brand', 'major_category', 'subtype',
-                'skintype', 'function_tags', 'image_url', 'price'
-            ]].to_dict(orient='records')
-
-        user_vec    = self.vectorizer.transform([q])
-        df['score'] = cosine_similarity(user_vec, self.tfidf_matrix).flatten()
-        return df.sort_values('score', ascending=False)[[
-            'name', 'brand', 'major_category', 'subtype',
-            'skintype', 'function_tags', 'image_url', 'price'
-        ]].to_dict(orient='records')
+if __name__ == "__main__":
+    results = run_tests()
