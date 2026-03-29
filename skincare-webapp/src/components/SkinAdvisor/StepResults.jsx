@@ -424,6 +424,20 @@ const ProductCard = ({ product, matchPercent, rank, email, userName, onDismiss, 
           {/* ── ซ้าย: รูป + ชื่อ + ราคา ── */}
           <div className="card-left">
             <div className="card-badge-row" style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                {/* เพิ่มตรงนี้ */}
+                {product.is_new && (
+                  <span style={{
+                    background: 'linear-gradient(135deg, #F97316, #EF4444)',
+                    color: 'white',
+                    padding: '4px 10px',
+                    borderRadius: '20px',
+                    fontSize: '11px',
+                    fontWeight: '800',
+                    animation: 'pulse 1.5s ease-in-out infinite',
+                  }}>
+                    🆕 ใหม่
+                  </span>
+                )}
               <span className="match-badge" style={{ background: getBadgeGrad(rank) }}>
                 {getRankEmoji(rank)} อันดับ {rank}
               </span>

@@ -169,6 +169,28 @@ TEST_CASES = [
         "expected_keywords": ["niacinamide", "vitamin c", "tranexamic", "ceramide", "brightening"],
         "expected_skin":     "sensitive",
     },
+    # TC4: ทดสอบจากคำสั่ง cURL (วัยรุ่นหญิง ผิวมัน สิว รูขุมขนกว้าง)
+    {
+        "id": "TC4",
+        "name": "ทดสอบจาก cURL (วัยรุ่น ผิวมัน สิว)",
+        "payload": {
+            "skin_type": "oily",
+            "concerns": ["acne_control", "exfoliating"],
+            "price_range": "low",
+            "context": {
+                "age": "teen",
+                "gender": "female",
+                "hydration": "oily",
+                "environment": "hot_humid",
+                "experience": "beginner",
+                "routine_time": "morning"
+            }
+        },
+        # กำหนดคำที่คาดหวังว่า AI ต้องแนะนำมาให้ (เช่น รักษาสิว ผลัดเซลล์ผิว)
+        "expected_keywords": ["acne", "exfol", "salicylic", "bha", "niacinamide"], 
+        "expected_skin": "oily",
+    },
+    
 ]
 
 

@@ -29,7 +29,8 @@ CREATE TABLE IF NOT EXISTS products (
     image_url        TEXT,
     image_local      TEXT,
     skintype         TEXT,
-    created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    -- ✅ แก้: TIMESTAMP WITH TIME ZONE + DEFAULT NOW() สำหรับ is_new 7 วัน
+    created_at       TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- migrate: ถ้า products มี VARCHAR อยู่ให้แปลงเป็น TEXT อัตโนมัติ
@@ -53,6 +54,10 @@ ALTER TABLE products ADD COLUMN IF NOT EXISTS active_barrier   TEXT;
 ALTER TABLE products ADD COLUMN IF NOT EXISTS active_soothing  TEXT;
 ALTER TABLE products ADD COLUMN IF NOT EXISTS active_oilct     TEXT;
 ALTER TABLE products ADD COLUMN IF NOT EXISTS active_antioxidant TEXT;
+-- ✅ แก้: migrate created_at เป็น TIMESTAMP WITH TIME ZONE (ถ้า DB เก่าใช้ TIMESTAMP ธรรมดา)
+ALTER TABLE products ALTER COLUMN created_at TYPE TIMESTAMP WITH TIME ZONE USING created_at AT TIME ZONE 'Asia/Bangkok';
+ALTER TABLE products ALTER COLUMN created_at SET DEFAULT NOW();
+
 -- เพิ่ม table active_ingredients
 CREATE TABLE IF NOT EXISTS active_ingredients (
     id         SERIAL PRIMARY KEY,
@@ -279,6 +284,7 @@ INSERT INTO active_ingredients (ingredient, acne, whitening, wrinkle, exfoliatio
 ('Vitamin E', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE),
 ('Vitis Vinifera Seed Extract', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE),
 ('Vitis Vinifera Seed Extract (Grape Seed)', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE)
+
 ON CONFLICT (ingredient) DO UPDATE SET
     acne = EXCLUDED.acne,
     whitening = EXCLUDED.whitening,
@@ -289,7 +295,7 @@ ON CONFLICT (ingredient) DO UPDATE SET
     soothing = EXCLUDED.soothing,
     oilcontrol = EXCLUDED.oilcontrol,
     antioxidant = EXCLUDED.antioxidant;
-    
+
 
 CREATE TABLE IF NOT EXISTS history (
     id                   SERIAL PRIMARY KEY,
@@ -335,6 +341,10 @@ CREATE TABLE IF NOT EXISTS reviews (
 CREATE INDEX IF NOT EXISTS idx_reviews_product ON reviews(product_name);
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS gender VARCHAR(10) DEFAULT 'other';
+
+-- ✅ ตั้ง timezone DB เป็นไทย
+ALTER DATABASE "skincareCollectionDB" SET timezone = 'Asia/Bangkok';
+
 -- Default admin account
 INSERT INTO users (name, email, password, role)
 VALUES ('Admin', 'admin@admin.com', 'admin1234', 'admin')

@@ -3,14 +3,19 @@ ai_engine_v2.py
 ===============
 SCORING FORMULA
 ---------------
-final_score = (cosine × 0.35) + (concern × 0.45) + (skin × 0.05) + (context × 0.15)
+final_score = (cosine × 0.25) + (concern × 0.55) + (context × 0.20)
 
 skin_type เป็น Hard Filter ก่อน scoring — ผลิตภัณฑ์ต้องตรง skin type ก่อนเสมอ
 
-Layer 1 — TF-IDF cosine similarity (35%)
-Layer 2 — Concern ML score normalized (45%)
-Layer 3 — Skin type bonus (5%)
-Layer 4 — Context boost normalized (15%)
+Layer 1 — Concern ML score normalized (55%)
+Layer 2 — TF-IDF cosine similarity (25%)
+Layer 3 — Context boost normalized (20%)
+Skin type — Hard Filter (ไม่มี weight แยก)
+
+NEW PRODUCT FEATURE
+-------------------
+- is_new flag ใน products table → guaranteed slot ใน recommend_products
+- find_matching_users() → reverse match หา users ที่ควรได้รับ notification
 
 อ้างอิง: Alvarez GV et al. JAAD 2025;93(6):1509-1525.
 """
@@ -179,12 +184,6 @@ def _merge_boosts(context: dict) -> dict:
 
 
 def _context_score_normalized(function_tags: str, boost_map: dict) -> float:
-    """
-    Normalize context score → [0, 1]
-    raw     = Σ boost_w ของ tag ที่ match ใน function_tags
-    max_pos = Σ boost_w ทั้งหมดใน boost_map
-    return  = raw / max_pos
-    """
     if not boost_map:
         return 0.0
     tags = function_tags.lower()
@@ -196,11 +195,6 @@ def _context_score_normalized(function_tags: str, boost_map: dict) -> float:
 
 
 def _concern_score_normalized(pred: dict, concerns: list) -> tuple:
-    """
-    Normalize concern score → [0, 1]
-    concern_score_i = Σ(conf × rel_w) / Σ(rel_w)  ต่อ concern หนึ่งตัว
-    final           = mean ของทุก concern ที่เลือก
-    """
     if not pred or not concerns:
         return 0.0, {}
 
@@ -305,10 +299,9 @@ def build_explanation(row: pd.Series, skin_type: str, concerns: list,
                         matched: dict, scores: dict) -> dict:
     breakdown = {
         "final":   round(scores.get("final", 0), 4),
-        "concern": {"score": round(scores.get("concern", 0), 4), "weight": "45%"},
-        "tfidf":   {"score": round(scores.get("cosine", 0), 4),  "weight": "35%"},
-        "skin":    {"score": round(scores.get("skin", 0), 4),    "weight": "5%"},
-        "context": {"score": round(scores.get("context", 0), 4), "weight": "15%"},
+        "concern": {"score": round(scores.get("concern", 0), 4), "weight": "55%"},
+        "tfidf":   {"score": round(scores.get("cosine", 0), 4),  "weight": "25%"},
+        "context": {"score": round(scores.get("context", 0), 4), "weight": "20%"},
     }
 
     concern_reasons = []
@@ -377,8 +370,26 @@ class DataLoader:
             print("⚠️  No products in DB"); return
 
         df = pd.DataFrame(rows)
-        df["price"] = pd.to_numeric(df["price"], errors="coerce").fillna(0)
+        df["price"]  = pd.to_numeric(df["price"], errors="coerce").fillna(0)
+        
+        # ✅ ใหม่ (timezone ไทย UTC+7
+        # ที่เพิ่มแก้ไขเรื่อง ถ้า created_at อยู่ในช่วง 7 วันล่าสุด 
+        
+        from datetime import datetime, timezone , timedelta
+        
+        TZ_BANGKOK = timezone(timedelta(hours=7))
 
+        if "created_at" in df.columns:
+            now = datetime.now(TZ_BANGKOK)
+            df["created_at"] = pd.to_datetime(df["created_at"], utc=True, errors="coerce")
+            df["created_at"] = df["created_at"].dt.tz_convert(TZ_BANGKOK)
+            df["is_new"] = (now - df["created_at"]).dt.days <= 7
+            
+        # สินค้าที่ created_at ภายใน 7 วัน → is_new = True อัตโนมัติ
+        
+        else:
+            df["is_new"] = False
+            
         for col in self.TEXT_COLS + self.ACTIVE_COLS:
             df[col] = df[col].fillna("") if col in df.columns else ""
 
@@ -394,7 +405,7 @@ class DataLoader:
     def _score(self, df: pd.DataFrame, skin_type: str, concerns: list,
                 min_price: float, max_price: float, context: dict) -> pd.DataFrame:
 
-        # ── กรองราคาก่อน ─────────────────────────────────────────────────────
+        # ── กรองราคาก่อน ──────────────────────────────────────────────────────
         has_price = df["price"] > 0
         filtered = pd.concat([
             df[has_price & (df["price"] >= min_price) & (df["price"] <= max_price)],
@@ -404,10 +415,7 @@ class DataLoader:
         if filtered.empty:
             return filtered
 
-        # ── STEP 1: Hard Filter Skin Type (ปัจจัยหลัก — ทำก่อน scoring) ──────
-        # กรองเฉพาะสินค้าที่ตรง skin type ออกมาก่อน
-        # สินค้า "all" / "ทุกสภาพผิว" ผ่านได้เสมอ
-        # ถ้าไม่เจอเลย → fallback ใช้ทั้งหมด (ป้องกัน empty result)
+        # ── Hard Filter Skin Type ──────────────────────────────────────────────
         if skin_type and skin_type.lower() != "all":
             skin_match = filtered[
                 filtered["skintype"].str.lower().str.contains(skin_type.lower(), na=False) |
@@ -420,39 +428,31 @@ class DataLoader:
         if filtered.empty:
             return filtered
 
-        # ── STEP 2: Layer 1 — Concern × Active Ingredient (55%) ─────────────
-        # หลังกรอง skin แล้ว concern เป็นตัวจัดอันดับหลักใน pool
+        # ── Layer 1: Concern Score (55%) ───────────────────────────────────────
         results = filtered.apply(
             lambda row: self.concern_model.score_and_match(row, concerns), axis=1
         )
         filtered["concern_score"] = results.apply(lambda x: x[0])
         filtered["_matched"]      = results.apply(lambda x: x[1])
 
-        # ── STEP 3: Layer 2 — TF-IDF Cosine (25%) ────────────────────────────
-        # ลดลงจาก 35% เพราะ text similarity มักต่ำโดยไม่จำเป็น
-        # (ปัญหา char ngram กับ mixed Thai-English)
+        # ── Layer 2: TF-IDF Cosine (25%) ──────────────────────────────────────
         user_vec = self.vectorizer.transform([skin_type + " " + " ".join(concerns)])
         filtered["cosine_score"] = cosine_similarity(
             user_vec, self.tfidf_matrix[filtered.index]
         ).flatten()
 
-        # ── STEP 4: Layer 3 — Context normalized (20%) ───────────────────────
+        # ── Layer 3: Context (20%) ─────────────────────────────────────────────
         boost_map = _merge_boosts(context)
         filtered["context_score"] = filtered["function_tags"].apply(
             lambda tags: _context_score_normalized(tags, boost_map)
         )
 
-        # ── STEP 5: Skin Bonus (bonus เล็กน้อยสำหรับสินค้าที่ระบุ skin ตรงๆ)
-        # สินค้าที่ระบุ skin type ชัดเจน (ไม่ใช่ "all") ได้ bonus เพิ่ม
+        # ── Skin Bonus ─────────────────────────────────────────────────────────
         filtered["skin_boost"] = filtered["skintype"].apply(
             lambda x: 1.0 if skin_type and skin_type.lower() in str(x).lower() else 0.0
         )
 
-        # ── Final Score ───────────────────────────────────────────────────────
-        # Concern  : 55% — active ingredients เป็นตัวจัดอันดับหลักใน pool
-        # Cosine   : 25% — feature similarity
-        # Context  : 20% — บริบทผู้ใช้
-        # skin_boost ไม่มี weight แยก เพราะ hard filter ทำหน้าที่ไปแล้ว
+        # ── Final Score ────────────────────────────────────────────────────────
         filtered["final_score"] = (
             filtered["concern_score"] * 0.55 +
             filtered["cosine_score"]  * 0.25 +
@@ -461,19 +461,77 @@ class DataLoader:
 
         return filtered
 
+    # ================================================================
+    # NEW: score product ตัวเดียวโดยไม่ต้องผ่าน DataFrame ทั้งหมด
+    # ใช้ใน find_matching_users
+    # ================================================================
+    def _score_single_product(self, row: pd.Series, skin_type: str,
+                               concerns: list, context: dict) -> float:
+        concern_score, _ = self.concern_model.score_and_match(row, concerns)
+
+        combined = " ".join(str(row.get(col, "")) for col in self.TFIDF_COLS)
+        user_vec    = self.vectorizer.transform([skin_type + " " + " ".join(concerns)])
+        product_vec = self.vectorizer.transform([combined])
+        cosine_score = float(cosine_similarity(user_vec, product_vec).flatten()[0])
+
+        boost_map     = _merge_boosts(context)
+        context_score = _context_score_normalized(
+            str(row.get("function_tags", "")), boost_map
+        )
+
+        return round(
+            concern_score * 0.55 +
+            cosine_score  * 0.25 +
+            context_score * 0.20, 4
+        )
+
+    # ================================================================
+    # RECOMMEND PRODUCTS (แก้: guaranteed slot สำหรับ new product)
+    # ================================================================
     def recommend_products(self, skin_type: str, concerns: list,
                             min_price: float = 0, max_price: float = 100000,
                             top_n: int = 5, context: dict = None) -> list:
         if self.df is None:
             return []
+
         scored = self._score(self.df.copy(), skin_type, concerns,
-                                min_price, max_price, context or {})
+                              min_price, max_price, context or {})
         if scored.empty:
             return []
 
+        sorted_all = scored.sort_values("final_score", ascending=False)
+
+        # แยก new product ออกมา
+        new_df     = sorted_all[sorted_all["is_new"] == True]
+        regular_df = sorted_all[sorted_all["is_new"] != True]
+
+        rows = []
+        
+        if not new_df.empty:
+            # หา new product ที่ตรง skin_type ของ user ที่สุด
+            # ที่เพิ่มแก้ไข
+            
+            skin_match = new_df[
+                new_df["skintype"].str.lower().str.contains(skin_type.lower(), na=False)
+            ]
+            if not skin_match.empty:
+                rows.append(skin_match.iloc[0])
+            else:
+            # ถ้าไม่มีตรงเลย เอา "all skin" แทน
+                all_skin = new_df[
+                    new_df["skintype"].str.lower().str.contains("all", na=False)
+                ]
+                if not all_skin.empty:
+                    rows.append(all_skin.iloc[0])
+
+        # ตามด้วย regular products เต็ม top_n
+        for _, r in regular_df.head(top_n).iterrows():
+            rows.append(r)
+
         output = []
-        for _, row in scored.sort_values("final_score", ascending=False).head(top_n).iterrows():
+        for row in rows:
             p = row[RETURN_COLS].to_dict()
+            p["is_new"] = bool(row.get("is_new", False))
             p["explanation"] = build_explanation(
                 row, skin_type, concerns, row["_matched"],
                 {
@@ -493,7 +551,7 @@ class DataLoader:
         if self.df is None:
             return []
         scored = self._score(self.df.copy(), skin_type, concerns,
-                                min_price, max_price, context or {})
+                              min_price, max_price, context or {})
         if scored.empty:
             return []
 
@@ -522,6 +580,59 @@ class DataLoader:
             routine.append(product)
         return routine
 
+    # ================================================================
+    # NEW: find_matching_users
+    # reverse match — รับ product ใหม่ แล้วหา users ที่ควรได้รับ notification
+    #
+    # วิธีใช้:
+    #   users = engine.find_matching_users(new_product, all_users, threshold=0.4)
+    #   → ส่ง notification ไปหา users ใน list นี้
+    #
+    # new_product  : dict ที่มี key เหมือน product row ใน DB
+    # all_users    : list of dict จาก users table
+    #                แต่ละ user ต้องมี: user_id, skin_type, concerns, context
+    # score_threshold : ขั้นต่ำของ final_score ที่ถือว่า "ตรง" (default 0.4)
+    # ================================================================
+    def find_matching_users(self, new_product: dict,
+                             all_users: list,
+                             score_threshold: float = 0.4) -> list:
+        if self.df is None:
+            return []
+
+        product_row  = pd.Series(new_product)
+        product_skin = str(new_product.get("skintype", "")).lower()
+        matched_users = []
+
+        for user in all_users:
+            skin_type = user.get("skin_type", "")
+            concerns  = user.get("concerns", [])
+            context   = user.get("context", {})
+
+            # Hard filter — skin type ต้องตรงก่อน เหมือนระบบหลัก
+            if skin_type and skin_type.lower() != "all":
+                skin_ok = (
+                    skin_type.lower() in product_skin or
+                    "all" in product_skin or
+                    "ทุกสภาพผิว" in product_skin
+                )
+                if not skin_ok:
+                    continue
+
+            score = self._score_single_product(
+                product_row, skin_type, concerns, context
+            )
+
+            if score >= score_threshold:
+                matched_users.append({
+                    "user_id":   user.get("user_id"),
+                    "skin_type": skin_type,
+                    "concerns":  concerns,
+                    "score":     score,
+                })
+
+        # เรียงจาก score สูงสุด → แจ้ง user ที่ "ตรงที่สุด" ก่อน
+        return sorted(matched_users, key=lambda x: -x["score"])
+
     def search_products(self, query: str) -> list:
         if self.df is None:
             return []
@@ -535,7 +646,7 @@ class DataLoader:
         if not name_match.empty:
             return name_match[
                 ["name", "brand", "major_category", "subtype",
-                    "skintype", "function_tags", "image_url", "price"]
+                 "skintype", "function_tags", "image_url", "price"]
             ].to_dict(orient="records")
 
         scores = cosine_similarity(
@@ -543,5 +654,5 @@ class DataLoader:
         ).flatten()
         return df.assign(score=scores).sort_values("score", ascending=False)[
             ["name", "brand", "major_category", "subtype",
-                "skintype", "function_tags", "image_url", "price"]
+             "skintype", "function_tags", "image_url", "price"]
         ].to_dict(orient="records")

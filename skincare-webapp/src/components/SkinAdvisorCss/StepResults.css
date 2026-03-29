@@ -220,3 +220,8 @@
   .card-left { flex: none; border-right: none; border-bottom: 1px solid var(--border); }
   .chart-container { height: 220px; }
 }
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); }
+  50%       { box-shadow: 0 0 0 6px rgba(249, 115, 22, 0); }
+}
