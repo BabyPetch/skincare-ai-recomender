@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/skincare-ai-recomender/static/css/main.4771ee9f.css",
+    "main.js": "/skincare-ai-recomender/static/js/main.4a5ab980.js",
+    "index.html": "/skincare-ai-recomender/index.html",
+    "main.4771ee9f.css.map": "/skincare-ai-recomender/static/css/main.4771ee9f.css.map",
+    "main.4a5ab980.js.map": "/skincare-ai-recomender/static/js/main.4a5ab980.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.4771ee9f.css",
+    "static/js/main.4a5ab980.js"
+  ]
+}
