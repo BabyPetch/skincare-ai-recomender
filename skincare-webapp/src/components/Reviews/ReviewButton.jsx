@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import './ReviewButton.css';
 
-const API = 'http://127.0.0.1:5000/api';
+const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
 const STARS = [1, 2, 3, 4, 5];
 
 const ReviewModal = ({ product, email, userName, existing, onClose, onSaved }) => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './ProductReviews.css';
 
-const API = 'http://127.0.0.1:5000/api';
+const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
 
 const StarDisplay = ({ rating, size = 14 }) => (
   <span style={{ fontSize: size, letterSpacing: '-1px', color: '#FBBF24' }}>

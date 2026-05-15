@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './DashboardPage.css';
 
-const API = 'http://127.0.0.1:5000/api';
+const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
 
 const CONCERN_LABELS = {
   acne_control:   { label: 'สิว',             icon: '', color: '#F97316' },

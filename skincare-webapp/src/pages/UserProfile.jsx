@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './UserProfile.css';
 
+const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
+
 const getCategoryLabel = (cat) => ({
   moisturizer: 'มอยส์เจอไรเซอร์', serum: 'เซรั่ม', sunscreen: 'กันแดด',
   toner: 'โทนเนอร์', cleanser: 'คลีนเซอร์', mask: 'มาส์ก',
@@ -140,7 +142,7 @@ const UserProfile = ({ user }) => {
 
   useEffect(() => {
     if (user?.email) {
-      fetch(`http://127.0.0.1:5000/api/user/${user.email}`)
+      fetch(`${API}/user/${user.email}`)
         .then(res => res.json())
         .then(data => { if (!data.error) setCurrentUser(data); })
         .catch(err => console.error("Error fetching user:", err));

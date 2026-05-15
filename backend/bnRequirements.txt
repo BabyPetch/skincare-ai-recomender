@@ -1,3 +1,9 @@
-Flask
-Flask-CORS
+flask
+flask-cors
+psycopg2-binary
+scikit-learn
+joblib
+gunicorn
+python-dotenv
+numpy
 pandas

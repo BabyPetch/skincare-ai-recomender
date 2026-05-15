@@ -1,7 +1,11 @@
+from flask import app
 import psycopg2
 import os
 import pandas as pd
 import math
+
+# ── อ่านจาก env ถ้ามี DATABASE_URL (Render/Supabase) ──
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
 DB_CONFIG = {
     "dbname": "skincareCollectionDB",
@@ -10,6 +14,11 @@ DB_CONFIG = {
     "host": "127.0.0.1",
     "port": "5432"
 }
+
+def get_connection():
+    if DATABASE_URL:
+        return psycopg2.connect(DATABASE_URL)
+    return psycopg2.connect(**DB_CONFIG)
 
 CSV_PATH = os.path.join(
     os.path.dirname(__file__), "..",
@@ -165,3 +174,7 @@ def init_active_ingredients():
         print(f"✅ active_ingredients imported — {len(rows)} ingredients")
     finally:
         conn.close()
+
+if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)

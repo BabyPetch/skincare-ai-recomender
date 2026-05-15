@@ -5,7 +5,7 @@ import ReviewButton   from '../components/Reviews/ReviewButton';
 import ProductReviews from '../components/Reviews/ProductReviews';
 import './SearchPage.css';
 
-const API = 'http://127.0.0.1:5000/api';
+const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
 
 const CATEGORY_OPTIONS = [
   { value: 'all',         label: 'ทุกประเภท' },

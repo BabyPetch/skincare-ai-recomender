@@ -13,7 +13,7 @@ import StepPrice       from '../components/SkinAdvisor/StepPrice';
 import StepLoading     from '../components/SkinAdvisor/StepLoading';
 import StepResults     from '../components/SkinAdvisor/StepResults';
 
-const API = 'http://127.0.0.1:5000/api';
+const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
 
 const ageToGroup = (age) => {
   if (!age || age <= 0) return '';

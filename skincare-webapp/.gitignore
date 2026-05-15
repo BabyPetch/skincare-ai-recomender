@@ -13,18 +13,21 @@ build/
 venv/
 env/
 .venv/
-.env/
 
-# Environment Variables (สำคัญมาก!)
+# Environment Variables (สำคัญมาก! ห้าม commit credentials)
 .env
 .env.local
-.env.production
-config.py          # ถ้ามี credentials อยู่ใน config
+backend/.env
+
+# ML Model (ไฟล์ใหญ่ ไม่ควรอยู่ใน git)
+*.pkl
+*.joblib
+backend/training/model/
 
 # ===== Database =====
 *.db
 *.sqlite3
-*.sql
+# ❌ อย่า ignore *.sql เพราะ schema.sql ต้องอยู่ใน repo!
 
 # ===== Scraper Output =====
 backend/scraper/data_products/*.csv
@@ -32,12 +35,14 @@ backend/scraper/data_products/images/
 
 # ===== Frontend (React/Node) =====
 node_modules/
-frontend/node_modules/
+skincare-webapp/node_modules/
 npm-debug.log*
 yarn-error.log
-.next/
-dist/
-build/
+skincare-webapp/dist/
+skincare-webapp/build/
+
+# .env.production ไม่ต้อง ignore เพราะมีแค่ VITE_API_URL ไม่ใช่ secret
+# skincare-webapp/.env.production  ← ลบบรรทัดนี้ออก
 
 # ===== IDE =====
 .vscode/

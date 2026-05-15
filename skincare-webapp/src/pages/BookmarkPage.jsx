@@ -5,7 +5,7 @@ import ReviewButton   from '../components/Reviews/ReviewButton';
 import ProductReviews from '../components/Reviews/ProductReviews';
 import './BookmarkPage.css';
 
-const API = 'http://127.0.0.1:5000/api';
+const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
 
 const getCategoryLabel = (cat) => ({
   moisturizer: 'มอยส์เจอไรเซอร์', serum: 'เซรั่ม',
