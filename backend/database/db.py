@@ -16,8 +16,11 @@ DB_CONFIG = {
 }
 
 def get_connection():
+    print("🔗 Connecting to DB...")
+
     if DATABASE_URL:
         return psycopg2.connect(DATABASE_URL)
+
     return psycopg2.connect(**DB_CONFIG)
 
 CSV_PATH = os.path.join(
@@ -43,10 +46,6 @@ PRODUCT_COLUMNS = [
     "active_exfoliation", "active_hydration", "active_barrier",
     "active_soothing", "active_oilct", "active_antioxidant",
 ]
-
-def get_connection():
-    print("🔗 Connecting to DB...")
-    return psycopg2.connect(**DB_CONFIG)
 
 
 def init_database():
