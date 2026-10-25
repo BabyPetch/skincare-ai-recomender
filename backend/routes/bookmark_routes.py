@@ -11,7 +11,7 @@ def toggle_bookmark():
     data       = request.json
     email      = data.get('email')
     product    = data.get('product')
-
+    
     if not email or not product:
         return jsonify({"error": "missing email or product"}), 400
 
