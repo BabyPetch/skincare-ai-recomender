@@ -16,6 +16,9 @@ env/
 .env/
 
 # Environment Variables (สำคัญมาก!)
+.env.*
+!.env.example
+!.env.*.example
 .env
 .env.local
 .env.production
